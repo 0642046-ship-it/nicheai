@@ -203,6 +203,8 @@
   <div class="onboarding-inner">
     <div class="logo">NicheAI</div>
     <p>Пройди опрос с ИИ, узнай свою нишу и получи персональный план на первые 100 000 ₽</p>
+    <input id="apikey-input" type="password" placeholder="Вставь API ключ Claude (sk-ant-...)" style="width:100%;margin-bottom:12px;padding:14px;background:#22222c;border:1px solid #2a2a38;border-radius:12px;color:#f0f0f8;font-family:Manrope,sans-serif;font-size:13px;outline:none;" />
+    <p id="apikey-error" style="color:#ff6b6b;font-size:12px;margin-bottom:12px;display:none;">Введи API ключ чтобы продолжить</p>
     <button class="btn-primary" id="start-btn">Начать →</button>
   </div>
 </div>
@@ -267,7 +269,7 @@
 </nav>
 
 <script>
-const API_KEY = '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';
+let API_KEY = localStorage.getItem('nicheai_apikey') || '';
 const MODEL = 'claude-sonnet-4-20250514';
 
 let state = {
@@ -292,6 +294,16 @@ try { state = JSON.parse(raw); } catch(e) {} }
 }
 
 function startApp() {
+  const keyInput = document.getElementById('apikey-input');
+  if (keyInput) {
+    const key = keyInput.value.trim();
+    if (!key) {
+      document.getElementById('apikey-error').style.display = 'block';
+      return;
+    }
+    API_KEY = key;
+    localStorage.setItem('nicheai_apikey', key);
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('main-nav').style.display = 'flex';
   state.onboardingDone = true;
