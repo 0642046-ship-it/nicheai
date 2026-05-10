@@ -203,7 +203,7 @@
   <div class="onboarding-inner">
     <div class="logo">NicheAI</div>
     <p>Пройди опрос с ИИ, узнай свою нишу и получи персональный план на первые 100 000 ₽</p>
-    <button class="btn-primary" onclick="startApp()">Начать →</button>
+    <button class="btn-primary" id="start-btn">Начать →</button>
   </div>
 </div>
 
@@ -287,7 +287,8 @@ function saveState() {
 
 function loadState() {
   const raw = localStorage.getItem('nicheai_state');
-  if (raw) { try { state = JSON.parse(raw); } catch(e) {} }
+  if (raw) { document.getElementById("start-btn").addEventListener("click", startApp);
+try { state = JSON.parse(raw); } catch(e) {} }
 }
 
 function startApp() {
@@ -309,7 +310,8 @@ function startApp() {
 function loadProfile() {
   let name = 'Пользователь';
   let uid = '123456789';
-  try {
+  document.getElementById("start-btn").addEventListener("click", startApp);
+try {
     const tg = window.Telegram?.WebApp;
     if (tg?.initDataUnsafe?.user) {
       const u = tg.initDataUnsafe.user;
@@ -401,7 +403,8 @@ async function sendMessage() {
 
   const typingEl = addMsg('assistant', '', true);
 
-  try {
+  document.getElementById("start-btn").addEventListener("click", startApp);
+try {
     const messages = [{ role: 'user', content: SYSTEM_PROMPT }, ...state.chatHistory.filter(m => m.role !== 'system')];
     // Build proper alternating messages
     const apiMessages = buildApiMessages();
@@ -428,7 +431,8 @@ async function sendMessage() {
     const reply = data.content?.[0]?.text || 'Ошибка ответа';
 
     // Check if it's a JSON result
-    try {
+    document.getElementById("start-btn").addEventListener("click", startApp);
+try {
       const cleaned = reply.replace(/```json|```/g, '').trim();
       const parsed = JSON.parse(cleaned);
       if (parsed.type === 'result') {
@@ -537,4 +541,63 @@ function renderDiary() {
 
     const header = document.createElement('div');
     header.className = 'day-header';
-    header.in
+    header.innerHTML = `<span class="day-num">День ${day}${isToday ? ' 🔥' : ''}</span><span class="day-progress">${doneCnt}/${tasks.length}</span>`;
+    card.appendChild(header);
+
+    tasks.forEach((task, ti) => {
+      const item = document.createElement('div');
+      item.className = 'task-item' + (task.done ? ' done' : '');
+      item.innerHTML = `
+        <div class="task-check">${task.done ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}</div>
+        <div class="task-text">${task.text}</div>`;
+      item.onclick = () => toggleTask(day, ti, item, header, doneCnt);
+      card.appendChild(item);
+    });
+
+    container.appendChild(card);
+  }
+}
+
+function toggleTask(day, ti, itemEl, headerEl, prevDone) {
+  state.tasks[day][ti].done = !state.tasks[day][ti].done;
+  saveState();
+
+  const done = state.tasks[day][ti].done;
+  itemEl.className = 'task-item' + (done ? ' done' : '');
+  itemEl.querySelector('.task-check').innerHTML = done
+    ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+    : '';
+
+  const tasks = state.tasks[day];
+  const doneCnt = tasks.filter(t => t.done).length;
+  headerEl.querySelector('.day-progress').textContent = `${doneCnt}/${tasks.length}`;
+}
+
+function resetApp() {
+  if (!confirm('Сбросить весь прогресс и начать заново?')) return;
+  localStorage.removeItem('nicheai_state');
+  location.reload();
+}
+
+// ---- INIT ----
+loadState();
+if (state.onboardingDone) {
+  document.getElementById('screen-onboarding').classList.remove('active');
+  document.getElementById('main-nav').style.display = 'flex';
+  loadProfile();
+  renderChat();
+  renderNiche();
+  renderDiary();
+  showScreen('diary');
+} else {
+  document.getElementById('screen-onboarding').classList.add('active');
+}
+
+document.getElementById("start-btn").addEventListener("click", startApp);
+try {
+  window.Telegram?.WebApp?.ready();
+  window.Telegram?.WebApp?.expand();
+} catch(e) {}
+</script>
+</body>
+</html>
