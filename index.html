@@ -32,8 +32,8 @@
   }
 
   /* SCREENS */
-  .screen { display: none; flex-direction: column; min-height: calc(100vh - var(--nav-h)); padding: 20px 16px; padding-bottom: calc(var(--nav-h) + 20px); }
-  .screen.active { display: flex; }
+  .screen { display: none !important; flex-direction: column; min-height: calc(100vh - var(--nav-h)); padding: 20px 16px; padding-bottom: calc(var(--nav-h) + 20px); }
+  .screen.active { display: flex !important; }
 
   /* NAV */
   .nav {
@@ -291,7 +291,7 @@ function loadState() {
 }
 
 function startApp() {
-  document.getElementById('screen-onboarding').classList.remove('active');
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('main-nav').style.display = 'flex';
   state.onboardingDone = true;
   saveState();
@@ -537,4 +537,4 @@ function renderDiary() {
 
     const header = document.createElement('div');
     header.className = 'day-header';
-    header.innerHTML = `<span class="day-nu
+    header.in
