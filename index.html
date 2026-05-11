@@ -548,7 +548,7 @@ async function renderAdminPanel(){
     id: u.userId || u.id || '—',
     name: u.userName || u.name || '—',
     refBy: u.refBy || '',
-    joinDate: u.joinDate || '—',
+    joinDate: u.joinDate ? new Date(u.joinDate).toLocaleDateString('ru-RU') : (u.joinDate || '—'),
     plan: u.plan || 'Level Try',
     refs: 0,
     refEarned: 0
