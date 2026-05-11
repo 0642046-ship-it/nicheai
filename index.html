@@ -3,243 +3,469 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NicheAI</title>
+<title>The Level</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0e0e12;
-    --surface: #18181f;
-    --surface2: #22222c;
-    --accent: #7c6cfc;
-    --accent2: #c084fc;
-    --text: #f0f0f8;
-    --muted: #7a7a8e;
-    --success: #34d399;
-    --border: #2a2a38;
-    --radius: 16px;
-    --nav-h: 68px;
-  }
+:root {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface2: #1e1e1e;
+  --surface3: #282828;
+  --yellow: #FFD600;
+  --yellow2: #FFF176;
+  --text: #ffffff;
+  --muted: #666666;
+  --muted2: #444444;
+  --border: #2a2a2a;
+  --success: #FFD600;
+  --radius: 16px;
+  --nav-h: 72px;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-  body {
-    font-family: 'Manrope', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body {
+  font-family: 'Manrope', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  /* SCREENS */
-  .screen { display: none !important; flex-direction: column; min-height: calc(100vh - var(--nav-h)); padding: 20px 16px; padding-bottom: calc(var(--nav-h) + 20px); }
-  .screen.active { display: flex !important; }
+/* SPLASH */
+#splash {
+  position: fixed; inset: 0;
+  background: #0a0a0a;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 1000;
+  transition: opacity 0.6s ease;
+}
+#splash.hide { opacity: 0; pointer-events: none; }
+.splash-logo {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 42px; font-weight: 900;
+  color: #fff;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+.splash-logo span { color: var(--yellow); }
+.splash-bar {
+  width: 120px; height: 3px;
+  background: var(--surface3);
+  border-radius: 2px;
+  margin-top: 24px;
+  overflow: hidden;
+}
+.splash-bar-fill {
+  height: 100%; width: 0;
+  background: var(--yellow);
+  border-radius: 2px;
+  animation: loadbar 1.8s ease forwards;
+}
+@keyframes loadbar { 0%{width:0} 100%{width:100%} }
 
-  /* NAV */
-  .nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    height: var(--nav-h);
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    z-index: 100;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  .nav-btn {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 4px; background: none; border: none; cursor: pointer;
-    color: var(--muted); font-family: 'Manrope', sans-serif; font-size: 11px; font-weight: 600;
-    transition: color 0.2s;
-  }
-  .nav-btn.active { color: var(--accent); }
-  .nav-btn svg { width: 24px; height: 24px; }
+/* APP */
+#app { display: none; }
+#app.show { display: block; }
 
-  /* ONBOARDING */
-  #screen-onboarding {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; padding-bottom: 0;
-    background: radial-gradient(ellipse at 60% 20%, #2a1a6e44 0%, transparent 60%),
-                radial-gradient(ellipse at 20% 80%, #6c1fc844 0%, transparent 60%), var(--bg);
-  }
-  .onboarding-inner { text-align: center; max-width: 320px; }
-  .logo { font-family: 'Unbounded', sans-serif; font-size: 32px; font-weight: 700;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
-  .onboarding-inner p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 32px; }
-  .btn-primary {
-    width: 100%; padding: 16px; border: none; border-radius: var(--radius);
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff; font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 700;
-    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
-  }
-  .btn-primary:active { transform: scale(0.97); opacity: 0.9; }
+/* SCREENS */
+.screen { display: none; flex-direction: column; min-height: calc(100vh - var(--nav-h)); padding: 20px 16px; padding-bottom: calc(var(--nav-h) + 24px); overflow-y: auto; }
+.screen.active { display: flex; }
 
-  /* DIARY SCREEN */
-  .screen-title { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-  .screen-sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+/* NAV */
+.nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; background: none; border: none; cursor: pointer;
+  color: var(--muted); font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-btn.active { color: var(--yellow); }
+.nav-btn svg { width: 22px; height: 22px; }
+.nav-btn.active::after {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 32px; height: 2px;
+  background: var(--yellow);
+  border-radius: 0 0 2px 2px;
+}
 
-  .niche-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: linear-gradient(135deg, #2a1a6e, #3d1a6e);
-    border: 1px solid var(--accent);
-    border-radius: 12px; padding: 10px 16px;
-    font-size: 13px; font-weight: 600; color: var(--accent2);
-    margin-bottom: 24px;
-  }
+/* PROFILE SCREEN */
+.profile-hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.profile-hero::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, #FFD60022 0%, transparent 70%);
+  border-radius: 50%;
+}
+.profile-top { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--yellow);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; color: #000;
+  flex-shrink: 0;
+}
+.profile-name-block { flex: 1; }
+.profile-name { font-weight: 700; font-size: 17px; }
+.profile-id { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.profile-niche {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #FFD60015; border: 1px solid #FFD60044;
+  border-radius: 8px; padding: 4px 10px;
+  font-size: 11px; font-weight: 700; color: var(--yellow);
+  margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
 
-  .month-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px;
+}
+.stat-label { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.stat-value { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; color: var(--yellow); }
+.stat-value.white { color: var(--text); }
 
-  .day-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
-    transition: border-color 0.2s;
-  }
-  .day-card.today { border-color: var(--accent); }
-  .day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .day-num { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 600; color: var(--accent); }
-  .day-progress { font-size: 11px; color: var(--muted); }
+.earned-input-wrap { margin-top: 8px; }
+.earned-input {
+  width: 100%; background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+  color: var(--text); font-family: 'Unbounded', sans-serif; font-size: 16px;
+  outline: none; transition: border-color 0.2s;
+}
+.earned-input:focus { border-color: var(--yellow); }
+.earned-input::placeholder { color: var(--muted2); font-size: 13px; font-family: 'Manrope', sans-serif; }
 
-  .task-item {
-    display: flex; align-items: flex-start; gap: 10px; padding: 8px 0;
-    border-bottom: 1px solid var(--border); cursor: pointer;
-  }
-  .task-item:last-child { border-bottom: none; }
-  .task-check {
-    width: 20px; height: 20px; min-width: 20px;
-    border: 2px solid var(--border); border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; margin-top: 1px;
-  }
-  .task-item.done .task-check { background: var(--success); border-color: var(--success); }
-  .task-item.done .task-text { text-decoration: line-through; color: var(--muted); }
-  .task-text { font-size: 13px; line-height: 1.5; }
+.section-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
+  margin: 20px 0 12px;
+}
 
-  .empty-diary {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; gap: 12px; color: var(--muted); padding: 40px 20px;
-  }
-  .empty-diary svg { opacity: 0.3; }
-  .empty-diary p { font-size: 14px; line-height: 1.6; }
+/* Progress bar */
+.progress-wrap { margin-bottom: 16px; }
+.progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.progress-label span { font-size: 12px; color: var(--muted); font-weight: 600; }
+.progress-label strong { font-size: 12px; color: var(--yellow); font-weight: 700; }
+.progress-bar { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--yellow); border-radius: 3px; transition: width 0.5s ease; }
 
-  /* PROFILE / CHAT SCREEN */
-  .profile-header {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px; margin-bottom: 20px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .avatar {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; color: #fff;
-  }
-  .profile-name { font-weight: 700; font-size: 16px; }
-  .profile-id { font-size: 12px; color: var(--muted); margin-top: 2px; }
+/* DIARY SCREEN */
+.diary-header { margin-bottom: 20px; }
+.diary-title { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+.diary-title span { color: var(--yellow); }
 
-  .niche-result {
-    background: linear-gradient(135deg, #1a1040, #2a1060);
-    border: 1px solid var(--accent);
-    border-radius: var(--radius); padding: 16px; margin-bottom: 20px;
-  }
-  .niche-result-label { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-  .niche-result-title { font-family: 'Unbounded', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .niche-result-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.goal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.goal-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--yellow);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.goal-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.goal-input {
+  background: none; border: none; outline: none;
+  color: var(--text); font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 700;
+  width: 100%; padding: 0;
+}
+.goal-input::placeholder { color: var(--muted2); font-size: 14px; font-family: 'Manrope', sans-serif; font-weight: 500; }
 
-  .chat-section-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.niche-banner {
+  background: linear-gradient(135deg, #1a1600, #2a2000);
+  border: 1px solid #FFD60033;
+  border-radius: 14px; padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.niche-banner-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); flex-shrink: 0; }
+.niche-banner-text { font-size: 13px; font-weight: 600; color: var(--yellow2); }
 
-  .chat-messages {
-    flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-    margin-bottom: 12px; min-height: 200px; max-height: 340px;
-  }
-  .msg { max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 13px; line-height: 1.5; }
-  .msg.ai { background: var(--surface2); border-bottom-left-radius: 4px; align-self: flex-start; }
-  .msg.user { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-bottom-right-radius: 4px; align-self: flex-end; color: #fff; }
-  .msg.typing { color: var(--muted); font-style: italic; }
+.month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.month-name { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; }
+.month-stats { font-size: 12px; color: var(--muted); font-weight: 600; }
 
-  .chat-input-row { display: flex; gap: 8px; }
-  .chat-input {
-    flex: 1; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px 14px; color: var(--text);
-    font-family: 'Manrope', sans-serif; font-size: 14px; outline: none;
-    transition: border-color 0.2s;
-  }
-  .chat-input:focus { border-color: var(--accent); }
-  .chat-send {
-    width: 46px; height: 46px; border: none; border-radius: 12px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: opacity 0.2s, transform 0.1s;
-  }
-  .chat-send:active { transform: scale(0.93); }
-  .chat-send:disabled { opacity: 0.4; }
+.day-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+.day-card.today { border-color: var(--yellow); }
+.day-card.completed { border-color: #FFD60044; background: #1a1600; }
+.day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.day-num {
+  font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700;
+  color: var(--muted);
+}
+.day-card.today .day-num { color: var(--yellow); }
+.day-badge {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 3px 8px; border-radius: 6px;
+}
+.day-badge.today-badge { background: var(--yellow); color: #000; }
+.day-badge.done-badge { background: #FFD60022; color: var(--yellow); }
+.day-progress-text { font-size: 11px; color: var(--muted); }
 
-  .loading-dots span {
-    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--muted); margin: 0 2px;
-    animation: bounce 1.2s infinite;
-  }
-  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+.task-item {
+  display: flex; align-items: flex-start; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+  transition: opacity 0.2s;
+}
+.task-item:last-child { border-bottom: none; }
+.task-check {
+  width: 20px; height: 20px; min-width: 20px;
+  border: 2px solid var(--muted2); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; margin-top: 1px;
+}
+.task-item.done .task-check { background: var(--yellow); border-color: var(--yellow); }
+.task-item.done .task-text { text-decoration: line-through; color: var(--muted); }
+.task-text { font-size: 13px; line-height: 1.5; font-weight: 500; }
 
-  .reset-btn {
-    width: 100%; padding: 12px; border-radius: var(--radius);
-    background: transparent; border: 1px solid var(--border);
-    color: var(--muted); font-family: 'Manrope', sans-serif; font-size: 13px;
-    cursor: pointer; margin-top: 12px; transition: border-color 0.2s, color 0.2s;
-  }
-  .reset-btn:hover { border-color: #ff4444; color: #ff4444; }
+.empty-diary {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 12px; color: var(--muted); padding: 40px 20px;
+}
+.empty-icon {
+  width: 64px; height: 64px; border-radius: 20px;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 4px;
+}
+.empty-diary p { font-size: 14px; line-height: 1.6; }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+/* AI MENTOR SCREEN */
+.mentor-header { margin-bottom: 20px; }
+.mentor-title { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+.mentor-title span { color: var(--yellow); }
+.mentor-sub { font-size: 13px; color: var(--muted); }
+
+.niche-result-card {
+  background: linear-gradient(135deg, #1a1600, #2a2000);
+  border: 1px solid #FFD60044;
+  border-radius: 16px; padding: 16px; margin-bottom: 20px;
+}
+.niche-result-label { font-size: 10px; color: var(--yellow); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.niche-result-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.niche-result-desc { font-size: 13px; color: #aaa; line-height: 1.5; }
+
+.chat-messages {
+  flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 12px; min-height: 240px; max-height: 400px;
+}
+.msg { max-width: 85%; padding: 11px 14px; border-radius: 16px; font-size: 13px; line-height: 1.55; font-weight: 500; }
+.msg.ai { background: var(--surface2); border-bottom-left-radius: 4px; align-self: flex-start; border: 1px solid var(--border); }
+.msg.user { background: var(--yellow); border-bottom-right-radius: 4px; align-self: flex-end; color: #000; font-weight: 600; }
+
+.chat-input-row { display: flex; gap: 8px; }
+.chat-input {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 14px; color: var(--text);
+  font-family: 'Manrope', sans-serif; font-size: 14px; outline: none;
+  transition: border-color 0.2s;
+}
+.chat-input:focus { border-color: var(--yellow); }
+.chat-send {
+  width: 46px; height: 46px; border: none; border-radius: 12px;
+  background: var(--yellow);
+  color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.2s, transform 0.1s; flex-shrink: 0;
+}
+.chat-send:active { transform: scale(0.93); }
+.chat-send:disabled { opacity: 0.4; }
+
+.loading-dots span {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--muted); margin: 0 2px;
+  animation: bounce 1.2s infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+.reset-btn {
+  width: 100%; padding: 12px; border-radius: 12px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; margin-top: 10px; transition: all 0.2s;
+}
+.reset-btn:hover { border-color: #ff4444; color: #ff4444; }
+
+/* ONBOARDING / API KEY */
+#screen-onboarding {
+  display: none; align-items: center; justify-content: center;
+  min-height: 100vh; padding-bottom: 0;
+}
+#screen-onboarding.active { display: flex; }
+.onboarding-inner { text-align: center; max-width: 320px; width: 100%; padding: 20px; }
+.onb-logo { font-family: 'Unbounded', sans-serif; font-size: 36px; font-weight: 900; margin-bottom: 6px; }
+.onb-logo span { color: var(--yellow); }
+.onb-sub { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 32px; }
+.onb-input {
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px;
+  color: var(--text); font-family: 'Manrope', sans-serif; font-size: 13px;
+  outline: none; margin-bottom: 10px; transition: border-color 0.2s;
+  text-align: center;
+}
+.onb-input:focus { border-color: var(--yellow); }
+.onb-error { color: #ff6b6b; font-size: 12px; margin-bottom: 10px; display: none; }
+.btn-primary {
+  width: 100%; padding: 16px; border: none; border-radius: 14px;
+  background: var(--yellow);
+  color: #000; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: opacity 0.2s, transform 0.1s; letter-spacing: 0.5px;
+}
+.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
 </head>
 <body>
 
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">THE <span>LEVEL</span></div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+
 <!-- ONBOARDING -->
-<div id="screen-onboarding" class="screen active">
+<div id="screen-onboarding" class="screen">
   <div class="onboarding-inner">
-    <div class="logo">NicheAI</div>
-    <p>Пройди опрос с ИИ, узнай свою нишу и получи персональный план на первые 100 000 ₽</p>
-    <input id="apikey-input" type="password" placeholder="Вставь API ключ Claude (sk-ant-...)" style="width:100%;margin-bottom:12px;padding:14px;background:#22222c;border:1px solid #2a2a38;border-radius:12px;color:#f0f0f8;font-family:Manrope,sans-serif;font-size:13px;outline:none;" />
-    <p id="apikey-error" style="color:#ff6b6b;font-size:12px;margin-bottom:12px;display:none;">Введи API ключ чтобы продолжить</p>
-    <button class="btn-primary" id="start-btn">Начать →</button>
+    <div class="onb-logo">THE <span>LEVEL</span></div>
+    <p class="onb-sub">Твой AI-наставник по выходу на первые 100 000 ₽. Введи API ключ Claude для начала работы.</p>
+    <input class="onb-input" id="apikey-input" type="password" placeholder="sk-ant-..." />
+    <p class="onb-error" id="apikey-error">Введи API ключ чтобы продолжить</p>
+    <button class="btn-primary" id="start-btn">НАЧАТЬ →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- PROFILE -->
+<div id="screen-profile" class="screen">
+  <div class="profile-hero">
+    <div class="profile-top">
+      <div class="avatar" id="avatar-letter">?</div>
+      <div class="profile-name-block">
+        <div class="profile-name" id="profile-name">Загрузка...</div>
+        <div class="profile-id" id="profile-id">ID: —</div>
+        <div id="profile-niche-badge" style="display:none" class="profile-niche">🎯 <span id="profile-niche-text"></span></div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">💰 Заработано</div>
+        <div class="earned-input-wrap">
+          <input class="earned-input" id="earned-input" type="text" placeholder="0 ₽" />
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">✅ Задач выполнено</div>
+        <div class="stat-value" id="tasks-done-count">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="profile-progress-wrap" style="display:none">
+    <div class="section-title">Прогресс месяца</div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Задачи</span>
+        <strong id="progress-text">0%</strong>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="profile-plan-wrap" style="display:none">
+    <div class="section-title">Твой план</div>
+    <div class="niche-result-card">
+      <div class="niche-result-label">Стратегия</div>
+      <div class="niche-result-desc" id="profile-plan-text"></div>
+    </div>
   </div>
 </div>
 
 <!-- DIARY -->
 <div id="screen-diary" class="screen">
-  <div class="screen-title">Ежедневник</div>
-  <div class="screen-sub">Твой план на месяц</div>
-  <div id="diary-content"></div>
-</div>
+  <div class="diary-header">
+    <div class="diary-title">Еже<span>дневник</span></div>
+  </div>
 
-<!-- PROFILE -->
-<div id="screen-profile" class="screen">
-  <div class="profile-header">
-    <div class="avatar" id="avatar-letter">?</div>
-    <div>
-      <div class="profile-name" id="profile-name">Загрузка...</div>
-      <div class="profile-id" id="profile-id">ID: —</div>
+  <div class="goal-card">
+    <div class="goal-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="6"></circle>
+        <circle cx="12" cy="12" r="2"></circle>
+      </svg>
+    </div>
+    <div style="flex:1">
+      <div class="goal-label">Цель</div>
+      <input class="goal-input" id="goal-input" type="text" placeholder="Введи свою цель..." />
     </div>
   </div>
 
+  <div id="diary-content"></div>
+</div>
+
+<!-- AI MENTOR -->
+<div id="screen-mentor" class="screen">
+  <div class="mentor-header">
+    <div class="mentor-title">AI <span>Ментор</span></div>
+    <div class="mentor-sub">Отвечай на вопросы — получи нишу и план</div>
+  </div>
+
   <div id="niche-block" style="display:none">
-    <div class="niche-result">
+    <div class="niche-result-card">
       <div class="niche-result-label">Твоя ниша</div>
       <div class="niche-result-title" id="niche-title"></div>
       <div class="niche-result-desc" id="niche-desc"></div>
     </div>
   </div>
 
-  <div class="chat-section-label">ИИ-помощник</div>
   <div class="chat-messages" id="chat-messages"></div>
   <div class="chat-input-row">
     <input class="chat-input" id="chat-input" type="text" placeholder="Написать сообщение..." />
     <button class="chat-send" id="chat-send" onclick="sendMessage()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
         <line x1="22" y1="2" x2="11" y2="13"></line>
         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
       </svg>
@@ -248,17 +474,8 @@
   <button class="reset-btn" onclick="resetApp()">🔄 Начать заново</button>
 </div>
 
-<!-- BOTTOM NAV -->
-<nav class="nav" id="main-nav" style="display:none">
-  <button class="nav-btn active" id="nav-diary" onclick="showScreen('diary')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-      <line x1="16" y1="2" x2="16" y2="6"></line>
-      <line x1="8" y1="2" x2="8" y2="6"></line>
-      <line x1="3" y1="10" x2="21" y2="10"></line>
-    </svg>
-    Ежедневник
-  </button>
+<!-- NAV -->
+<nav class="nav">
   <button class="nav-btn" id="nav-profile" onclick="showScreen('profile')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -266,10 +483,27 @@
     </svg>
     Профиль
   </button>
+  <button class="nav-btn active" id="nav-diary" onclick="showScreen('diary')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+    </svg>
+    Дневник
+  </button>
+  <button class="nav-btn" id="nav-mentor" onclick="showScreen('mentor')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    AI Ментор
+  </button>
 </nav>
 
+</div><!-- end app -->
+
 <script>
-let API_KEY = localStorage.getItem('nicheai_apikey') || '';
+let API_KEY = localStorage.getItem('thelevel_apikey') || '';
 const MODEL = 'claude-sonnet-4-5';
 
 let state = {
@@ -277,53 +511,72 @@ let state = {
   niche: null,
   nicheDesc: null,
   plan: null,
-  tasks: {}, // {dayIndex: [{ text, done }]}
+  tasks: {},
   onboardingDone: false,
   userName: '',
-  userId: ''
+  userId: '',
+  earned: '',
+  goal: ''
 };
 
 function saveState() {
-  localStorage.setItem('nicheai_state', JSON.stringify(state));
+  localStorage.setItem('thelevel_state', JSON.stringify(state));
 }
 
 function loadState() {
-  const raw = localStorage.getItem('nicheai_state');
-  if (raw) { document.getElementById("start-btn").addEventListener("click", startApp);
-try { state = JSON.parse(raw); } catch(e) {} }
+  const raw = localStorage.getItem('thelevel_state');
+  if (raw) { try { state = JSON.parse(raw); } catch(e) {} }
 }
 
-function startApp() {
-  const keyInput = document.getElementById('apikey-input');
-  if (keyInput) {
-    const key = keyInput.value.trim();
-    if (!key) {
-      document.getElementById('apikey-error').style.display = 'block';
-      return;
-    }
-    API_KEY = key;
-    localStorage.setItem('nicheai_apikey', key);
+// SPLASH
+window.addEventListener('load', () => {
+  loadState();
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('splash').style.display = 'none';
+      if (state.onboardingDone && API_KEY) {
+        showApp();
+      } else {
+        document.getElementById('screen-onboarding').classList.add('active');
+      }
+    }, 600);
+  }, 2000);
+});
+
+document.getElementById('start-btn').addEventListener('click', () => {
+  const input = document.getElementById('apikey-input');
+  const key = input.value.trim();
+  if (!key || !key.startsWith('sk-')) {
+    document.getElementById('apikey-error').style.display = 'block';
+    return;
   }
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('main-nav').style.display = 'flex';
+  API_KEY = key;
+  localStorage.setItem('thelevel_apikey', key);
   state.onboardingDone = true;
   saveState();
+  document.getElementById('screen-onboarding').classList.remove('active');
+  showApp();
+});
+
+function showApp() {
+  document.getElementById('app').classList.add('show');
   loadProfile();
-  showScreen('profile');
+  renderDiary();
+  renderProfile();
+  showScreen('diary');
   if (state.chatHistory.length === 0) {
     startQuestionnaire();
   } else {
     renderChat();
     renderNiche();
-    renderDiary();
   }
 }
 
 function loadProfile() {
   let name = 'Пользователь';
   let uid = '123456789';
-  document.getElementById("start-btn").addEventListener("click", startApp);
-try {
+  try {
     const tg = window.Telegram?.WebApp;
     if (tg?.initDataUnsafe?.user) {
       const u = tg.initDataUnsafe.user;
@@ -331,44 +584,68 @@ try {
       uid = u.id;
     }
   } catch(e) {}
-  state.userName = state.userName || name;
-  state.userId = state.userId || uid;
+  if (!state.userName) state.userName = name;
+  if (!state.userId) state.userId = uid;
   saveState();
-
   document.getElementById('profile-name').textContent = state.userName;
   document.getElementById('profile-id').textContent = 'ID: ' + state.userId;
-  const letter = state.userName.charAt(0).toUpperCase();
-  document.getElementById('avatar-letter').textContent = letter;
+  document.getElementById('avatar-letter').textContent = state.userName.charAt(0).toUpperCase();
+  if (state.earned) document.getElementById('earned-input').value = state.earned;
+  if (state.goal) document.getElementById('goal-input').value = state.goal;
 }
+
+document.getElementById('earned-input').addEventListener('input', (e) => {
+  state.earned = e.target.value;
+  saveState();
+});
+
+document.getElementById('goal-input').addEventListener('input', (e) => {
+  state.goal = e.target.value;
+  saveState();
+});
 
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'profile') renderProfile();
 }
 
-// ---- CHAT ----
-const SYSTEM_PROMPT = `Ты ИИ-наставник по выбору ниши для заработка. Твоя задача — провести короткий опрос (5-7 вопросов), определить нишу для пользователя и составить план выхода на первые 100 000 рублей.
+function renderProfile() {
+  const allTasks = Object.values(state.tasks).flat();
+  const doneTasks = allTasks.filter(t => t.done).length;
+  document.getElementById('tasks-done-count').textContent = doneTasks;
 
-Веди себя живо, дружелюбно, без занудства. Задавай по одному вопросу за раз.
+  if (state.niche) {
+    document.getElementById('profile-niche-badge').style.display = 'inline-flex';
+    document.getElementById('profile-niche-text').textContent = state.niche;
+  }
 
-Вопросы касаются: навыков, опыта, интересов, сколько времени готов уделять, хочет ли работать с людьми или технически.
+  if (allTasks.length > 0) {
+    const pct = Math.round((doneTasks / allTasks.length) * 100);
+    document.getElementById('profile-progress-wrap').style.display = 'block';
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = pct + '%';
+  }
 
-После опроса — определи нишу и ответь строго в формате JSON (только JSON, без пояснений вне JSON):
-{
-  "type": "result",
-  "niche": "Название ниши",
-  "nicheDesc": "Краткое описание 1-2 предложения",
-  "plan": "Краткий план на 100к в 3-4 шагах",
-  "tasks": [
-    {"day": 1, "tasks": ["Задача 1", "Задача 2"]},
-    {"day": 2, "tasks": ["Задача 1", "Задача 2"]},
-    ...ровно 30 объектов, по 1 задаче в день, задачи короткие (до 8 слов)...
-  ]
+  if (state.plan) {
+    document.getElementById('profile-plan-wrap').style.display = 'block';
+    document.getElementById('profile-plan-text').textContent = state.plan;
+  }
 }
 
-ВАЖНО: JSON должен быть полным, все 30 дней, задачи максимально короткие. До финального результата — просто отвечай текстом, задавай вопросы по одному.`;
+// CHAT
+const SYSTEM_PROMPT = `Ты AI-наставник приложения "The Level". Проведи короткий опрос (5-6 вопросов) и определи нишу для заработка.
+
+Веди себя живо и кратко. Один вопрос за раз.
+
+Темы вопросов: навыки, опыт, время, работа с людьми или нет, стартовый бюджет.
+
+После опроса ответь ТОЛЬКО JSON без текста до или после:
+{"type":"result","niche":"Название ниши","nicheDesc":"Описание 1-2 предложения","plan":"План на 100к в 3-4 шагах","tasks":[{"day":1,"tasks":["Задача до 7 слов"]},{"day":2,"tasks":["Задача до 7 слов"]},{"day":3,"tasks":["Задача до 7 слов"]},{"day":4,"tasks":["Задача"]},{"day":5,"tasks":["Задача"]},{"day":6,"tasks":["Задача"]},{"day":7,"tasks":["Задача"]},{"day":8,"tasks":["Задача"]},{"day":9,"tasks":["Задача"]},{"day":10,"tasks":["Задача"]},{"day":11,"tasks":["Задача"]},{"day":12,"tasks":["Задача"]},{"day":13,"tasks":["Задача"]},{"day":14,"tasks":["Задача"]},{"day":15,"tasks":["Задача"]},{"day":16,"tasks":["Задача"]},{"day":17,"tasks":["Задача"]},{"day":18,"tasks":["Задача"]},{"day":19,"tasks":["Задача"]},{"day":20,"tasks":["Задача"]},{"day":21,"tasks":["Задача"]},{"day":22,"tasks":["Задача"]},{"day":23,"tasks":["Задача"]},{"day":24,"tasks":["Задача"]},{"day":25,"tasks":["Задача"]},{"day":26,"tasks":["Задача"]},{"day":27,"tasks":["Задача"]},{"day":28,"tasks":["Задача"]},{"day":29,"tasks":["Задача"]},{"day":30,"tasks":["Задача"]}]}
+
+Задачи должны быть конкретными и короткими (до 7 слов). JSON должен быть полным — все 30 дней.`;
 
 function addMsg(role, text, typing = false) {
   const box = document.getElementById('chat-messages');
@@ -388,13 +665,11 @@ function addMsg(role, text, typing = false) {
 function renderChat() {
   const box = document.getElementById('chat-messages');
   box.innerHTML = '';
-  state.chatHistory.forEach(m => {
-    if (m.role !== 'system') addMsg(m.role, m.content);
-  });
+  state.chatHistory.forEach(m => addMsg(m.role, m.content));
 }
 
 async function startQuestionnaire() {
-  const greeting = 'Привет! 👋 Я помогу тебе найти нишу для заработка и составлю персональный план. Для начала — расскажи, что умеешь делать лучше всего? Это может быть что угодно: программирование, дизайн, продажи, готовка — всё подходит!';
+  const greeting = 'Привет! 👋 Я помогу найти твою нишу и составлю план на первые 100 000 ₽. Начнём! Расскажи — что умеешь делать лучше всего?';
   state.chatHistory.push({ role: 'assistant', content: greeting });
   saveState();
   addMsg('assistant', greeting);
@@ -405,22 +680,14 @@ async function sendMessage() {
   const sendBtn = document.getElementById('chat-send');
   const text = input.value.trim();
   if (!text) return;
-
   input.value = '';
   sendBtn.disabled = true;
-
   state.chatHistory.push({ role: 'user', content: text });
   saveState();
   addMsg('user', text);
-
   const typingEl = addMsg('assistant', '', true);
-
-  document.getElementById("start-btn").addEventListener("click", startApp);
-try {
-    const messages = [{ role: 'user', content: SYSTEM_PROMPT }, ...state.chatHistory.filter(m => m.role !== 'system')];
-    // Build proper alternating messages
+  try {
     const apiMessages = buildApiMessages();
-
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -429,45 +696,32 @@ try {
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 4000,
-        system: SYSTEM_PROMPT,
-        messages: apiMessages
-      })
+      body: JSON.stringify({ model: MODEL, max_tokens: 4000, system: SYSTEM_PROMPT, messages: apiMessages })
     });
-
     const data = await res.json();
     typingEl.remove();
-
     const reply = data.content?.[0]?.text || 'Ошибка ответа';
-
-    // Check if it's a JSON result
-    document.getElementById("start-btn").addEventListener("click", startApp);
-try {
+    try {
       const cleaned = reply.replace(/```json|```/g, '').trim();
-      const parsed = JSON.parse(cleaned);
-      if (parsed.type === 'result') {
-        handleResult(parsed);
-        return;
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      if (start !== -1 && end !== -1) {
+        const parsed = JSON.parse(cleaned.substring(start, end + 1));
+        if (parsed.type === 'result') { handleResult(parsed); sendBtn.disabled = false; return; }
       }
     } catch(e) {}
-
     state.chatHistory.push({ role: 'assistant', content: reply });
     saveState();
     addMsg('assistant', reply);
-
   } catch(e) {
     typingEl.remove();
     addMsg('assistant', 'Ошибка соединения. Попробуй ещё раз.');
   }
-
   sendBtn.disabled = false;
 }
 
 function buildApiMessages() {
-  const msgs = state.chatHistory.filter(m => m.role !== 'system');
-  // Ensure alternating user/assistant starting with user
+  const msgs = state.chatHistory;
   const result = [];
   for (let i = 0; i < msgs.length; i++) {
     if (result.length === 0 && msgs[i].role === 'assistant') continue;
@@ -488,20 +742,17 @@ function handleResult(parsed) {
   state.niche = parsed.niche;
   state.nicheDesc = parsed.nicheDesc;
   state.plan = parsed.plan;
-
-  // Build tasks object
   state.tasks = {};
   parsed.tasks.forEach(d => {
     state.tasks[d.day] = d.tasks.map(t => ({ text: t, done: false }));
   });
-
-  state.chatHistory.push({ role: 'assistant', content: `✅ Ниша определена: ${parsed.niche}\n\n${parsed.nicheDesc}\n\nПлан: ${parsed.plan}\n\nЕжедневник заполнен на 30 дней — переходи во вкладку Ежедневник!` });
+  const msg = `✅ Ниша: ${parsed.niche}\n\n${parsed.nicheDesc}\n\nЕжедневник на 30 дней заполнен! Переходи во вкладку Дневник 📅`;
+  state.chatHistory.push({ role: 'assistant', content: msg });
   saveState();
-
-  addMsg('assistant', `✅ Ниша определена: ${parsed.niche}\n\n${parsed.nicheDesc}\n\nЕжедневник заполнен! Переходи во вкладку Ежедневник 📅`);
-
+  addMsg('assistant', msg);
   renderNiche();
   renderDiary();
+  renderProfile();
 }
 
 function renderNiche() {
@@ -511,58 +762,69 @@ function renderNiche() {
   document.getElementById('niche-desc').textContent = state.nicheDesc || '';
 }
 
-// ---- DIARY ----
 function renderDiary() {
   const container = document.getElementById('diary-content');
   container.innerHTML = '';
-
   if (!state.niche) {
     container.innerHTML = `
       <div class="empty-diary">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="3" y="4" width="18" height="18" rx="2"></rect>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-        </svg>
-        <p>Сначала пройди опрос с ИИ-помощником во вкладке <strong>Профиль</strong> — и я заполню твой план!</p>
+        <div class="empty-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+          </svg>
+        </div>
+        <p>Пройди опрос у <strong style="color:#FFD600">AI Ментора</strong> — и я заполню твой план на 30 дней!</p>
       </div>`;
     return;
   }
-
-  // Niche badge
-  const badge = document.createElement('div');
-  badge.className = 'niche-badge';
-  badge.innerHTML = `🎯 ${state.niche}`;
-  container.appendChild(badge);
-
-  const label = document.createElement('div');
-  label.className = 'month-label';
-  label.textContent = 'Май 2026 — 30 дней';
-  container.appendChild(label);
-
   const today = new Date().getDate();
+  const allTasks = Object.values(state.tasks).flat();
+  const doneTasks = allTasks.filter(t => t.done).length;
+  const pct = allTasks.length > 0 ? Math.round((doneTasks / allTasks.length) * 100) : 0;
+
+  const banner = document.createElement('div');
+  banner.className = 'niche-banner';
+  banner.innerHTML = `<div class="niche-banner-dot"></div><div class="niche-banner-text">🎯 ${state.niche}</div>`;
+  container.appendChild(banner);
+
+  const monthNav = document.createElement('div');
+  monthNav.className = 'month-nav';
+  monthNav.innerHTML = `<span class="month-name">Май 2026</span><span class="month-stats">${doneTasks}/${allTasks.length} задач • ${pct}%</span>`;
+  container.appendChild(monthNav);
 
   for (let day = 1; day <= 30; day++) {
     const tasks = state.tasks[day] || [];
     const doneCnt = tasks.filter(t => t.done).length;
     const isToday = day === today;
+    const allDone = tasks.length > 0 && doneCnt === tasks.length;
 
     const card = document.createElement('div');
-    card.className = 'day-card' + (isToday ? ' today' : '');
+    card.className = 'day-card' + (isToday ? ' today' : '') + (allDone ? ' completed' : '');
 
     const header = document.createElement('div');
     header.className = 'day-header';
-    header.innerHTML = `<span class="day-num">День ${day}${isToday ? ' 🔥' : ''}</span><span class="day-progress">${doneCnt}/${tasks.length}</span>`;
+    let badge = '';
+    if (isToday) badge = '<span class="day-badge today-badge">Сегодня</span>';
+    else if (allDone) badge = '<span class="day-badge done-badge">✓ Готово</span>';
+    else badge = `<span class="day-progress-text">${doneCnt}/${tasks.length}</span>`;
+    header.innerHTML = `<span class="day-num">День ${day}</span>${badge}`;
     card.appendChild(header);
 
     tasks.forEach((task, ti) => {
       const item = document.createElement('div');
       item.className = 'task-item' + (task.done ? ' done' : '');
       item.innerHTML = `
-        <div class="task-check">${task.done ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}</div>
+        <div class="task-check">${task.done ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}</div>
         <div class="task-text">${task.text}</div>`;
-      item.onclick = () => toggleTask(day, ti, item, header, doneCnt);
+      item.onclick = () => {
+        state.tasks[day][ti].done = !state.tasks[day][ti].done;
+        saveState();
+        renderDiary();
+        renderProfile();
+      };
       card.appendChild(item);
     });
 
@@ -570,46 +832,14 @@ function renderDiary() {
   }
 }
 
-function toggleTask(day, ti, itemEl, headerEl, prevDone) {
-  state.tasks[day][ti].done = !state.tasks[day][ti].done;
-  saveState();
-
-  const done = state.tasks[day][ti].done;
-  itemEl.className = 'task-item' + (done ? ' done' : '');
-  itemEl.querySelector('.task-check').innerHTML = done
-    ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-    : '';
-
-  const tasks = state.tasks[day];
-  const doneCnt = tasks.filter(t => t.done).length;
-  headerEl.querySelector('.day-progress').textContent = `${doneCnt}/${tasks.length}`;
-}
-
 function resetApp() {
   if (!confirm('Сбросить весь прогресс и начать заново?')) return;
-  localStorage.removeItem('nicheai_state');
+  localStorage.removeItem('thelevel_state');
+  localStorage.removeItem('thelevel_apikey');
   location.reload();
 }
 
-// ---- INIT ----
-loadState();
-if (state.onboardingDone) {
-  document.getElementById('screen-onboarding').classList.remove('active');
-  document.getElementById('main-nav').style.display = 'flex';
-  loadProfile();
-  renderChat();
-  renderNiche();
-  renderDiary();
-  showScreen('diary');
-} else {
-  document.getElementById('screen-onboarding').classList.add('active');
-}
-
-document.getElementById("start-btn").addEventListener("click", startApp);
-try {
-  window.Telegram?.WebApp?.ready();
-  window.Telegram?.WebApp?.expand();
-} catch(e) {}
+try { window.Telegram?.WebApp?.ready(); window.Telegram?.WebApp?.expand(); } catch(e) {}
 </script>
 </body>
 </html>
