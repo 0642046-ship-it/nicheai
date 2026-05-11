@@ -543,38 +543,54 @@ async function renderAdminPanel(){
     document.getElementById('adm-ult').textContent=0;
     return;
   }
-  const total=users.length;
-  const active=users.filter(u=>u.plan!=='Level Try').length;
-  const refs=users.reduce((s,u)=>s+u.refs,0);
-  const rev=users.reduce((s,u)=>s+u.refEarned,0);
-  const tryC=users.filter(u=>u.plan==='Level Try').length;
-  const baseC=users.filter(u=>u.plan==='The Level').length;
-  const ultC=users.filter(u=>u.plan==='The Level Ultimate').length;
+  // Normalize users from Google Sheets format
+  const normalized = users.map(u => ({
+    id: u.userId || u.id || '—',
+    name: u.userName || u.name || '—',
+    refBy: u.refBy || '',
+    joinDate: u.joinDate || '—',
+    plan: u.plan || 'Level Try',
+    refs: 0,
+    refEarned: 0
+  }));
 
-  document.getElementById('adm-total').textContent=total;
-  document.getElementById('adm-active').textContent=active;
-  document.getElementById('adm-refs').textContent=refs;
-  document.getElementById('adm-rev').textContent=rev+' ₽';
-  document.getElementById('adm-try').textContent=tryC;
-  document.getElementById('adm-base').textContent=baseC;
-  document.getElementById('adm-ult').textContent=ultC;
+  // Count refs for each user
+  normalized.forEach(u => {
+    u.refs = normalized.filter(r => r.refBy === 'ref_' + u.id).length;
+    u.refEarned = u.refs * 199 * 0.2;
+  });
 
-  const list=document.getElementById('adm-users-list');
-  list.innerHTML='';
-  if(users.length===0){ list.innerHTML='<div class="adm-empty">Пользователей пока нет</div>'; return; }
+  const total = normalized.length;
+  const active = normalized.filter(u => u.plan !== 'Level Try').length;
+  const refs = normalized.reduce((s,u) => s + u.refs, 0);
+  const rev = normalized.reduce((s,u) => s + u.refEarned, 0);
+  const tryC = normalized.filter(u => u.plan === 'Level Try').length;
+  const baseC = normalized.filter(u => u.plan === 'The Level').length;
+  const ultC = normalized.filter(u => u.plan === 'The Level Ultimate').length;
 
-  users.forEach(u=>{
-    const planClass=u.plan==='Level Try'?'plan-try':u.plan==='The Level'?'plan-base':'plan-ult';
-    const card=document.createElement('div'); card.className='adm-card';
-    card.innerHTML=`
+  document.getElementById('adm-total').textContent = total;
+  document.getElementById('adm-active').textContent = active;
+  document.getElementById('adm-refs').textContent = refs;
+  document.getElementById('adm-rev').textContent = Math.round(rev) + ' ₽';
+  document.getElementById('adm-try').textContent = tryC;
+  document.getElementById('adm-base').textContent = baseC;
+  document.getElementById('adm-ult').textContent = ultC;
+
+  const list = document.getElementById('adm-users-list');
+  list.innerHTML = '';
+
+  normalized.forEach(u => {
+    const planClass = u.plan === 'Level Try' ? 'plan-try' : u.plan === 'The Level' ? 'plan-base' : 'plan-ult';
+    const card = document.createElement('div'); card.className = 'adm-card';
+    card.innerHTML = `
       <div class="adm-card-top">
         <div class="adm-card-name">${u.name}</div>
         <div class="adm-card-plan ${planClass}">${u.plan}</div>
       </div>
       <div class="adm-card-row"><span>Зарегистрирован</span><span>${u.joinDate}</span></div>
       <div class="adm-card-row"><span>Рефералов</span><span>${u.refs}</span></div>
-      <div class="adm-card-row"><span>Реф. заработок (20%)</span><span>${u.refEarned} ₽</span></div>
-      ${u.refBy?`<div class="adm-card-row"><span>Приведён через</span><span>${u.refBy}</span></div>`:''}
+      <div class="adm-card-row"><span>Реф. заработок (20%)</span><span>${Math.round(u.refEarned)} ₽</span></div>
+      ${u.refBy ? `<div class="adm-card-row"><span>Приведён через</span><span>${u.refBy}</span></div>` : ''}
     `;
     list.appendChild(card);
   });
