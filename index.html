@@ -5,26 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>The Level</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #080808;
-  --surface: #111111;
-  --surface2: #181818;
-  --surface3: #222222;
-  --yellow: #FFD600;
-  --yellow-dim: #FFD60020;
-  --yellow-border: #FFD60040;
+  --bg: #0d0d0f;
+  --bg2: #131316;
+  --surface: #1a1a1d;
+  --surface2: #232327;
+  --surface3: #2c2c30;
   --white: #ffffff;
-  --white-80: rgba(255,255,255,0.8);
-  --white-50: rgba(255,255,255,0.5);
-  --white-20: rgba(255,255,255,0.2);
-  --white-10: rgba(255,255,255,0.07);
-  --green: #39FF88;
-  --green-dim: #39FF8820;
-  --border: #2a2a2a;
-  --radius: 16px;
-  --nav-h: 72px;
+  --white-90: rgba(255,255,255,0.92);
+  --white-70: rgba(255,255,255,0.65);
+  --white-50: rgba(255,255,255,0.45);
+  --white-30: rgba(255,255,255,0.22);
+  --white-10: rgba(255,255,255,0.08);
+  --white-5: rgba(255,255,255,0.04);
+  --accent: #ffffff;
+  --green: #4ade80;
+  --green-dim: rgba(74,222,128,0.15);
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.12);
+  --nav-h: 76px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; overflow-x: hidden; }
@@ -32,176 +33,192 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--w
 /* SPLASH */
 #splash {
   position: fixed; inset: 0; z-index: 1000;
-  background: #080808;
+  background: radial-gradient(ellipse at center, #1a1a1d 0%, #0d0d0f 80%);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   transition: opacity 0.7s ease;
 }
 #splash.hide { opacity: 0; pointer-events: none; }
-.splash-tag { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--white-50); text-transform: uppercase; margin-bottom: 24px; }
-.splash-logo { font-family: 'Unbounded', sans-serif; font-size: 56px; font-weight: 900; line-height: 0.95; text-align: center; margin-bottom: 8px; color: var(--white); }
-.splash-logo .y { color: var(--yellow); }
-.splash-arrow { font-size: 36px; color: var(--yellow); margin-bottom: 28px; line-height: 1; }
-.splash-sub { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; color: var(--white-50); text-transform: uppercase; text-align: center; line-height: 2; margin-bottom: 52px; }
-.splash-sub .y { color: var(--yellow); }
-.splash-bar { width: 120px; height: 2px; background: var(--surface3); border-radius: 1px; overflow: hidden; }
-.splash-bar-fill { height: 100%; width: 0; background: var(--yellow); animation: loadbar 2.2s ease forwards; }
+.splash-logo {
+  font-family: 'Unbounded', sans-serif; font-size: 56px; font-weight: 700;
+  line-height: 1; text-align: center; color: var(--white);
+  letter-spacing: -1px; margin-bottom: 4px;
+}
+.splash-level {
+  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+  font-size: 64px; line-height: 1; color: var(--white);
+  margin-top: -8px;
+}
+.splash-sub {
+  font-size: 10px; font-weight: 700; letter-spacing: 3px;
+  color: var(--white-50); text-transform: uppercase;
+  text-align: center; line-height: 2; margin-top: 64px;
+}
+.splash-bar { width: 100px; height: 2px; background: var(--white-10); border-radius: 1px; overflow: hidden; margin-top: 32px; }
+.splash-bar-fill { height: 100%; width: 0; background: var(--white); animation: loadbar 2.2s ease forwards; }
 @keyframes loadbar { 0%{width:0} 100%{width:100%} }
 
 /* ONBOARDING */
 #screen-onboarding { position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center; background: var(--bg); }
 #screen-onboarding.active { display: flex; }
-.onb-inner { text-align: center; max-width: 300px; width: 100%; padding: 24px; }
-.onb-logo { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 900; margin-bottom: 4px; color: var(--white); }
-.onb-logo .y { color: var(--yellow); }
-.onb-sub { color: var(--white-50); font-size: 13px; line-height: 1.6; margin: 10px 0 28px; }
-.onb-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 14px 14px 42px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 13px; outline: none; margin-bottom: 8px; transition: border-color 0.2s; position: relative; }
-.onb-input:focus { border-color: var(--yellow); }
+.onb-inner { text-align: center; max-width: 320px; width: 100%; padding: 24px; }
+.onb-logo { font-family: 'Unbounded', sans-serif; font-size: 30px; font-weight: 700; color: var(--white); line-height: 1; }
+.onb-level { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: 36px; color: var(--white); margin-top: -4px; }
+.onb-sub { color: var(--white-50); font-size: 13px; line-height: 1.6; margin: 24px 0 32px; }
 .onb-input-wrap { position: relative; margin-bottom: 8px; }
+.onb-input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 14px 16px 42px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 13px; outline: none; transition: border-color 0.2s; }
+.onb-input:focus { border-color: var(--white-30); }
 .onb-input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--white-50); }
-.onb-error { color: #ff6b6b; font-size: 12px; margin-bottom: 10px; display: none; }
-.btn-primary { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--yellow); color: #000; font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: opacity 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
+.onb-error { color: #ff7b7b; font-size: 12px; margin-bottom: 10px; display: none; }
+.btn-primary { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--white); color: #000; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px; transition: opacity 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-primary:active { transform: scale(0.97); opacity: 0.85; }
 
 /* APP */
 #app { display: none; }
 #app.show { display: block; }
 
-/* SCREENS */
 .screen { display: none; flex-direction: column; min-height: calc(100vh - var(--nav-h)); padding: 16px 16px; padding-bottom: calc(var(--nav-h) + 20px); overflow-y: auto; }
 .screen.active { display: flex; }
 
 /* NAV */
-.nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
-.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: none; border: none; cursor: pointer; color: var(--white-50); font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; position: relative; transition: color 0.2s; }
-.nav-btn.active { color: var(--yellow); }
-.nav-btn svg { width: 22px; height: 22px; }
-.nav-btn.active::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 28px; height: 2px; background: var(--yellow); border-radius: 0 0 2px 2px; }
+.nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: rgba(20,20,23,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; color: var(--white-50); font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.3px; position: relative; transition: color 0.2s; }
+.nav-btn.active { color: var(--white); }
+.nav-btn svg { width: 22px; height: 22px; transition: transform 0.2s; }
+.nav-btn.active svg { transform: scale(1.08); }
 
-/* CARDS */
+/* HOME */
+.home-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 0; }
+.home-logo { font-family: 'Unbounded', sans-serif; font-size: 56px; font-weight: 700; line-height: 1; color: var(--white); letter-spacing: -1px; margin-bottom: 0; }
+.home-level { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; font-size: 64px; line-height: 1; color: var(--white); margin-top: -8px; }
+.home-tagline { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--white-50); text-transform: uppercase; line-height: 2; margin: 32px 0 36px; }
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 20px; }
+.home-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 16px; text-align: left; }
+.home-stat-label { font-size: 10px; color: var(--white-50); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.home-stat-val { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); line-height: 1; }
+.home-stat-sub { font-size: 11px; color: var(--white-50); margin-top: 4px; }
+.home-cta { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--white); color: #000; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: opacity 0.2s, transform 0.1s; }
+.home-cta:active { opacity: 0.85; transform: scale(0.98); }
+
+/* PROFILE */
+.profile-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 20px; }
+.profile-title { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; color: var(--white); }
+.profile-bell { width: 38px; height: 38px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s; }
+.profile-bell:hover { border-color: var(--white-30); }
+
+.profile-hero { display: flex; flex-direction: column; align-items: center; padding: 8px 0 20px; }
+.avatar-wrap { position: relative; margin-bottom: 14px; }
+.avatar { width: 92px; height: 92px; border-radius: 50%; background: linear-gradient(135deg, var(--surface3), var(--surface2)); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 36px; font-weight: 700; color: var(--white); border: 1px solid var(--border2); }
+.avatar-dot { position: absolute; bottom: 6px; right: 6px; width: 14px; height: 14px; border-radius: 50%; background: var(--green); border: 2px solid var(--bg); }
+.profile-name { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--white); }
+.profile-role { font-size: 13px; color: var(--white-50); margin-bottom: 12px; }
+
+.chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 6px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+.chip-white { background: var(--white-10); border: 1px solid var(--border2); color: var(--white-90); }
+.chip-green { background: var(--green-dim); border: 1px solid rgba(74,222,128,0.3); color: var(--green); }
+
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 12px; }
 .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .card-title { font-size: 15px; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 8px; }
 
-/* CHIPS */
-.chip { display: inline-flex; align-items: center; gap: 5px; border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
-.chip-yellow { background: var(--yellow-dim); border: 1px solid var(--yellow-border); color: var(--yellow); }
-.chip-green { background: var(--green-dim); border: 1px solid #39FF8840; color: var(--green); }
-.chip-white { background: var(--white-10); border: 1px solid var(--white-20); color: var(--white-80); }
-
-/* HOME */
-.home-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px 0; }
-.home-logo { font-family: 'Unbounded', sans-serif; font-size: 52px; font-weight: 900; line-height: 0.95; margin-bottom: 8px; color: var(--white); }
-.home-logo .y { color: var(--yellow); }
-.home-tagline { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; color: var(--white-50); text-transform: uppercase; line-height: 2; margin: 16px 0 36px; }
-.home-tagline .y { color: var(--yellow); }
-.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 20px; }
-.home-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: left; }
-.home-stat-label { font-size: 10px; color: var(--white-50); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.home-stat-val { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); }
-.home-stat-sub { font-size: 11px; color: var(--white-50); margin-top: 3px; }
-.home-stat-accent { color: var(--yellow); }
-.home-cta { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--yellow); color: #000; font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s; }
-.home-cta:active { opacity: 0.85; }
-
-/* PROFILE */
-.profile-hero { display: flex; flex-direction: column; align-items: center; padding: 28px 0 20px; }
-.avatar-wrap { position: relative; margin-bottom: 14px; }
-.avatar { width: 84px; height: 84px; border-radius: 50%; background: var(--yellow); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 34px; font-weight: 700; color: #000; border: 3px solid var(--yellow); }
-.avatar-dot { position: absolute; bottom: 4px; right: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--green); border: 2px solid var(--bg); }
-.profile-name { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--white); }
-.profile-role { font-size: 13px; color: var(--white-50); margin-bottom: 12px; }
-
 .sub-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.sub-row:last-child { border-bottom: none; }
+.sub-row:last-of-type { border-bottom: none; }
 .sub-row-label { font-size: 13px; color: var(--white-50); }
 .sub-row-val { font-size: 13px; font-weight: 700; color: var(--white); }
-.sub-row-val.y { color: var(--yellow); }
-.sub-row-val.g { color: var(--green); }
-.manage-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: var(--white-10); border: 1px solid var(--white-20); color: var(--white); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
-.manage-btn:hover { background: var(--white-20); }
+.sub-row-val.green { color: var(--green); }
 
-.earnings-val { font-family: 'Unbounded', sans-serif; font-size: 30px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
-.earned-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; outline: none; transition: border-color 0.2s; }
-.earned-input:focus { border-color: var(--yellow); }
-.earned-input::placeholder { color: var(--white-50); }
+.card-btn { width: 100%; padding: 14px; border: 1px solid var(--border2); border-radius: 12px; background: var(--white-5); color: var(--white); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+.card-btn:hover { background: var(--white-10); border-color: var(--white-30); }
+.card-btn.primary { background: var(--white); color: #000; border-color: var(--white); }
+.card-btn.primary:hover { opacity: 0.9; }
+
+.earnings-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+.earnings-val { font-family: 'Unbounded', sans-serif; font-size: 28px; font-weight: 700; color: var(--white); line-height: 1; }
+.earnings-label { font-size: 11px; color: var(--white-50); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.earnings-trend { display: inline-flex; align-items: center; gap: 4px; background: var(--green-dim); color: var(--green); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+
+.input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; outline: none; transition: border-color 0.2s; }
+.input:focus { border-color: var(--white-30); }
+.input::placeholder { color: var(--white-50); font-weight: 500; }
 
 /* GOALS */
-.page-title { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 900; color: var(--white); }
 .page-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 20px; }
-.page-icon { width: 38px; height: 38px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.page-title { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; color: var(--white); }
+.page-icon { width: 38px; height: 38px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 
-.goal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 12px; }
-.goal-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
-.goal-label { font-size: 11px; color: var(--white-50); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-.goal-amount { font-family: 'Unbounded', sans-serif; font-size: 32px; font-weight: 700; color: var(--white); line-height: 1; }
-.goal-of { font-size: 12px; color: var(--white-50); margin-top: 4px; }
-.goal-of input { background: none; border: none; outline: none; color: var(--white-50); font-family: 'Manrope', sans-serif; font-size: 12px; width: 140px; }
-.circle-wrap { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+.goal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 20px; margin-bottom: 16px; }
+.goal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+.goal-left { flex: 1; min-width: 0; }
+.goal-label { font-size: 10px; color: var(--white-50); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.goal-input { background: none; border: none; outline: none; color: var(--white); font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; width: 100%; line-height: 1.2; padding: 0; }
+.goal-input::placeholder { color: var(--white-30); font-family: 'Manrope', sans-serif; font-weight: 500; font-size: 16px; }
+.goal-deadline { font-size: 11px; color: var(--white-50); margin-top: 6px; }
+.circle-wrap { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
 .circle-wrap svg { transform: rotate(-90deg); }
-.circle-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: var(--yellow); }
-.progress-bar { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
-.progress-fill { height: 100%; background: var(--yellow); border-radius: 3px; transition: width 0.6s ease; }
-.progress-msg { font-size: 12px; color: var(--white-50); font-weight: 500; }
-.progress-msg strong { color: var(--white-80); }
+.circle-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); }
+.progress-bar { height: 4px; background: var(--white-10); border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+.progress-fill { height: 100%; background: var(--white); border-radius: 2px; transition: width 0.6s ease; }
+.progress-msg { font-size: 12px; color: var(--white-70); font-weight: 500; line-height: 1.5; }
+.progress-msg strong { color: var(--white); }
 
-.section-label { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.section-label { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
 .section-label span { font-family: 'Manrope', sans-serif; font-size: 12px; color: var(--white-50); font-weight: 600; }
 
-.task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 13px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
-.task-card:active { opacity: 0.8; }
-.task-card.done { background: #0f0f00; border-color: var(--yellow-border); }
-.task-check { width: 22px; height: 22px; min-width: 22px; border-radius: 7px; border: 2px solid var(--white-20); display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-.task-card.done .task-check { background: var(--yellow); border-color: var(--yellow); }
-.task-text { flex: 1; font-size: 13px; font-weight: 600; color: var(--white); }
+.task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 13px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s; }
+.task-card:active { transform: scale(0.99); }
+.task-card.done { background: var(--white-5); border-color: var(--border2); }
+.task-check { width: 22px; height: 22px; min-width: 22px; border-radius: 7px; border: 2px solid var(--white-30); display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.task-card.done .task-check { background: var(--white); border-color: var(--white); }
+.task-text { flex: 1; font-size: 13px; font-weight: 600; color: var(--white); line-height: 1.4; }
 .task-card.done .task-text { text-decoration: line-through; color: var(--white-50); }
 
-.expand-btn { width: 100%; padding: 14px; border-radius: 12px; background: transparent; border: 1px solid var(--border); color: var(--white-80); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: border-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.expand-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.expand-btn { width: 100%; padding: 14px; border-radius: 14px; background: transparent; border: 1px solid var(--border2); color: var(--white-70); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 8px; margin-bottom: 12px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.expand-btn:hover { border-color: var(--white-30); color: var(--white); }
 
 .day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; }
-.day-card.is-today { border-color: var(--yellow); }
-.day-card.is-done { background: #0f0f00; border-color: var(--yellow-border); }
+.day-card.is-today { border-color: var(--white-30); }
+.day-card.is-done { background: var(--white-5); border-color: var(--border2); }
 .day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .day-num { font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 700; color: var(--white-50); }
-.day-card.is-today .day-num { color: var(--yellow); }
+.day-date { font-size: 11px; color: var(--white-50); font-weight: 500; }
+.day-card.is-today .day-num { color: var(--white); }
 .day-task { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
 .day-task:last-child { border-bottom: none; }
-.day-check { width: 18px; height: 18px; min-width: 18px; border-radius: 5px; border: 2px solid var(--white-20); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.day-task.done .day-check { background: var(--yellow); border-color: var(--yellow); }
+.day-check { width: 18px; height: 18px; min-width: 18px; border-radius: 5px; border: 2px solid var(--white-30); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.day-task.done .day-check { background: var(--white); border-color: var(--white); }
 .day-task-text { font-size: 12px; font-weight: 500; color: var(--white); }
 .day-task.done .day-task-text { text-decoration: line-through; color: var(--white-50); }
 
-.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; padding: 48px 20px; }
-.empty-icon { width: 64px; height: 64px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
-.empty-state p { font-size: 14px; line-height: 1.7; color: var(--white-50); }
-.empty-state strong { color: var(--yellow); }
+.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 48px 20px; }
+.empty-icon { width: 70px; height: 70px; border-radius: 22px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+.empty-state p { font-size: 14px; line-height: 1.7; color: var(--white-50); max-width: 280px; }
+.empty-state strong { color: var(--white); }
 
 /* MENTOR */
 .mentor-top { display: flex; align-items: center; gap: 12px; padding: 10px 0 18px; }
-.mentor-icon { width: 46px; height: 46px; border-radius: 14px; background: var(--yellow); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mentor-icon { width: 48px; height: 48px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .mentor-name { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: var(--white); }
 .mentor-sub { font-size: 12px; color: var(--white-50); margin-top: 2px; }
 
-.niche-card { background: linear-gradient(135deg, #151200, #201a00); border: 1px solid var(--yellow-border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
-.niche-label { font-size: 10px; color: var(--yellow); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.niche-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+.niche-label { font-size: 10px; color: var(--white-50); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
 .niche-title { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--white); }
-.niche-desc { font-size: 13px; color: var(--white-50); line-height: 1.5; }
+.niche-desc { font-size: 13px; color: var(--white-70); line-height: 1.5; }
 
-.chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; min-height: 180px; max-height: 340px; }
-.msg { max-width: 86%; padding: 11px 14px; border-radius: 18px; font-size: 13px; line-height: 1.55; font-weight: 500; }
-.msg.ai { background: var(--surface2); border: 1px solid var(--border); border-bottom-left-radius: 4px; align-self: flex-start; color: var(--white); }
-.msg.user { background: var(--yellow); border-bottom-right-radius: 4px; align-self: flex-end; color: #000; font-weight: 700; }
+.chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; min-height: 200px; max-height: 360px; }
+.msg { max-width: 86%; padding: 12px 15px; border-radius: 18px; font-size: 13px; line-height: 1.55; font-weight: 500; }
+.msg.ai { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; align-self: flex-start; color: var(--white); }
+.msg.user { background: var(--white); border-bottom-right-radius: 4px; align-self: flex-end; color: #000; font-weight: 600; }
 
 .quick-row { display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
 .quick-row::-webkit-scrollbar { display: none; }
-.qbtn { flex-shrink: 0; padding: 8px 14px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); color: var(--white-80); font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-.qbtn:hover { border-color: var(--yellow); color: var(--yellow); }
+.qbtn { flex-shrink: 0; padding: 9px 14px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border2); color: var(--white-70); font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.qbtn:hover { border-color: var(--white-30); color: var(--white); }
 
 .input-row { display: flex; gap: 8px; }
-.msg-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
-.msg-input:focus { border-color: var(--yellow); }
+.msg-input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.msg-input:focus { border-color: var(--white-30); }
 .msg-input::placeholder { color: var(--white-50); }
-.send-btn { width: 46px; height: 46px; border: none; border-radius: 12px; background: var(--yellow); color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.2s, transform 0.1s; }
+.send-btn { width: 48px; height: 48px; border: none; border-radius: 14px; background: var(--white); color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.2s, transform 0.1s; }
 .send-btn:active { transform: scale(0.92); }
 .send-btn:disabled { opacity: 0.35; }
 
@@ -210,39 +227,56 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--w
 .dots span:nth-child(3) { animation-delay: .4s; }
 @keyframes bop { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
 
-.reset-btn { width: 100%; padding: 12px; border-radius: 12px; background: transparent; border: 1px solid var(--border); color: var(--white-50); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
-.reset-btn:hover { border-color: #ff4444; color: #ff4444; }
+.reset-btn { width: 100%; padding: 12px; border-radius: 12px; background: transparent; border: 1px solid var(--border); color: var(--white-50); font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
+.reset-btn:hover { border-color: #ff5a5a; color: #ff5a5a; }
+
+/* SUBSCRIPTION MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: flex-end; }
+.modal-overlay.active { display: flex; }
+.modal { width: 100%; background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 24px 24px 0 0; padding: 24px 20px 32px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle { width: 40px; height: 4px; background: var(--white-20); border-radius: 2px; margin: 0 auto 20px; }
+.modal-title { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 8px; }
+.modal-sub { font-size: 13px; color: var(--white-50); text-align: center; margin-bottom: 24px; }
+.tariff { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s; }
+.tariff.active-plan { border-color: var(--white); background: var(--white-5); }
+.tariff-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.tariff-name { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; }
+.tariff-price { font-family: 'Unbounded', sans-serif; font-size: 17px; font-weight: 700; color: var(--white); }
+.tariff-price small { font-size: 12px; color: var(--white-50); font-weight: 500; }
+.tariff-features { list-style: none; }
+.tariff-features li { font-size: 12px; color: var(--white-70); padding: 3px 0; display: flex; align-items: center; gap: 6px; }
+.tariff-features li::before { content: '✓'; color: var(--green); font-weight: 700; }
+.modal-close { width: 100%; padding: 14px; border: 1px solid var(--border2); border-radius: 14px; background: transparent; color: var(--white-70); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 12px; transition: all 0.2s; }
+.modal-close:hover { background: var(--white-5); }
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--white-10); border-radius: 3px; }
 </style>
 </head>
 <body>
 
 <!-- SPLASH -->
 <div id="splash">
-  <div class="splash-tag">AI Income Assistant</div>
-  <div class="splash-logo">THE<br><span class="y">LEVEL</span></div>
-  <div class="splash-arrow">↗</div>
-  <div class="splash-sub">AI-POWERED GROWTH.<br>REAL INCOME.<br><span class="y">EVERY DAY.</span></div>
+  <div class="splash-logo">THE</div>
+  <div class="splash-level">level</div>
+  <div class="splash-sub">AI-POWERED GROWTH<br>REAL INCOME · EVERY DAY</div>
   <div class="splash-bar"><div class="splash-bar-fill"></div></div>
 </div>
 
 <!-- ONBOARDING -->
 <div id="screen-onboarding">
   <div class="onb-inner">
-    <div class="onb-logo">THE <span class="y">LEVEL</span></div>
+    <div class="onb-logo">THE</div>
+    <div class="onb-level">level</div>
     <p class="onb-sub">AI Assistant that helps you earn more and level up every day.</p>
     <div class="onb-input-wrap">
       <svg class="onb-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <input class="onb-input" id="apikey-input" type="password" placeholder="Введи API ключ Claude..." />
+      <input class="onb-input" id="apikey-input" type="password" placeholder="API ключ Claude..." />
     </div>
     <p class="onb-error" id="apikey-error">Введи корректный API ключ (sk-ant-...)</p>
-    <button class="btn-primary" id="start-btn">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      НАЧАТЬ
-    </button>
+    <button class="btn-primary" id="start-btn">Start Now →</button>
   </div>
 </div>
 
@@ -252,24 +286,25 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--w
 <!-- HOME -->
 <div id="screen-home" class="screen active">
   <div class="home-hero">
-    <div style="font-size:10px;font-weight:700;letter-spacing:3px;color:var(--white-50);text-transform:uppercase;margin-bottom:18px;">AI Income Assistant</div>
-    <div class="home-logo">THE<br><span class="y">LEVEL</span> <span style="color:var(--yellow)">↗</span></div>
-    <div class="home-tagline">AI-POWERED GROWTH.<br>REAL INCOME.<br><span class="y">EVERY DAY.</span></div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:3px;color:var(--white-50);text-transform:uppercase;margin-bottom:20px;">AI Income Assistant</div>
+    <div class="home-logo">THE</div>
+    <div class="home-level">level</div>
+    <div class="home-tagline">AI-POWERED GROWTH<br>REAL INCOME · EVERY DAY</div>
     <div class="home-grid">
       <div class="home-stat">
         <div class="home-stat-label">Заработано</div>
-        <div class="home-stat-val home-stat-accent" id="home-earned">—</div>
-        <div class="home-stat-sub">lifetime earnings</div>
+        <div class="home-stat-val" id="home-earned">—</div>
+        <div class="home-stat-sub">lifetime</div>
       </div>
       <div class="home-stat">
         <div class="home-stat-label">Задач готово</div>
         <div class="home-stat-val" id="home-tasks">0</div>
-        <div class="home-stat-sub">выполнено</div>
+        <div class="home-stat-sub">completed</div>
       </div>
     </div>
     <button class="home-cta" onclick="showScreen('mentor')">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       Начать с AI Ментором
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
   </div>
 </div>
@@ -279,9 +314,7 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--w
   <div class="page-header">
     <div class="page-title">Daily Goals</div>
     <div class="page-icon">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
-      </svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
     </div>
   </div>
   <div id="goals-content"></div>
@@ -291,12 +324,10 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--w
 <div id="screen-mentor" class="screen">
   <div class="mentor-top">
     <div class="mentor-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     </div>
     <div>
-      <div class="mentor-name">AI Mentor (Chat)</div>
+      <div class="mentor-name">AI Mentor</div>
       <div class="mentor-sub">Your personal growth partner</div>
     </div>
   </div>
@@ -312,24 +343,29 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--w
   <div class="chat-box" id="chat-messages"></div>
 
   <div class="quick-row">
-    <button class="qbtn" onclick="quickSend('Дай план на сегодня')">⚡ Daily Plan</button>
-    <button class="qbtn" onclick="quickSend('Новые идеи для заработка')">💡 New Ideas</button>
-    <button class="qbtn" onclick="quickSend('Как отследить прогресс?')">📊 Track Progress</button>
+    <button class="qbtn" onclick="quickSend('Дай план на сегодня')">Daily Plan</button>
+    <button class="qbtn" onclick="quickSend('Новые идеи для развития')">New Ideas</button>
+    <button class="qbtn" onclick="quickSend('Как отследить прогресс?')">Track Progress</button>
   </div>
 
   <div class="input-row">
     <input class="msg-input" id="chat-input" type="text" placeholder="Message AI Mentor..." />
     <button class="send-btn" id="chat-send" onclick="sendMessage()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
-        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     </button>
   </div>
-  <button class="reset-btn" onclick="resetApp()">🔄 Начать заново</button>
+  <button class="reset-btn" onclick="resetApp()">Начать заново</button>
 </div>
 
 <!-- PROFILE -->
 <div id="screen-profile" class="screen">
+  <div class="profile-header">
+    <div class="profile-title">Profile</div>
+    <div class="profile-bell">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </div>
+  </div>
+
   <div class="profile-hero">
     <div class="avatar-wrap">
       <div class="avatar" id="avatar-letter">?</div>
@@ -338,29 +374,29 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--w
     <div class="profile-name" id="profile-name">...</div>
     <div class="profile-role" id="profile-role">AI Builder & Entrepreneur</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
-      <div class="chip chip-yellow">⭐ LEVEL PRO</div>
+      <div class="chip chip-white">⭐ LEVEL PRO</div>
       <div class="chip chip-green" id="tasks-chip">✓ 0 задач</div>
     </div>
   </div>
 
-  <!-- Subscription -->
   <div class="card">
     <div class="card-header">
       <div class="card-title">👑 Subscription</div>
       <div class="chip chip-green">Active</div>
     </div>
-    <div class="sub-row"><span class="sub-row-label">Plan</span><span class="sub-row-val y">Level Pro</span></div>
-    <div class="sub-row"><span class="sub-row-label">Status</span><span class="sub-row-val g">Active</span></div>
+    <div class="sub-row"><span class="sub-row-label">Plan</span><span class="sub-row-val">Level Pro</span></div>
+    <div class="sub-row"><span class="sub-row-label">Status</span><span class="sub-row-val green">Active</span></div>
     <div class="sub-row"><span class="sub-row-label">Renews on</span><span class="sub-row-val" id="sub-date">—</span></div>
     <div class="sub-row"><span class="sub-row-label">Tasks completed</span><span class="sub-row-val" id="sub-tasks-count">0</span></div>
-    <button class="manage-btn">Manage Subscription →</button>
+    <button class="card-btn primary" onclick="openSubModal()">Manage Subscription</button>
   </div>
 
-  <!-- Earnings -->
   <div class="card">
-    <div style="font-size:11px;color:var(--white-50);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Lifetime Earnings</div>
-    <div class="earnings-val" id="earnings-display">—</div>
-    <input class="earned-input" id="earned-input" type="text" placeholder="Введи сумму заработка (напр. 25 000 ₽)" />
+    <div class="earnings-label">Lifetime Earnings</div>
+    <div class="earnings-row">
+      <div class="earnings-val" id="earnings-display">—</div>
+    </div>
+    <input class="input" id="earned-input" type="text" placeholder="Введи сумму заработка..." />
   </div>
 </div>
 
@@ -385,10 +421,59 @@ body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--w
 </nav>
 </div>
 
+<!-- SUBSCRIPTION MODAL -->
+<div class="modal-overlay" id="sub-modal" onclick="if(event.target===this)closeSubModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Manage Subscription</div>
+    <div class="modal-sub">Выбери план который подходит тебе</div>
+
+    <div class="tariff">
+      <div class="tariff-top">
+        <span class="tariff-name">Free</span>
+        <span class="tariff-price">0 ₽</span>
+      </div>
+      <ul class="tariff-features">
+        <li>Базовый AI-ментор</li>
+        <li>1 цель в месяц</li>
+        <li>30 дней задач</li>
+      </ul>
+    </div>
+
+    <div class="tariff active-plan">
+      <div class="tariff-top">
+        <span class="tariff-name">Level Pro ⭐</span>
+        <span class="tariff-price">490 ₽<small>/мес</small></span>
+      </div>
+      <ul class="tariff-features">
+        <li>Расширенный AI-ментор 24/7</li>
+        <li>Неограниченные цели</li>
+        <li>Персональные планы</li>
+        <li>Аналитика прогресса</li>
+      </ul>
+    </div>
+
+    <div class="tariff">
+      <div class="tariff-top">
+        <span class="tariff-name">Level Premium 👑</span>
+        <span class="tariff-price">1490 ₽<small>/мес</small></span>
+      </div>
+      <ul class="tariff-features">
+        <li>Всё из Pro</li>
+        <li>Личный ментор-эксперт</li>
+        <li>Эксклюзивный контент</li>
+        <li>Приоритетная поддержка</li>
+      </ul>
+    </div>
+
+    <button class="modal-close" onclick="closeSubModal()">Закрыть</button>
+  </div>
+</div>
+
 <script>
 let API_KEY = localStorage.getItem('thelevel_apikey') || '';
 const MODEL = 'claude-sonnet-4-5';
-let state = { chatHistory:[], niche:null, nicheDesc:null, plan:null, tasks:{}, onboardingDone:false, userName:'', userId:'', earned:'', goal:'', subDate:'' };
+let state = { chatHistory:[], niche:null, nicheDesc:null, plan:null, tasks:{}, onboardingDone:false, userName:'', userId:'', earned:'', goal:'', subDate:'', startDate:null };
 
 function save() { localStorage.setItem('thelevel_state', JSON.stringify(state)); }
 function load() { try { const r=localStorage.getItem('thelevel_state'); if(r) state=JSON.parse(r); } catch(e){} }
@@ -463,46 +548,69 @@ function renderHome() {
   document.getElementById('home-earned').textContent = state.earned||'—';
 }
 
+function getDayOfPlan() {
+  if (!state.startDate) return 1;
+  const start = new Date(state.startDate);
+  const now = new Date();
+  const diff = Math.floor((now - start) / (1000*60*60*24)) + 1;
+  return Math.max(1, Math.min(30, diff));
+}
+
+function getDayDate(dayNum) {
+  if (!state.startDate) return '';
+  const start = new Date(state.startDate);
+  start.setDate(start.getDate() + dayNum - 1);
+  return start.toLocaleDateString('ru-RU', {day:'numeric', month:'short'});
+}
+
 function renderGoals() {
   const c = document.getElementById('goals-content');
   c.innerHTML = '';
   if(!state.niche) {
-    c.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><p>Пройди опрос у <strong>AI Ментора</strong> — получи нишу и персональный план на 30 дней!</p></div>`;
+    c.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><p>Пройди опрос у <strong>AI Ментора</strong> — получи персональный план на 30 дней!</p></div>`;
     return;
   }
   const all=Object.values(state.tasks).flat(), done=all.filter(t=>t.done).length;
   const pct=all.length>0?Math.round((done/all.length)*100):0;
   const R=28, circ=2*Math.PI*R, offset=circ-(pct/100)*circ;
 
+  // Calc deadline
+  let deadlineText = '';
+  if (state.startDate) {
+    const end = new Date(state.startDate);
+    end.setDate(end.getDate() + 29);
+    deadlineText = 'до ' + end.toLocaleDateString('ru-RU', {day:'numeric', month:'long'});
+  }
+
   // Goal card
   const gc=document.createElement('div'); gc.className='goal-card';
   gc.innerHTML=`
     <div class="goal-top">
-      <div>
-        <div class="goal-label">Monthly Goal</div>
-        <div class="goal-amount">${state.goal||'100 000 ₽'}</div>
-        <div class="goal-of">of <input id="goal-input" placeholder="Введи свою цель..." value="${state.goal||''}" /></div>
+      <div class="goal-left">
+        <div class="goal-label">Твоя цель</div>
+        <input class="goal-input" id="goal-input" placeholder="Например: 100к, новый клиент, спорт..." value="${state.goal||''}" />
+        <div class="goal-deadline">${deadlineText}</div>
       </div>
       <div class="circle-wrap">
-        <svg width="72" height="72" viewBox="0 0 72 72">
-          <circle cx="36" cy="36" r="${R}" stroke="#222" stroke-width="7" fill="none"/>
-          <circle cx="36" cy="36" r="${R}" stroke="#FFD600" stroke-width="7" fill="none" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}" stroke-linecap="round"/>
+        <svg width="76" height="76" viewBox="0 0 76 76">
+          <circle cx="38" cy="38" r="${R}" stroke="rgba(255,255,255,0.08)" stroke-width="6" fill="none"/>
+          <circle cx="38" cy="38" r="${R}" stroke="#ffffff" stroke-width="6" fill="none" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}" stroke-linecap="round"/>
         </svg>
         <div class="circle-label">${pct}%</div>
       </div>
     </div>
     <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-    <div class="progress-msg" style="margin-top:8px">${pct===100?'🎉 <strong>Great work! You\'ve hit your goal!</strong>':pct>50?'Keep going! You\'re on <strong>the right track.</strong>':'Stay focused — <strong>you\'ve got this!</strong>'}</div>
+    <div class="progress-msg">${pct===100?'🎉 <strong>Great work! Ты выполнил план!</strong>':pct>=66?'<strong>Финишная прямая!</strong> Так держать.':pct>=33?'<strong>Хороший прогресс</strong> — продолжай.':'<strong>Старт дан</strong> — каждый день важен.'}</div>
   `;
   c.appendChild(gc);
   gc.querySelector('#goal-input').addEventListener('input', e=>{ state.goal=e.target.value; save(); });
 
   // Today tasks
-  const today=new Date().getDate();
+  const today = getDayOfPlan();
   const todayT=state.tasks[today]||[];
   const todayDone=todayT.filter(t=>t.done).length;
   const ts=document.createElement('div');
-  ts.innerHTML=`<div class="section-label">Today's Tasks <span>${todayDone}/${todayT.length} completed</span></div>`;
+  ts.innerHTML=`<div class="section-label">Сегодня — День ${today} <span>${todayDone}/${todayT.length} done</span></div>`;
   todayT.forEach((task,ti)=>{
     const item=document.createElement('div'); item.className='task-card'+(task.done?' done':'');
     item.innerHTML=`<div class="task-check">${task.done?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div class="task-text">${task.text}</div>`;
@@ -511,17 +619,18 @@ function renderGoals() {
   });
   c.appendChild(ts);
 
-  // All days
-  const expBtn=document.createElement('button'); expBtn.className='expand-btn'; expBtn.innerHTML='📅 Все 30 дней <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+  // Expand all days
+  const expBtn=document.createElement('button'); expBtn.className='expand-btn';
+  expBtn.innerHTML='Все 30 дней <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
   const allDiv=document.createElement('div'); allDiv.style.display='none';
   let open=false;
-  expBtn.onclick=()=>{ open=!open; allDiv.style.display=open?'block':'none'; expBtn.innerHTML=open?'🔼 Скрыть':'📅 Все 30 дней <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'; };
+  expBtn.onclick=()=>{ open=!open; allDiv.style.display=open?'block':'none'; expBtn.innerHTML=open?'Скрыть':'Все 30 дней <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'; };
 
   for(let day=1;day<=30;day++){
     const tasks=state.tasks[day]||[], dc=tasks.filter(t=>t.done).length;
     const isT=day===today, isDone=tasks.length>0&&dc===tasks.length;
     const card=document.createElement('div'); card.className='day-card'+(isT?' is-today':'')+(isDone?' is-done':'');
-    let badge=isT?`<div class="chip chip-yellow" style="font-size:10px;padding:3px 8px;">Сегодня</div>`:isDone?`<div class="chip chip-green" style="font-size:10px;padding:3px 8px;">✓ Done</div>`:`<span style="font-size:11px;color:var(--white-50)">${dc}/${tasks.length}</span>`;
+    let badge=isT?`<div class="chip chip-white" style="font-size:10px;padding:3px 8px;">Сегодня</div>`:isDone?`<div class="chip chip-green" style="font-size:10px;padding:3px 8px;">Done</div>`:`<span class="day-date">${getDayDate(day)}</span>`;
     card.innerHTML=`<div class="day-header"><span class="day-num">День ${day}</span>${badge}</div>`;
     tasks.forEach((task,ti)=>{
       const t=document.createElement('div'); t.className='day-task'+(task.done?' done':'');
@@ -535,14 +644,14 @@ function renderGoals() {
 }
 
 // CHAT
-const SYS=`Ты AI-наставник "The Level". Проведи опрос (5-6 вопросов), определи нишу для заработка.
+const SYS=`Ты AI-наставник "The Level" — помогаешь людям достигать любых целей (не только финансовых). Проведи опрос (5-6 вопросов): сначала спроси цель пользователя (заработок, навык, спорт, бизнес — любая), потом про текущий уровень, навыки, время, ограничения.
 
 Один вопрос за раз. Кратко, мотивирующе, по-русски.
 
-После опроса — ТОЛЬКО JSON, никакого текста снаружи:
-{"type":"result","niche":"Название","nicheDesc":"1-2 предложения","plan":"3-4 шага к 100к","tasks":[{"day":1,"tasks":["Задача до 7 слов"]},{"day":2,"tasks":["Задача"]},{"day":3,"tasks":["Задача"]},{"day":4,"tasks":["Задача"]},{"day":5,"tasks":["Задача"]},{"day":6,"tasks":["Задача"]},{"day":7,"tasks":["Задача"]},{"day":8,"tasks":["Задача"]},{"day":9,"tasks":["Задача"]},{"day":10,"tasks":["Задача"]},{"day":11,"tasks":["Задача"]},{"day":12,"tasks":["Задача"]},{"day":13,"tasks":["Задача"]},{"day":14,"tasks":["Задача"]},{"day":15,"tasks":["Задача"]},{"day":16,"tasks":["Задача"]},{"day":17,"tasks":["Задача"]},{"day":18,"tasks":["Задача"]},{"day":19,"tasks":["Задача"]},{"day":20,"tasks":["Задача"]},{"day":21,"tasks":["Задача"]},{"day":22,"tasks":["Задача"]},{"day":23,"tasks":["Задача"]},{"day":24,"tasks":["Задача"]},{"day":25,"tasks":["Задача"]},{"day":26,"tasks":["Задача"]},{"day":27,"tasks":["Задача"]},{"day":28,"tasks":["Задача"]},{"day":29,"tasks":["Задача"]},{"day":30,"tasks":["Задача"]}]}
+После опроса — ТОЛЬКО валидный JSON без текста снаружи:
+{"type":"result","niche":"Краткое название цели/ниши","nicheDesc":"1-2 предложения о пути пользователя","plan":"3-4 шага к цели","tasks":[{"day":1,"tasks":["Задача до 7 слов"]},{"day":2,"tasks":["Задача"]},{"day":3,"tasks":["Задача"]},{"day":4,"tasks":["Задача"]},{"day":5,"tasks":["Задача"]},{"day":6,"tasks":["Задача"]},{"day":7,"tasks":["Задача"]},{"day":8,"tasks":["Задача"]},{"day":9,"tasks":["Задача"]},{"day":10,"tasks":["Задача"]},{"day":11,"tasks":["Задача"]},{"day":12,"tasks":["Задача"]},{"day":13,"tasks":["Задача"]},{"day":14,"tasks":["Задача"]},{"day":15,"tasks":["Задача"]},{"day":16,"tasks":["Задача"]},{"day":17,"tasks":["Задача"]},{"day":18,"tasks":["Задача"]},{"day":19,"tasks":["Задача"]},{"day":20,"tasks":["Задача"]},{"day":21,"tasks":["Задача"]},{"day":22,"tasks":["Задача"]},{"day":23,"tasks":["Задача"]},{"day":24,"tasks":["Задача"]},{"day":25,"tasks":["Задача"]},{"day":26,"tasks":["Задача"]},{"day":27,"tasks":["Задача"]},{"day":28,"tasks":["Задача"]},{"day":29,"tasks":["Задача"]},{"day":30,"tasks":["Задача"]}]}
 
-Задачи конкретные, до 7 слов каждая. Все 30 дней обязательно.`;
+Все 30 дней обязательны. Задачи конкретные, до 7 слов.`;
 
 function addMsg(role,text,typing=false){
   const box=document.getElementById('chat-messages');
@@ -553,7 +662,8 @@ function addMsg(role,text,typing=false){
   box.appendChild(div); box.scrollTop=box.scrollHeight; return div;
 }
 function renderChat(){ const b=document.getElementById('chat-messages'); b.innerHTML=''; state.chatHistory.forEach(m=>addMsg(m.role,m.content)); }
-async function startQuestionnaire(){ const g="Hey! 👋 I'm your AI mentor — here to help you earn more and grow every day.\n\nДавай начнём! Расскажи — что умеешь делать лучше всего?"; state.chatHistory.push({role:'assistant',content:g}); save(); addMsg('assistant',g); }
+async function startQuestionnaire(){ const g="Привет! 👋 Я твой AI-ментор. Помогу составить план на 30 дней под любую цель.\n\nС чего начнём — какую цель хочешь достичь? Это может быть что угодно: заработок, новый навык, спорт, проект, привычка.";
+  state.chatHistory.push({role:'assistant',content:g}); save(); addMsg('assistant',g); }
 function quickSend(t){ document.getElementById('chat-input').value=t; sendMessage(); }
 function buildMsgs(){ const m=state.chatHistory,r=[]; for(let i=0;i<m.length;i++){ if(r.length===0&&m[i].role==='assistant')continue; if(r.length>0&&m[i].role===r[r.length-1].role)r[r.length-1].content+='\n'+m[i].content; else r.push({role:m[i].role,content:m[i].content}); } return r; }
 
@@ -578,12 +688,16 @@ document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key===
 function handleResult(p){
   state.niche=p.niche; state.nicheDesc=p.nicheDesc; state.plan=p.plan; state.tasks={};
   p.tasks.forEach(d=>{state.tasks[d.day]=d.tasks.map(t=>({text:t,done:false}));});
-  const msg=`✅ Ниша определена: ${p.niche}\n\n${p.nicheDesc}\n\nПлан на 30 дней готов! Переходи в Goals 🎯`;
+  state.startDate = new Date().toISOString(); // Start day 1 from now
+  const msg=`✅ Цель определена: ${p.niche}\n\n${p.nicheDesc}\n\nПлан на 30 дней готов. Открывай Goals 🎯`;
   state.chatHistory.push({role:'assistant',content:msg}); save(); addMsg('assistant',msg);
   renderNiche(); renderGoals(); renderHome(); updateProfile();
 }
 
 function renderNiche(){ if(!state.niche)return; document.getElementById('niche-block').style.display='block'; document.getElementById('niche-title').textContent=state.niche; document.getElementById('niche-desc').textContent=state.nicheDesc||''; }
+
+function openSubModal() { document.getElementById('sub-modal').classList.add('active'); }
+function closeSubModal() { document.getElementById('sub-modal').classList.remove('active'); }
 
 function resetApp(){ if(!confirm('Сбросить весь прогресс?'))return; localStorage.removeItem('thelevel_state'); localStorage.removeItem('thelevel_apikey'); location.reload(); }
 
