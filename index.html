@@ -8,345 +8,210 @@
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0a;
-  --surface: #141414;
-  --surface2: #1e1e1e;
-  --surface3: #282828;
+  --bg: #080808;
+  --surface: #111111;
+  --surface2: #181818;
+  --surface3: #222222;
   --yellow: #FFD600;
-  --yellow2: #FFF176;
-  --text: #ffffff;
-  --muted: #666666;
-  --muted2: #444444;
+  --yellow-dim: #FFD60020;
+  --yellow-border: #FFD60040;
+  --white: #ffffff;
+  --white-80: rgba(255,255,255,0.8);
+  --white-50: rgba(255,255,255,0.5);
+  --white-20: rgba(255,255,255,0.2);
+  --white-10: rgba(255,255,255,0.07);
+  --green: #39FF88;
+  --green-dim: #39FF8820;
   --border: #2a2a2a;
-  --success: #FFD600;
   --radius: 16px;
   --nav-h: 72px;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-body {
-  font-family: 'Manrope', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; overflow-x: hidden; }
 
 /* SPLASH */
 #splash {
-  position: fixed; inset: 0;
-  background: #0a0a0a;
+  position: fixed; inset: 0; z-index: 1000;
+  background: #080808;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 1000;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.7s ease;
 }
 #splash.hide { opacity: 0; pointer-events: none; }
-.splash-logo {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 42px; font-weight: 900;
-  color: #fff;
-  letter-spacing: -1px;
-  margin-bottom: 8px;
-}
-.splash-logo span { color: var(--yellow); }
-.splash-bar {
-  width: 120px; height: 3px;
-  background: var(--surface3);
-  border-radius: 2px;
-  margin-top: 24px;
-  overflow: hidden;
-}
-.splash-bar-fill {
-  height: 100%; width: 0;
-  background: var(--yellow);
-  border-radius: 2px;
-  animation: loadbar 1.8s ease forwards;
-}
+.splash-tag { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--white-50); text-transform: uppercase; margin-bottom: 24px; }
+.splash-logo { font-family: 'Unbounded', sans-serif; font-size: 56px; font-weight: 900; line-height: 0.95; text-align: center; margin-bottom: 8px; color: var(--white); }
+.splash-logo .y { color: var(--yellow); }
+.splash-arrow { font-size: 36px; color: var(--yellow); margin-bottom: 28px; line-height: 1; }
+.splash-sub { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; color: var(--white-50); text-transform: uppercase; text-align: center; line-height: 2; margin-bottom: 52px; }
+.splash-sub .y { color: var(--yellow); }
+.splash-bar { width: 120px; height: 2px; background: var(--surface3); border-radius: 1px; overflow: hidden; }
+.splash-bar-fill { height: 100%; width: 0; background: var(--yellow); animation: loadbar 2.2s ease forwards; }
 @keyframes loadbar { 0%{width:0} 100%{width:100%} }
+
+/* ONBOARDING */
+#screen-onboarding { position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center; background: var(--bg); }
+#screen-onboarding.active { display: flex; }
+.onb-inner { text-align: center; max-width: 300px; width: 100%; padding: 24px; }
+.onb-logo { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 900; margin-bottom: 4px; color: var(--white); }
+.onb-logo .y { color: var(--yellow); }
+.onb-sub { color: var(--white-50); font-size: 13px; line-height: 1.6; margin: 10px 0 28px; }
+.onb-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 14px 14px 42px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 13px; outline: none; margin-bottom: 8px; transition: border-color 0.2s; position: relative; }
+.onb-input:focus { border-color: var(--yellow); }
+.onb-input-wrap { position: relative; margin-bottom: 8px; }
+.onb-input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--white-50); }
+.onb-error { color: #ff6b6b; font-size: 12px; margin-bottom: 10px; display: none; }
+.btn-primary { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--yellow); color: #000; font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: opacity 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
 
 /* APP */
 #app { display: none; }
 #app.show { display: block; }
 
 /* SCREENS */
-.screen { display: none; flex-direction: column; min-height: calc(100vh - var(--nav-h)); padding: 20px 16px; padding-bottom: calc(var(--nav-h) + 24px); overflow-y: auto; }
+.screen { display: none; flex-direction: column; min-height: calc(100vh - var(--nav-h)); padding: 16px 16px; padding-bottom: calc(var(--nav-h) + 20px); overflow-y: auto; }
 .screen.active { display: flex; }
 
 /* NAV */
-.nav {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  height: var(--nav-h);
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  display: flex;
-  z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.nav-btn {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 5px; background: none; border: none; cursor: pointer;
-  color: var(--muted); font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.5px;
-  transition: color 0.2s;
-  position: relative;
-}
+.nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: var(--surface); border-top: 1px solid var(--border); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: none; border: none; cursor: pointer; color: var(--white-50); font-family: 'Manrope', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; position: relative; transition: color 0.2s; }
 .nav-btn.active { color: var(--yellow); }
 .nav-btn svg { width: 22px; height: 22px; }
-.nav-btn.active::after {
-  content: '';
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 32px; height: 2px;
-  background: var(--yellow);
-  border-radius: 0 0 2px 2px;
-}
+.nav-btn.active::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 28px; height: 2px; background: var(--yellow); border-radius: 0 0 2px 2px; }
 
-/* PROFILE SCREEN */
-.profile-hero {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-}
-.profile-hero::before {
-  content: '';
-  position: absolute; top: -40px; right: -40px;
-  width: 120px; height: 120px;
-  background: radial-gradient(circle, #FFD60022 0%, transparent 70%);
-  border-radius: 50%;
-}
-.profile-top { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-.avatar {
-  width: 56px; height: 56px; border-radius: 50%;
-  background: var(--yellow);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; color: #000;
-  flex-shrink: 0;
-}
-.profile-name-block { flex: 1; }
-.profile-name { font-weight: 700; font-size: 17px; }
-.profile-id { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.profile-niche {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: #FFD60015; border: 1px solid #FFD60044;
-  border-radius: 8px; padding: 4px 10px;
-  font-size: 11px; font-weight: 700; color: var(--yellow);
-  margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px;
-}
+/* CARDS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 12px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 8px; }
 
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.stat-card {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 14px; padding: 14px;
-}
-.stat-label { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-.stat-value { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; color: var(--yellow); }
-.stat-value.white { color: var(--text); }
+/* CHIPS */
+.chip { display: inline-flex; align-items: center; gap: 5px; border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+.chip-yellow { background: var(--yellow-dim); border: 1px solid var(--yellow-border); color: var(--yellow); }
+.chip-green { background: var(--green-dim); border: 1px solid #39FF8840; color: var(--green); }
+.chip-white { background: var(--white-10); border: 1px solid var(--white-20); color: var(--white-80); }
 
-.earned-input-wrap { margin-top: 8px; }
-.earned-input {
-  width: 100%; background: var(--surface3);
-  border: 1px solid var(--border);
-  border-radius: 10px; padding: 10px 14px;
-  color: var(--text); font-family: 'Unbounded', sans-serif; font-size: 16px;
-  outline: none; transition: border-color 0.2s;
-}
+/* HOME */
+.home-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px 0; }
+.home-logo { font-family: 'Unbounded', sans-serif; font-size: 52px; font-weight: 900; line-height: 0.95; margin-bottom: 8px; color: var(--white); }
+.home-logo .y { color: var(--yellow); }
+.home-tagline { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; color: var(--white-50); text-transform: uppercase; line-height: 2; margin: 16px 0 36px; }
+.home-tagline .y { color: var(--yellow); }
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 20px; }
+.home-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: left; }
+.home-stat-label { font-size: 10px; color: var(--white-50); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.home-stat-val { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); }
+.home-stat-sub { font-size: 11px; color: var(--white-50); margin-top: 3px; }
+.home-stat-accent { color: var(--yellow); }
+.home-cta { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--yellow); color: #000; font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s; }
+.home-cta:active { opacity: 0.85; }
+
+/* PROFILE */
+.profile-hero { display: flex; flex-direction: column; align-items: center; padding: 28px 0 20px; }
+.avatar-wrap { position: relative; margin-bottom: 14px; }
+.avatar { width: 84px; height: 84px; border-radius: 50%; background: var(--yellow); display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 34px; font-weight: 700; color: #000; border: 3px solid var(--yellow); }
+.avatar-dot { position: absolute; bottom: 4px; right: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--green); border: 2px solid var(--bg); }
+.profile-name { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--white); }
+.profile-role { font-size: 13px; color: var(--white-50); margin-bottom: 12px; }
+
+.sub-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.sub-row:last-child { border-bottom: none; }
+.sub-row-label { font-size: 13px; color: var(--white-50); }
+.sub-row-val { font-size: 13px; font-weight: 700; color: var(--white); }
+.sub-row-val.y { color: var(--yellow); }
+.sub-row-val.g { color: var(--green); }
+.manage-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: var(--white-10); border: 1px solid var(--white-20); color: var(--white); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+.manage-btn:hover { background: var(--white-20); }
+
+.earnings-val { font-family: 'Unbounded', sans-serif; font-size: 30px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+.earned-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; outline: none; transition: border-color 0.2s; }
 .earned-input:focus { border-color: var(--yellow); }
-.earned-input::placeholder { color: var(--muted2); font-size: 13px; font-family: 'Manrope', sans-serif; }
+.earned-input::placeholder { color: var(--white-50); }
 
-.section-title {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 13px; font-weight: 700;
-  color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
-  margin: 20px 0 12px;
-}
+/* GOALS */
+.page-title { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 900; color: var(--white); }
+.page-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 20px; }
+.page-icon { width: 38px; height: 38px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 
-/* Progress bar */
-.progress-wrap { margin-bottom: 16px; }
-.progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.progress-label span { font-size: 12px; color: var(--muted); font-weight: 600; }
-.progress-label strong { font-size: 12px; color: var(--yellow); font-weight: 700; }
-.progress-bar { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--yellow); border-radius: 3px; transition: width 0.5s ease; }
+.goal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 12px; }
+.goal-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+.goal-label { font-size: 11px; color: var(--white-50); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.goal-amount { font-family: 'Unbounded', sans-serif; font-size: 32px; font-weight: 700; color: var(--white); line-height: 1; }
+.goal-of { font-size: 12px; color: var(--white-50); margin-top: 4px; }
+.goal-of input { background: none; border: none; outline: none; color: var(--white-50); font-family: 'Manrope', sans-serif; font-size: 12px; width: 140px; }
+.circle-wrap { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+.circle-wrap svg { transform: rotate(-90deg); }
+.circle-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: var(--yellow); }
+.progress-bar { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { height: 100%; background: var(--yellow); border-radius: 3px; transition: width 0.6s ease; }
+.progress-msg { font-size: 12px; color: var(--white-50); font-weight: 500; }
+.progress-msg strong { color: var(--white-80); }
 
-/* DIARY SCREEN */
-.diary-header { margin-bottom: 20px; }
-.diary-title { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 4px; }
-.diary-title span { color: var(--yellow); }
+.section-label { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.section-label span { font-family: 'Manrope', sans-serif; font-size: 12px; color: var(--white-50); font-weight: 600; }
 
-.goal-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px; padding: 16px;
-  margin-bottom: 20px;
-  display: flex; align-items: center; gap: 14px;
-}
-.goal-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  background: var(--yellow);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.goal-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-.goal-input {
-  background: none; border: none; outline: none;
-  color: var(--text); font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 700;
-  width: 100%; padding: 0;
-}
-.goal-input::placeholder { color: var(--muted2); font-size: 14px; font-family: 'Manrope', sans-serif; font-weight: 500; }
+.task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 13px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.task-card:active { opacity: 0.8; }
+.task-card.done { background: #0f0f00; border-color: var(--yellow-border); }
+.task-check { width: 22px; height: 22px; min-width: 22px; border-radius: 7px; border: 2px solid var(--white-20); display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.task-card.done .task-check { background: var(--yellow); border-color: var(--yellow); }
+.task-text { flex: 1; font-size: 13px; font-weight: 600; color: var(--white); }
+.task-card.done .task-text { text-decoration: line-through; color: var(--white-50); }
 
-.niche-banner {
-  background: linear-gradient(135deg, #1a1600, #2a2000);
-  border: 1px solid #FFD60033;
-  border-radius: 14px; padding: 14px 16px;
-  margin-bottom: 20px;
-  display: flex; align-items: center; gap: 12px;
-}
-.niche-banner-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); flex-shrink: 0; }
-.niche-banner-text { font-size: 13px; font-weight: 600; color: var(--yellow2); }
+.expand-btn { width: 100%; padding: 14px; border-radius: 12px; background: transparent; border: 1px solid var(--border); color: var(--white-80); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; margin-bottom: 12px; transition: border-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.expand-btn:hover { border-color: var(--yellow); color: var(--yellow); }
 
-.month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.month-name { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; }
-.month-stats { font-size: 12px; color: var(--muted); font-weight: 600; }
+.day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; }
+.day-card.is-today { border-color: var(--yellow); }
+.day-card.is-done { background: #0f0f00; border-color: var(--yellow-border); }
+.day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.day-num { font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 700; color: var(--white-50); }
+.day-card.is-today .day-num { color: var(--yellow); }
+.day-task { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+.day-task:last-child { border-bottom: none; }
+.day-check { width: 18px; height: 18px; min-width: 18px; border-radius: 5px; border: 2px solid var(--white-20); display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.day-task.done .day-check { background: var(--yellow); border-color: var(--yellow); }
+.day-task-text { font-size: 12px; font-weight: 500; color: var(--white); }
+.day-task.done .day-task-text { text-decoration: line-through; color: var(--white-50); }
 
-.day-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px; padding: 14px 16px; margin-bottom: 8px;
-  transition: border-color 0.2s;
-}
-.day-card.today { border-color: var(--yellow); }
-.day-card.completed { border-color: #FFD60044; background: #1a1600; }
-.day-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.day-num {
-  font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700;
-  color: var(--muted);
-}
-.day-card.today .day-num { color: var(--yellow); }
-.day-badge {
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-  padding: 3px 8px; border-radius: 6px;
-}
-.day-badge.today-badge { background: var(--yellow); color: #000; }
-.day-badge.done-badge { background: #FFD60022; color: var(--yellow); }
-.day-progress-text { font-size: 11px; color: var(--muted); }
+.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; padding: 48px 20px; }
+.empty-icon { width: 64px; height: 64px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.empty-state p { font-size: 14px; line-height: 1.7; color: var(--white-50); }
+.empty-state strong { color: var(--yellow); }
 
-.task-item {
-  display: flex; align-items: flex-start; gap: 10px; padding: 8px 0;
-  border-bottom: 1px solid var(--border); cursor: pointer;
-  transition: opacity 0.2s;
-}
-.task-item:last-child { border-bottom: none; }
-.task-check {
-  width: 20px; height: 20px; min-width: 20px;
-  border: 2px solid var(--muted2); border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; margin-top: 1px;
-}
-.task-item.done .task-check { background: var(--yellow); border-color: var(--yellow); }
-.task-item.done .task-text { text-decoration: line-through; color: var(--muted); }
-.task-text { font-size: 13px; line-height: 1.5; font-weight: 500; }
+/* MENTOR */
+.mentor-top { display: flex; align-items: center; gap: 12px; padding: 10px 0 18px; }
+.mentor-icon { width: 46px; height: 46px; border-radius: 14px; background: var(--yellow); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mentor-name { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: var(--white); }
+.mentor-sub { font-size: 12px; color: var(--white-50); margin-top: 2px; }
 
-.empty-diary {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; gap: 12px; color: var(--muted); padding: 40px 20px;
-}
-.empty-icon {
-  width: 64px; height: 64px; border-radius: 20px;
-  background: var(--surface2);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 4px;
-}
-.empty-diary p { font-size: 14px; line-height: 1.6; }
+.niche-card { background: linear-gradient(135deg, #151200, #201a00); border: 1px solid var(--yellow-border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+.niche-label { font-size: 10px; color: var(--yellow); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.niche-title { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--white); }
+.niche-desc { font-size: 13px; color: var(--white-50); line-height: 1.5; }
 
-/* AI MENTOR SCREEN */
-.mentor-header { margin-bottom: 20px; }
-.mentor-title { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 4px; }
-.mentor-title span { color: var(--yellow); }
-.mentor-sub { font-size: 13px; color: var(--muted); }
+.chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; min-height: 180px; max-height: 340px; }
+.msg { max-width: 86%; padding: 11px 14px; border-radius: 18px; font-size: 13px; line-height: 1.55; font-weight: 500; }
+.msg.ai { background: var(--surface2); border: 1px solid var(--border); border-bottom-left-radius: 4px; align-self: flex-start; color: var(--white); }
+.msg.user { background: var(--yellow); border-bottom-right-radius: 4px; align-self: flex-end; color: #000; font-weight: 700; }
 
-.niche-result-card {
-  background: linear-gradient(135deg, #1a1600, #2a2000);
-  border: 1px solid #FFD60044;
-  border-radius: 16px; padding: 16px; margin-bottom: 20px;
-}
-.niche-result-label { font-size: 10px; color: var(--yellow); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-.niche-result-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-.niche-result-desc { font-size: 13px; color: #aaa; line-height: 1.5; }
+.quick-row { display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.quick-row::-webkit-scrollbar { display: none; }
+.qbtn { flex-shrink: 0; padding: 8px 14px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--border); color: var(--white-80); font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.qbtn:hover { border-color: var(--yellow); color: var(--yellow); }
 
-.chat-messages {
-  flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-  margin-bottom: 12px; min-height: 240px; max-height: 400px;
-}
-.msg { max-width: 85%; padding: 11px 14px; border-radius: 16px; font-size: 13px; line-height: 1.55; font-weight: 500; }
-.msg.ai { background: var(--surface2); border-bottom-left-radius: 4px; align-self: flex-start; border: 1px solid var(--border); }
-.msg.user { background: var(--yellow); border-bottom-right-radius: 4px; align-self: flex-end; color: #000; font-weight: 600; }
+.input-row { display: flex; gap: 8px; }
+.msg-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; color: var(--white); font-family: 'Manrope', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.msg-input:focus { border-color: var(--yellow); }
+.msg-input::placeholder { color: var(--white-50); }
+.send-btn { width: 46px; height: 46px; border: none; border-radius: 12px; background: var(--yellow); color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.2s, transform 0.1s; }
+.send-btn:active { transform: scale(0.92); }
+.send-btn:disabled { opacity: 0.35; }
 
-.chat-input-row { display: flex; gap: 8px; }
-.chat-input {
-  flex: 1; background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 12px; padding: 12px 14px; color: var(--text);
-  font-family: 'Manrope', sans-serif; font-size: 14px; outline: none;
-  transition: border-color 0.2s;
-}
-.chat-input:focus { border-color: var(--yellow); }
-.chat-send {
-  width: 46px; height: 46px; border: none; border-radius: 12px;
-  background: var(--yellow);
-  color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.2s, transform 0.1s; flex-shrink: 0;
-}
-.chat-send:active { transform: scale(0.93); }
-.chat-send:disabled { opacity: 0.4; }
+.dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--white-50); margin: 0 2px; animation: bop 1.2s infinite; }
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes bop { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
 
-.loading-dots span {
-  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--muted); margin: 0 2px;
-  animation: bounce 1.2s infinite;
-}
-.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
-
-.reset-btn {
-  width: 100%; padding: 12px; border-radius: 12px;
-  background: transparent; border: 1px solid var(--border);
-  color: var(--muted); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600;
-  cursor: pointer; margin-top: 10px; transition: all 0.2s;
-}
+.reset-btn { width: 100%; padding: 12px; border-radius: 12px; background: transparent; border: 1px solid var(--border); color: var(--white-50); font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
 .reset-btn:hover { border-color: #ff4444; color: #ff4444; }
-
-/* ONBOARDING / API KEY */
-#screen-onboarding {
-  display: none; align-items: center; justify-content: center;
-  min-height: 100vh; padding-bottom: 0;
-}
-#screen-onboarding.active { display: flex; }
-.onboarding-inner { text-align: center; max-width: 320px; width: 100%; padding: 20px; }
-.onb-logo { font-family: 'Unbounded', sans-serif; font-size: 36px; font-weight: 900; margin-bottom: 6px; }
-.onb-logo span { color: var(--yellow); }
-.onb-sub { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 32px; }
-.onb-input {
-  width: 100%; background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px; padding: 14px;
-  color: var(--text); font-family: 'Manrope', sans-serif; font-size: 13px;
-  outline: none; margin-bottom: 10px; transition: border-color 0.2s;
-  text-align: center;
-}
-.onb-input:focus { border-color: var(--yellow); }
-.onb-error { color: #ff6b6b; font-size: 12px; margin-bottom: 10px; display: none; }
-.btn-primary {
-  width: 100%; padding: 16px; border: none; border-radius: 14px;
-  background: var(--yellow);
-  color: #000; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700;
-  cursor: pointer; transition: opacity 0.2s, transform 0.1s; letter-spacing: 0.5px;
-}
-.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -357,489 +222,372 @@ body {
 
 <!-- SPLASH -->
 <div id="splash">
-  <div class="splash-logo">THE <span>LEVEL</span></div>
+  <div class="splash-tag">AI Income Assistant</div>
+  <div class="splash-logo">THE<br><span class="y">LEVEL</span></div>
+  <div class="splash-arrow">↗</div>
+  <div class="splash-sub">AI-POWERED GROWTH.<br>REAL INCOME.<br><span class="y">EVERY DAY.</span></div>
   <div class="splash-bar"><div class="splash-bar-fill"></div></div>
 </div>
 
 <!-- ONBOARDING -->
-<div id="screen-onboarding" class="screen">
-  <div class="onboarding-inner">
-    <div class="onb-logo">THE <span>LEVEL</span></div>
-    <p class="onb-sub">Твой AI-наставник по выходу на первые 100 000 ₽. Введи API ключ Claude для начала работы.</p>
-    <input class="onb-input" id="apikey-input" type="password" placeholder="sk-ant-..." />
-    <p class="onb-error" id="apikey-error">Введи API ключ чтобы продолжить</p>
-    <button class="btn-primary" id="start-btn">НАЧАТЬ →</button>
+<div id="screen-onboarding">
+  <div class="onb-inner">
+    <div class="onb-logo">THE <span class="y">LEVEL</span></div>
+    <p class="onb-sub">AI Assistant that helps you earn more and level up every day.</p>
+    <div class="onb-input-wrap">
+      <svg class="onb-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <input class="onb-input" id="apikey-input" type="password" placeholder="Введи API ключ Claude..." />
+    </div>
+    <p class="onb-error" id="apikey-error">Введи корректный API ключ (sk-ant-...)</p>
+    <button class="btn-primary" id="start-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      НАЧАТЬ
+    </button>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
 
-<!-- PROFILE -->
-<div id="screen-profile" class="screen">
-  <div class="profile-hero">
-    <div class="profile-top">
-      <div class="avatar" id="avatar-letter">?</div>
-      <div class="profile-name-block">
-        <div class="profile-name" id="profile-name">Загрузка...</div>
-        <div class="profile-id" id="profile-id">ID: —</div>
-        <div id="profile-niche-badge" style="display:none" class="profile-niche">🎯 <span id="profile-niche-text"></span></div>
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="home-hero">
+    <div style="font-size:10px;font-weight:700;letter-spacing:3px;color:var(--white-50);text-transform:uppercase;margin-bottom:18px;">AI Income Assistant</div>
+    <div class="home-logo">THE<br><span class="y">LEVEL</span> <span style="color:var(--yellow)">↗</span></div>
+    <div class="home-tagline">AI-POWERED GROWTH.<br>REAL INCOME.<br><span class="y">EVERY DAY.</span></div>
+    <div class="home-grid">
+      <div class="home-stat">
+        <div class="home-stat-label">Заработано</div>
+        <div class="home-stat-val home-stat-accent" id="home-earned">—</div>
+        <div class="home-stat-sub">lifetime earnings</div>
+      </div>
+      <div class="home-stat">
+        <div class="home-stat-label">Задач готово</div>
+        <div class="home-stat-val" id="home-tasks">0</div>
+        <div class="home-stat-sub">выполнено</div>
       </div>
     </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">💰 Заработано</div>
-        <div class="earned-input-wrap">
-          <input class="earned-input" id="earned-input" type="text" placeholder="0 ₽" />
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">✅ Задач выполнено</div>
-        <div class="stat-value" id="tasks-done-count">0</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="profile-progress-wrap" style="display:none">
-    <div class="section-title">Прогресс месяца</div>
-    <div class="progress-wrap">
-      <div class="progress-label">
-        <span>Задачи</span>
-        <strong id="progress-text">0%</strong>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="profile-plan-wrap" style="display:none">
-    <div class="section-title">Твой план</div>
-    <div class="niche-result-card">
-      <div class="niche-result-label">Стратегия</div>
-      <div class="niche-result-desc" id="profile-plan-text"></div>
-    </div>
+    <button class="home-cta" onclick="showScreen('mentor')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Начать с AI Ментором
+    </button>
   </div>
 </div>
 
-<!-- DIARY -->
-<div id="screen-diary" class="screen">
-  <div class="diary-header">
-    <div class="diary-title">Еже<span>дневник</span></div>
-  </div>
-
-  <div class="goal-card">
-    <div class="goal-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
-        <circle cx="12" cy="12" r="10"></circle>
-        <circle cx="12" cy="12" r="6"></circle>
-        <circle cx="12" cy="12" r="2"></circle>
+<!-- GOALS -->
+<div id="screen-goals" class="screen">
+  <div class="page-header">
+    <div class="page-title">Daily Goals</div>
+    <div class="page-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
       </svg>
     </div>
-    <div style="flex:1">
-      <div class="goal-label">Цель</div>
-      <input class="goal-input" id="goal-input" type="text" placeholder="Введи свою цель..." />
-    </div>
   </div>
-
-  <div id="diary-content"></div>
+  <div id="goals-content"></div>
 </div>
 
-<!-- AI MENTOR -->
+<!-- MENTOR -->
 <div id="screen-mentor" class="screen">
-  <div class="mentor-header">
-    <div class="mentor-title">AI <span>Ментор</span></div>
-    <div class="mentor-sub">Отвечай на вопросы — получи нишу и план</div>
+  <div class="mentor-top">
+    <div class="mentor-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="mentor-name">AI Mentor (Chat)</div>
+      <div class="mentor-sub">Your personal growth partner</div>
+    </div>
   </div>
 
   <div id="niche-block" style="display:none">
-    <div class="niche-result-card">
-      <div class="niche-result-label">Твоя ниша</div>
-      <div class="niche-result-title" id="niche-title"></div>
-      <div class="niche-result-desc" id="niche-desc"></div>
+    <div class="niche-card">
+      <div class="niche-label">Твоя ниша</div>
+      <div class="niche-title" id="niche-title"></div>
+      <div class="niche-desc" id="niche-desc"></div>
     </div>
   </div>
 
-  <div class="chat-messages" id="chat-messages"></div>
-  <div class="chat-input-row">
-    <input class="chat-input" id="chat-input" type="text" placeholder="Написать сообщение..." />
-    <button class="chat-send" id="chat-send" onclick="sendMessage()">
+  <div class="chat-box" id="chat-messages"></div>
+
+  <div class="quick-row">
+    <button class="qbtn" onclick="quickSend('Дай план на сегодня')">⚡ Daily Plan</button>
+    <button class="qbtn" onclick="quickSend('Новые идеи для заработка')">💡 New Ideas</button>
+    <button class="qbtn" onclick="quickSend('Как отследить прогресс?')">📊 Track Progress</button>
+  </div>
+
+  <div class="input-row">
+    <input class="msg-input" id="chat-input" type="text" placeholder="Message AI Mentor..." />
+    <button class="send-btn" id="chat-send" onclick="sendMessage()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
-        <line x1="22" y1="2" x2="11" y2="13"></line>
-        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
       </svg>
     </button>
   </div>
   <button class="reset-btn" onclick="resetApp()">🔄 Начать заново</button>
 </div>
 
+<!-- PROFILE -->
+<div id="screen-profile" class="screen">
+  <div class="profile-hero">
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatar-letter">?</div>
+      <div class="avatar-dot"></div>
+    </div>
+    <div class="profile-name" id="profile-name">...</div>
+    <div class="profile-role" id="profile-role">AI Builder & Entrepreneur</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+      <div class="chip chip-yellow">⭐ LEVEL PRO</div>
+      <div class="chip chip-green" id="tasks-chip">✓ 0 задач</div>
+    </div>
+  </div>
+
+  <!-- Subscription -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">👑 Subscription</div>
+      <div class="chip chip-green">Active</div>
+    </div>
+    <div class="sub-row"><span class="sub-row-label">Plan</span><span class="sub-row-val y">Level Pro</span></div>
+    <div class="sub-row"><span class="sub-row-label">Status</span><span class="sub-row-val g">Active</span></div>
+    <div class="sub-row"><span class="sub-row-label">Renews on</span><span class="sub-row-val" id="sub-date">—</span></div>
+    <div class="sub-row"><span class="sub-row-label">Tasks completed</span><span class="sub-row-val" id="sub-tasks-count">0</span></div>
+    <button class="manage-btn">Manage Subscription →</button>
+  </div>
+
+  <!-- Earnings -->
+  <div class="card">
+    <div style="font-size:11px;color:var(--white-50);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Lifetime Earnings</div>
+    <div class="earnings-val" id="earnings-display">—</div>
+    <input class="earned-input" id="earned-input" type="text" placeholder="Введи сумму заработка (напр. 25 000 ₽)" />
+  </div>
+</div>
+
 <!-- NAV -->
 <nav class="nav">
-  <button class="nav-btn" id="nav-profile" onclick="showScreen('profile')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-      <circle cx="12" cy="7" r="4"></circle>
-    </svg>
-    Профиль
+  <button class="nav-btn active" id="nav-home" onclick="showScreen('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
   </button>
-  <button class="nav-btn active" id="nav-diary" onclick="showScreen('diary')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="3" y="4" width="18" height="18" rx="2"></rect>
-      <line x1="3" y1="10" x2="21" y2="10"></line>
-      <line x1="8" y1="2" x2="8" y2="6"></line>
-      <line x1="16" y1="2" x2="16" y2="6"></line>
-    </svg>
-    Дневник
+  <button class="nav-btn" id="nav-goals" onclick="showScreen('goals')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    Goals
   </button>
   <button class="nav-btn" id="nav-mentor" onclick="showScreen('mentor')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
-    AI Ментор
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Mentor
+  </button>
+  <button class="nav-btn" id="nav-profile" onclick="showScreen('profile')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profile
   </button>
 </nav>
-
-</div><!-- end app -->
+</div>
 
 <script>
 let API_KEY = localStorage.getItem('thelevel_apikey') || '';
 const MODEL = 'claude-sonnet-4-5';
+let state = { chatHistory:[], niche:null, nicheDesc:null, plan:null, tasks:{}, onboardingDone:false, userName:'', userId:'', earned:'', goal:'', subDate:'' };
 
-let state = {
-  chatHistory: [],
-  niche: null,
-  nicheDesc: null,
-  plan: null,
-  tasks: {},
-  onboardingDone: false,
-  userName: '',
-  userId: '',
-  earned: '',
-  goal: ''
-};
+function save() { localStorage.setItem('thelevel_state', JSON.stringify(state)); }
+function load() { try { const r=localStorage.getItem('thelevel_state'); if(r) state=JSON.parse(r); } catch(e){} }
 
-function saveState() {
-  localStorage.setItem('thelevel_state', JSON.stringify(state));
-}
-
-function loadState() {
-  const raw = localStorage.getItem('thelevel_state');
-  if (raw) { try { state = JSON.parse(raw); } catch(e) {} }
-}
-
-// SPLASH
 window.addEventListener('load', () => {
-  loadState();
+  load();
   setTimeout(() => {
     document.getElementById('splash').classList.add('hide');
     setTimeout(() => {
       document.getElementById('splash').style.display = 'none';
-      if (state.onboardingDone && API_KEY) {
-        showApp();
-      } else {
-        document.getElementById('screen-onboarding').classList.add('active');
-      }
-    }, 600);
-  }, 2000);
+      if (state.onboardingDone && API_KEY) initApp();
+      else document.getElementById('screen-onboarding').classList.add('active');
+    }, 700);
+  }, 2400);
 });
 
 document.getElementById('start-btn').addEventListener('click', () => {
-  const input = document.getElementById('apikey-input');
-  const key = input.value.trim();
-  if (!key || !key.startsWith('sk-')) {
-    document.getElementById('apikey-error').style.display = 'block';
-    return;
-  }
-  API_KEY = key;
-  localStorage.setItem('thelevel_apikey', key);
+  const k = document.getElementById('apikey-input').value.trim();
+  if (!k || !k.startsWith('sk-')) { document.getElementById('apikey-error').style.display='block'; return; }
+  API_KEY = k; localStorage.setItem('thelevel_apikey', k);
   state.onboardingDone = true;
-  saveState();
+  const d = new Date(); d.setDate(d.getDate()+30);
+  state.subDate = d.toLocaleDateString('ru-RU');
+  save();
   document.getElementById('screen-onboarding').classList.remove('active');
-  showApp();
+  initApp();
 });
 
-function showApp() {
+function initApp() {
   document.getElementById('app').classList.add('show');
-  loadProfile();
-  renderDiary();
-  renderProfile();
-  showScreen('diary');
-  if (state.chatHistory.length === 0) {
-    startQuestionnaire();
-  } else {
-    renderChat();
-    renderNiche();
-  }
+  updateProfile(); renderGoals(); renderHome();
+  showScreen('home');
+  if (state.chatHistory.length===0) startQuestionnaire();
+  else { renderChat(); renderNiche(); }
 }
 
-function loadProfile() {
-  let name = 'Пользователь';
-  let uid = '123456789';
-  try {
-    const tg = window.Telegram?.WebApp;
-    if (tg?.initDataUnsafe?.user) {
-      const u = tg.initDataUnsafe.user;
-      name = u.first_name + (u.last_name ? ' ' + u.last_name : '');
-      uid = u.id;
-    }
-  } catch(e) {}
-  if (!state.userName) state.userName = name;
-  if (!state.userId) state.userId = uid;
-  saveState();
-  document.getElementById('profile-name').textContent = state.userName;
-  document.getElementById('profile-id').textContent = 'ID: ' + state.userId;
+function updateProfile() {
+  let name='Пользователь', uid='123456789';
+  try { const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user){const u=tg.initDataUnsafe.user; name=u.first_name+(u.last_name?' '+u.last_name:''); uid=u.id;} } catch(e){}
+  if(!state.userName) state.userName=name;
+  if(!state.userId) state.userId=uid;
+  save();
+  document.getElementById('profile-name').textContent = '@'+state.userName.toLowerCase().replace(/\s/g,'_');
   document.getElementById('avatar-letter').textContent = state.userName.charAt(0).toUpperCase();
-  if (state.earned) document.getElementById('earned-input').value = state.earned;
-  if (state.goal) document.getElementById('goal-input').value = state.goal;
+  if(state.niche) document.getElementById('profile-role').textContent = state.niche;
+  const all=Object.values(state.tasks).flat(), done=all.filter(t=>t.done).length;
+  document.getElementById('tasks-chip').textContent = '✓ '+done+' задач';
+  document.getElementById('sub-tasks-count').textContent = done;
+  if(state.subDate) document.getElementById('sub-date').textContent = state.subDate;
+  if(state.earned){ document.getElementById('earned-input').value=state.earned; document.getElementById('earnings-display').textContent=state.earned; }
 }
 
-document.getElementById('earned-input').addEventListener('input', (e) => {
-  state.earned = e.target.value;
-  saveState();
-});
-
-document.getElementById('goal-input').addEventListener('input', (e) => {
-  state.goal = e.target.value;
-  saveState();
+document.getElementById('earned-input').addEventListener('input', e => {
+  state.earned=e.target.value;
+  document.getElementById('earnings-display').textContent=e.target.value||'—';
+  save(); renderHome();
 });
 
 function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('nav-' + name).classList.add('active');
-  if (name === 'profile') renderProfile();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('nav-'+name).classList.add('active');
+  if(name==='profile') updateProfile();
+  if(name==='home') renderHome();
+  if(name==='goals') renderGoals();
 }
 
-function renderProfile() {
-  const allTasks = Object.values(state.tasks).flat();
-  const doneTasks = allTasks.filter(t => t.done).length;
-  document.getElementById('tasks-done-count').textContent = doneTasks;
+function renderHome() {
+  const all=Object.values(state.tasks).flat(), done=all.filter(t=>t.done).length;
+  document.getElementById('home-tasks').textContent = done;
+  document.getElementById('home-earned').textContent = state.earned||'—';
+}
 
-  if (state.niche) {
-    document.getElementById('profile-niche-badge').style.display = 'inline-flex';
-    document.getElementById('profile-niche-text').textContent = state.niche;
+function renderGoals() {
+  const c = document.getElementById('goals-content');
+  c.innerHTML = '';
+  if(!state.niche) {
+    c.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><p>Пройди опрос у <strong>AI Ментора</strong> — получи нишу и персональный план на 30 дней!</p></div>`;
+    return;
   }
+  const all=Object.values(state.tasks).flat(), done=all.filter(t=>t.done).length;
+  const pct=all.length>0?Math.round((done/all.length)*100):0;
+  const R=28, circ=2*Math.PI*R, offset=circ-(pct/100)*circ;
 
-  if (allTasks.length > 0) {
-    const pct = Math.round((doneTasks / allTasks.length) * 100);
-    document.getElementById('profile-progress-wrap').style.display = 'block';
-    document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('progress-text').textContent = pct + '%';
-  }
+  // Goal card
+  const gc=document.createElement('div'); gc.className='goal-card';
+  gc.innerHTML=`
+    <div class="goal-top">
+      <div>
+        <div class="goal-label">Monthly Goal</div>
+        <div class="goal-amount">${state.goal||'100 000 ₽'}</div>
+        <div class="goal-of">of <input id="goal-input" placeholder="Введи свою цель..." value="${state.goal||''}" /></div>
+      </div>
+      <div class="circle-wrap">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r="${R}" stroke="#222" stroke-width="7" fill="none"/>
+          <circle cx="36" cy="36" r="${R}" stroke="#FFD600" stroke-width="7" fill="none" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}" stroke-linecap="round"/>
+        </svg>
+        <div class="circle-label">${pct}%</div>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="progress-msg" style="margin-top:8px">${pct===100?'🎉 <strong>Great work! You\'ve hit your goal!</strong>':pct>50?'Keep going! You\'re on <strong>the right track.</strong>':'Stay focused — <strong>you\'ve got this!</strong>'}</div>
+  `;
+  c.appendChild(gc);
+  gc.querySelector('#goal-input').addEventListener('input', e=>{ state.goal=e.target.value; save(); });
 
-  if (state.plan) {
-    document.getElementById('profile-plan-wrap').style.display = 'block';
-    document.getElementById('profile-plan-text').textContent = state.plan;
+  // Today tasks
+  const today=new Date().getDate();
+  const todayT=state.tasks[today]||[];
+  const todayDone=todayT.filter(t=>t.done).length;
+  const ts=document.createElement('div');
+  ts.innerHTML=`<div class="section-label">Today's Tasks <span>${todayDone}/${todayT.length} completed</span></div>`;
+  todayT.forEach((task,ti)=>{
+    const item=document.createElement('div'); item.className='task-card'+(task.done?' done':'');
+    item.innerHTML=`<div class="task-check">${task.done?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div class="task-text">${task.text}</div>`;
+    item.onclick=()=>{ state.tasks[today][ti].done=!state.tasks[today][ti].done; save(); renderGoals(); renderHome(); updateProfile(); };
+    ts.appendChild(item);
+  });
+  c.appendChild(ts);
+
+  // All days
+  const expBtn=document.createElement('button'); expBtn.className='expand-btn'; expBtn.innerHTML='📅 Все 30 дней <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+  const allDiv=document.createElement('div'); allDiv.style.display='none';
+  let open=false;
+  expBtn.onclick=()=>{ open=!open; allDiv.style.display=open?'block':'none'; expBtn.innerHTML=open?'🔼 Скрыть':'📅 Все 30 дней <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'; };
+
+  for(let day=1;day<=30;day++){
+    const tasks=state.tasks[day]||[], dc=tasks.filter(t=>t.done).length;
+    const isT=day===today, isDone=tasks.length>0&&dc===tasks.length;
+    const card=document.createElement('div'); card.className='day-card'+(isT?' is-today':'')+(isDone?' is-done':'');
+    let badge=isT?`<div class="chip chip-yellow" style="font-size:10px;padding:3px 8px;">Сегодня</div>`:isDone?`<div class="chip chip-green" style="font-size:10px;padding:3px 8px;">✓ Done</div>`:`<span style="font-size:11px;color:var(--white-50)">${dc}/${tasks.length}</span>`;
+    card.innerHTML=`<div class="day-header"><span class="day-num">День ${day}</span>${badge}</div>`;
+    tasks.forEach((task,ti)=>{
+      const t=document.createElement('div'); t.className='day-task'+(task.done?' done':'');
+      t.innerHTML=`<div class="day-check">${task.done?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div class="day-task-text">${task.text}</div>`;
+      t.onclick=()=>{ state.tasks[day][ti].done=!state.tasks[day][ti].done; save(); renderGoals(); renderHome(); updateProfile(); };
+      card.appendChild(t);
+    });
+    allDiv.appendChild(card);
   }
+  c.appendChild(expBtn); c.appendChild(allDiv);
 }
 
 // CHAT
-const SYSTEM_PROMPT = `Ты AI-наставник приложения "The Level". Проведи короткий опрос (5-6 вопросов) и определи нишу для заработка.
+const SYS=`Ты AI-наставник "The Level". Проведи опрос (5-6 вопросов), определи нишу для заработка.
 
-Веди себя живо и кратко. Один вопрос за раз.
+Один вопрос за раз. Кратко, мотивирующе, по-русски.
 
-Темы вопросов: навыки, опыт, время, работа с людьми или нет, стартовый бюджет.
+После опроса — ТОЛЬКО JSON, никакого текста снаружи:
+{"type":"result","niche":"Название","nicheDesc":"1-2 предложения","plan":"3-4 шага к 100к","tasks":[{"day":1,"tasks":["Задача до 7 слов"]},{"day":2,"tasks":["Задача"]},{"day":3,"tasks":["Задача"]},{"day":4,"tasks":["Задача"]},{"day":5,"tasks":["Задача"]},{"day":6,"tasks":["Задача"]},{"day":7,"tasks":["Задача"]},{"day":8,"tasks":["Задача"]},{"day":9,"tasks":["Задача"]},{"day":10,"tasks":["Задача"]},{"day":11,"tasks":["Задача"]},{"day":12,"tasks":["Задача"]},{"day":13,"tasks":["Задача"]},{"day":14,"tasks":["Задача"]},{"day":15,"tasks":["Задача"]},{"day":16,"tasks":["Задача"]},{"day":17,"tasks":["Задача"]},{"day":18,"tasks":["Задача"]},{"day":19,"tasks":["Задача"]},{"day":20,"tasks":["Задача"]},{"day":21,"tasks":["Задача"]},{"day":22,"tasks":["Задача"]},{"day":23,"tasks":["Задача"]},{"day":24,"tasks":["Задача"]},{"day":25,"tasks":["Задача"]},{"day":26,"tasks":["Задача"]},{"day":27,"tasks":["Задача"]},{"day":28,"tasks":["Задача"]},{"day":29,"tasks":["Задача"]},{"day":30,"tasks":["Задача"]}]}
 
-После опроса ответь ТОЛЬКО JSON без текста до или после:
-{"type":"result","niche":"Название ниши","nicheDesc":"Описание 1-2 предложения","plan":"План на 100к в 3-4 шагах","tasks":[{"day":1,"tasks":["Задача до 7 слов"]},{"day":2,"tasks":["Задача до 7 слов"]},{"day":3,"tasks":["Задача до 7 слов"]},{"day":4,"tasks":["Задача"]},{"day":5,"tasks":["Задача"]},{"day":6,"tasks":["Задача"]},{"day":7,"tasks":["Задача"]},{"day":8,"tasks":["Задача"]},{"day":9,"tasks":["Задача"]},{"day":10,"tasks":["Задача"]},{"day":11,"tasks":["Задача"]},{"day":12,"tasks":["Задача"]},{"day":13,"tasks":["Задача"]},{"day":14,"tasks":["Задача"]},{"day":15,"tasks":["Задача"]},{"day":16,"tasks":["Задача"]},{"day":17,"tasks":["Задача"]},{"day":18,"tasks":["Задача"]},{"day":19,"tasks":["Задача"]},{"day":20,"tasks":["Задача"]},{"day":21,"tasks":["Задача"]},{"day":22,"tasks":["Задача"]},{"day":23,"tasks":["Задача"]},{"day":24,"tasks":["Задача"]},{"day":25,"tasks":["Задача"]},{"day":26,"tasks":["Задача"]},{"day":27,"tasks":["Задача"]},{"day":28,"tasks":["Задача"]},{"day":29,"tasks":["Задача"]},{"day":30,"tasks":["Задача"]}]}
+Задачи конкретные, до 7 слов каждая. Все 30 дней обязательно.`;
 
-Задачи должны быть конкретными и короткими (до 7 слов). JSON должен быть полным — все 30 дней.`;
+function addMsg(role,text,typing=false){
+  const box=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className='msg '+(role==='assistant'?'ai':'user')+(typing?' typing':'');
+  if(typing){div.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';div.id='typing-indicator';}
+  else{div.textContent=text;}
+  box.appendChild(div); box.scrollTop=box.scrollHeight; return div;
+}
+function renderChat(){ const b=document.getElementById('chat-messages'); b.innerHTML=''; state.chatHistory.forEach(m=>addMsg(m.role,m.content)); }
+async function startQuestionnaire(){ const g="Hey! 👋 I'm your AI mentor — here to help you earn more and grow every day.\n\nДавай начнём! Расскажи — что умеешь делать лучше всего?"; state.chatHistory.push({role:'assistant',content:g}); save(); addMsg('assistant',g); }
+function quickSend(t){ document.getElementById('chat-input').value=t; sendMessage(); }
+function buildMsgs(){ const m=state.chatHistory,r=[]; for(let i=0;i<m.length;i++){ if(r.length===0&&m[i].role==='assistant')continue; if(r.length>0&&m[i].role===r[r.length-1].role)r[r.length-1].content+='\n'+m[i].content; else r.push({role:m[i].role,content:m[i].content}); } return r; }
 
-function addMsg(role, text, typing = false) {
-  const box = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = 'msg ' + (role === 'assistant' ? 'ai' : 'user') + (typing ? ' typing' : '');
-  if (typing) {
-    div.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
-    div.id = 'typing-indicator';
-  } else {
-    div.textContent = text;
-  }
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-  return div;
+async function sendMessage(){
+  const inp=document.getElementById('chat-input'), btn=document.getElementById('chat-send');
+  const text=inp.value.trim(); if(!text)return;
+  inp.value=''; btn.disabled=true;
+  state.chatHistory.push({role:'user',content:text}); save(); addMsg('user',text);
+  const te=addMsg('assistant','',true);
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:4000,system:SYS,messages:buildMsgs()})});
+    const data=await res.json(); te.remove();
+    const reply=data.content?.[0]?.text||'Ошибка ответа';
+    try{ const cl=reply.replace(/```json|```/g,'').trim(); const s=cl.indexOf('{'),e=cl.lastIndexOf('}'); if(s!==-1&&e!==-1){const p=JSON.parse(cl.substring(s,e+1)); if(p.type==='result'){handleResult(p);btn.disabled=false;return;}} }catch(e){}
+    state.chatHistory.push({role:'assistant',content:reply}); save(); addMsg('assistant',reply);
+  }catch(e){ te.remove(); addMsg('assistant','Ошибка соединения. Попробуй ещё раз.'); }
+  btn.disabled=false;
 }
 
-function renderChat() {
-  const box = document.getElementById('chat-messages');
-  box.innerHTML = '';
-  state.chatHistory.forEach(m => addMsg(m.role, m.content));
+document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage();});
+
+function handleResult(p){
+  state.niche=p.niche; state.nicheDesc=p.nicheDesc; state.plan=p.plan; state.tasks={};
+  p.tasks.forEach(d=>{state.tasks[d.day]=d.tasks.map(t=>({text:t,done:false}));});
+  const msg=`✅ Ниша определена: ${p.niche}\n\n${p.nicheDesc}\n\nПлан на 30 дней готов! Переходи в Goals 🎯`;
+  state.chatHistory.push({role:'assistant',content:msg}); save(); addMsg('assistant',msg);
+  renderNiche(); renderGoals(); renderHome(); updateProfile();
 }
 
-async function startQuestionnaire() {
-  const greeting = 'Привет! 👋 Я помогу найти твою нишу и составлю план на первые 100 000 ₽. Начнём! Расскажи — что умеешь делать лучше всего?';
-  state.chatHistory.push({ role: 'assistant', content: greeting });
-  saveState();
-  addMsg('assistant', greeting);
-}
+function renderNiche(){ if(!state.niche)return; document.getElementById('niche-block').style.display='block'; document.getElementById('niche-title').textContent=state.niche; document.getElementById('niche-desc').textContent=state.nicheDesc||''; }
 
-async function sendMessage() {
-  const input = document.getElementById('chat-input');
-  const sendBtn = document.getElementById('chat-send');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  sendBtn.disabled = true;
-  state.chatHistory.push({ role: 'user', content: text });
-  saveState();
-  addMsg('user', text);
-  const typingEl = addMsg('assistant', '', true);
-  try {
-    const apiMessages = buildApiMessages();
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({ model: MODEL, max_tokens: 4000, system: SYSTEM_PROMPT, messages: apiMessages })
-    });
-    const data = await res.json();
-    typingEl.remove();
-    const reply = data.content?.[0]?.text || 'Ошибка ответа';
-    try {
-      const cleaned = reply.replace(/```json|```/g, '').trim();
-      const start = cleaned.indexOf('{');
-      const end = cleaned.lastIndexOf('}');
-      if (start !== -1 && end !== -1) {
-        const parsed = JSON.parse(cleaned.substring(start, end + 1));
-        if (parsed.type === 'result') { handleResult(parsed); sendBtn.disabled = false; return; }
-      }
-    } catch(e) {}
-    state.chatHistory.push({ role: 'assistant', content: reply });
-    saveState();
-    addMsg('assistant', reply);
-  } catch(e) {
-    typingEl.remove();
-    addMsg('assistant', 'Ошибка соединения. Попробуй ещё раз.');
-  }
-  sendBtn.disabled = false;
-}
+function resetApp(){ if(!confirm('Сбросить весь прогресс?'))return; localStorage.removeItem('thelevel_state'); localStorage.removeItem('thelevel_apikey'); location.reload(); }
 
-function buildApiMessages() {
-  const msgs = state.chatHistory;
-  const result = [];
-  for (let i = 0; i < msgs.length; i++) {
-    if (result.length === 0 && msgs[i].role === 'assistant') continue;
-    if (result.length > 0 && msgs[i].role === result[result.length-1].role) {
-      result[result.length-1].content += '\n' + msgs[i].content;
-    } else {
-      result.push({ role: msgs[i].role, content: msgs[i].content });
-    }
-  }
-  return result;
-}
-
-document.getElementById('chat-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendMessage();
-});
-
-function handleResult(parsed) {
-  state.niche = parsed.niche;
-  state.nicheDesc = parsed.nicheDesc;
-  state.plan = parsed.plan;
-  state.tasks = {};
-  parsed.tasks.forEach(d => {
-    state.tasks[d.day] = d.tasks.map(t => ({ text: t, done: false }));
-  });
-  const msg = `✅ Ниша: ${parsed.niche}\n\n${parsed.nicheDesc}\n\nЕжедневник на 30 дней заполнен! Переходи во вкладку Дневник 📅`;
-  state.chatHistory.push({ role: 'assistant', content: msg });
-  saveState();
-  addMsg('assistant', msg);
-  renderNiche();
-  renderDiary();
-  renderProfile();
-}
-
-function renderNiche() {
-  if (!state.niche) return;
-  document.getElementById('niche-block').style.display = 'block';
-  document.getElementById('niche-title').textContent = state.niche;
-  document.getElementById('niche-desc').textContent = state.nicheDesc || '';
-}
-
-function renderDiary() {
-  const container = document.getElementById('diary-content');
-  container.innerHTML = '';
-  if (!state.niche) {
-    container.innerHTML = `
-      <div class="empty-diary">
-        <div class="empty-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
-            <line x1="3" y1="10" x2="21" y2="10"></line>
-            <line x1="8" y1="2" x2="8" y2="6"></line>
-            <line x1="16" y1="2" x2="16" y2="6"></line>
-          </svg>
-        </div>
-        <p>Пройди опрос у <strong style="color:#FFD600">AI Ментора</strong> — и я заполню твой план на 30 дней!</p>
-      </div>`;
-    return;
-  }
-  const today = new Date().getDate();
-  const allTasks = Object.values(state.tasks).flat();
-  const doneTasks = allTasks.filter(t => t.done).length;
-  const pct = allTasks.length > 0 ? Math.round((doneTasks / allTasks.length) * 100) : 0;
-
-  const banner = document.createElement('div');
-  banner.className = 'niche-banner';
-  banner.innerHTML = `<div class="niche-banner-dot"></div><div class="niche-banner-text">🎯 ${state.niche}</div>`;
-  container.appendChild(banner);
-
-  const monthNav = document.createElement('div');
-  monthNav.className = 'month-nav';
-  monthNav.innerHTML = `<span class="month-name">Май 2026</span><span class="month-stats">${doneTasks}/${allTasks.length} задач • ${pct}%</span>`;
-  container.appendChild(monthNav);
-
-  for (let day = 1; day <= 30; day++) {
-    const tasks = state.tasks[day] || [];
-    const doneCnt = tasks.filter(t => t.done).length;
-    const isToday = day === today;
-    const allDone = tasks.length > 0 && doneCnt === tasks.length;
-
-    const card = document.createElement('div');
-    card.className = 'day-card' + (isToday ? ' today' : '') + (allDone ? ' completed' : '');
-
-    const header = document.createElement('div');
-    header.className = 'day-header';
-    let badge = '';
-    if (isToday) badge = '<span class="day-badge today-badge">Сегодня</span>';
-    else if (allDone) badge = '<span class="day-badge done-badge">✓ Готово</span>';
-    else badge = `<span class="day-progress-text">${doneCnt}/${tasks.length}</span>`;
-    header.innerHTML = `<span class="day-num">День ${day}</span>${badge}`;
-    card.appendChild(header);
-
-    tasks.forEach((task, ti) => {
-      const item = document.createElement('div');
-      item.className = 'task-item' + (task.done ? ' done' : '');
-      item.innerHTML = `
-        <div class="task-check">${task.done ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}</div>
-        <div class="task-text">${task.text}</div>`;
-      item.onclick = () => {
-        state.tasks[day][ti].done = !state.tasks[day][ti].done;
-        saveState();
-        renderDiary();
-        renderProfile();
-      };
-      card.appendChild(item);
-    });
-
-    container.appendChild(card);
-  }
-}
-
-function resetApp() {
-  if (!confirm('Сбросить весь прогресс и начать заново?')) return;
-  localStorage.removeItem('thelevel_state');
-  localStorage.removeItem('thelevel_apikey');
-  location.reload();
-}
-
-try { window.Telegram?.WebApp?.ready(); window.Telegram?.WebApp?.expand(); } catch(e) {}
+try{window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();}catch(e){}
 </script>
 </body>
 </html>
