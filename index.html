@@ -243,6 +243,23 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .tariff-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--gdim);color:var(--green);margin-left:8px}
 .modal-close{width:100%;padding:14px;border:1px solid var(--border2);border-radius:14px;background:transparent;color:var(--w70);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:12px;transition:all .2s}
 
+/* GATE SCREENS */
+#gate{position:fixed;inset:0;z-index:996;display:none;align-items:center;justify-content:center;background:var(--bg)}
+#gate.active{display:flex}
+.gate-in{text-align:center;max-width:320px;width:100%;padding:28px}
+.gate-logo{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:700;color:var(--white);line-height:1}
+.gate-lv{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:32px;color:var(--white);margin-top:-4px;margin-bottom:24px}
+.gate-icon{width:72px;height:72px;border-radius:22px;background:var(--surface);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.gate-title{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:700;margin-bottom:10px;color:var(--white)}
+.gate-desc{font-size:14px;color:var(--w70);line-height:1.6;margin-bottom:28px}
+.gate-btn{width:100%;padding:16px;border:none;border-radius:14px;background:var(--white);color:#000;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s}
+.gate-btn:active{opacity:.85}
+.gate-btn.secondary{background:transparent;border:1px solid var(--border2);color:var(--w70)}
+.trial-timer{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;color:var(--white);margin:16px 0 6px}
+.trial-label{font-size:12px;color:var(--w50);text-transform:uppercase;letter-spacing:1px;margin-bottom:24px}
+.trial-progress{height:6px;background:var(--w10);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.trial-fill{height:100%;background:var(--white);border-radius:3px;transition:width .5s}
+
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--w10);border-radius:3px}
@@ -388,6 +405,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
         <div class="s-row"><span class="s-label">Тариф</span><span class="s-val">The Level Ultimate</span></div>
         <div class="s-row"><span class="s-label">Статус</span><span class="s-val g">Активна</span></div>
         <div class="s-row"><span class="s-label">Продлевается</span><span class="s-val" id="sub-date">—</span></div>
+        <div class="s-row"><span class="s-label">Пробный период</span><span class="s-val" id="trial-days">—</span></div>
         <div class="s-row"><span class="s-label">Задач выполнено</span><span class="s-val" id="sub-tasks-count">0</span></div>
         <button class="card-btn primary" onclick="openSubModal()">Управление подпиской</button>
       </div>
@@ -424,6 +442,11 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
   <button class="nb" id="nav-mentor" onclick="showScreen('mentor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>AI Mentor</button>
   <button class="nb" id="nav-profile" onclick="showScreen('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Профиль</button>
 </nav>
+</div>
+
+<!-- GATE: subscription check -->
+<div id="gate">
+  <div class="gate-in" id="gate-content"></div>
 </div>
 
 <div class="modal-ov" id="sub-modal" onclick="if(event.target===this)closeSubModal()">
@@ -474,7 +497,7 @@ function getRefParam(){
   try{ const p=new URLSearchParams(window.location.search); return p.get('start')||''; }catch(e){ return ''; }
 }
 
-let state = { chatHistory:[], niche:null, nicheDesc:null, plan:null, tasks:{}, onboardingDone:false, userName:'', userId:'', earned:'', goal:'', subDate:'', startDate:null };
+let state = { chatHistory:[], niche:null, nicheDesc:null, plan:null, tasks:{}, onboardingDone:false, userName:'', userId:'', earned:'', goal:'', subDate:'', startDate:null, trialStart:null };
 function save(){ localStorage.setItem('thelevel_state', JSON.stringify(state)); }
 function load(){ try{ const r=localStorage.getItem('thelevel_state'); if(r) state=JSON.parse(r); }catch(e){} }
 
@@ -609,12 +632,116 @@ document.getElementById('start-btn').addEventListener('click', ()=>{
   initApp();
 });
 
-function initApp(){
+const CHANNEL = 'thelevelai';
+const BOT_TOKEN = '8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
+const TRIAL_DAYS = 3;
+
+async function checkSubscription(userId){
+  try{
+    const res = await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/getChatMember?chat_id=@'+CHANNEL+'&user_id='+userId);
+    const data = await res.json();
+    if(data.ok){
+      const status = data.result.status;
+      return ['member','administrator','creator'].includes(status);
+    }
+  }catch(e){}
+  return false;
+}
+
+function getTrialDaysLeft(){
+  if(!state.trialStart) return TRIAL_DAYS;
+  const diff = Math.floor((new Date() - new Date(state.trialStart)) / (1000*60*60*24));
+  return Math.max(0, TRIAL_DAYS - diff);
+}
+
+async function initApp(){
   document.getElementById('app').classList.add('show');
   updateProfile(); renderGoals(); renderHome();
+
+  // Get userId from Telegram
+  let userId = state.userId || '0';
+  try{ const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user) userId=String(tg.initDataUnsafe.user.id); }catch(e){}
+
+  // Set trial start if not set
+  if(!state.trialStart){ state.trialStart = new Date().toISOString(); save(); }
+
+  const daysLeft = getTrialDaysLeft();
+
+  // Check subscription first
+  const isSubscribed = userId !== '0' ? await checkSubscription(userId) : true;
+
+  if(!isSubscribed){
+    showGate('subscribe');
+    return;
+  }
+
+  if(daysLeft <= 0){
+    showGate('trial-expired');
+    return;
+  }
+
   showScreen('home');
   if(state.chatHistory.length===0) startQuestionnaire();
   else{ renderChat(); renderNiche(); }
+}
+
+function showGate(type){
+  const gate = document.getElementById('gate');
+  const content = document.getElementById('gate-content');
+  gate.classList.add('active');
+
+  if(type === 'subscribe'){
+    content.innerHTML = `
+      <div class="gate-logo">THE</div>
+      <div class="gate-lv">level</div>
+      <div class="gate-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.97"/>
+        </svg>
+      </div>
+      <div class="gate-title">Подпишись на канал</div>
+      <div class="gate-desc">Чтобы пользоваться The Level, нужно подписаться на наш Telegram-канал</div>
+      <a href="https://t.me/thelevelai" target="_blank" style="text-decoration:none;display:block;margin-bottom:10px;">
+        <button class="gate-btn">Подписаться на @thelevelai</button>
+      </a>
+      <button class="gate-btn secondary" onclick="recheckSubscription()">Я подписался ✓</button>
+    `;
+  } else if(type === 'trial-expired'){
+    content.innerHTML = `
+      <div class="gate-logo">THE</div>
+      <div class="gate-lv">level</div>
+      <div class="gate-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="gate-title">Пробный период закончился</div>
+      <div class="gate-desc">3 дня бесплатного доступа истекли. Выбери тариф чтобы продолжить.</div>
+      <button class="gate-btn" onclick="closeGateAndSub()">Выбрать тариф</button>
+    `;
+  }
+}
+
+async function recheckSubscription(){
+  let userId = state.userId || '0';
+  try{ const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user) userId=String(tg.initDataUnsafe.user.id); }catch(e){}
+  const isSubscribed = await checkSubscription(userId);
+  if(isSubscribed){
+    document.getElementById('gate').classList.remove('active');
+    const daysLeft = getTrialDaysLeft();
+    if(daysLeft <= 0){ showGate('trial-expired'); return; }
+    showScreen('home');
+    if(state.chatHistory.length===0) startQuestionnaire();
+    else{ renderChat(); renderNiche(); }
+  } else {
+    alert('Ты ещё не подписался! Подпишись на @thelevelai и нажми снова.');
+  }
+}
+
+function closeGateAndSub(){
+  document.getElementById('gate').classList.remove('active');
+  showScreen('profile');
+  setTimeout(()=>openSubModal(), 300);
 }
 
 function updateProfile(){
@@ -634,6 +761,9 @@ function updateProfile(){
   document.getElementById('earnings-display').textContent=state.earned?state.earned+' ₽':'— ₽';
   if(state.earned) document.getElementById('earned-input').value=state.earned;
   document.getElementById('ref-link-text').textContent='t.me/TheLevelAppBot/thelevel?start=ref_'+state.userId;
+  const dLeft = getTrialDaysLeft ? getTrialDaysLeft() : 3;
+  const trialEl = document.getElementById('trial-days');
+  if(trialEl) trialEl.textContent = dLeft > 0 ? dLeft+' дн. осталось' : 'Истёк';
   // Fetch real ref count
   getRefCount(state.userId).then(count => {
     document.getElementById('ref-count').textContent = count;
