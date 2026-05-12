@@ -11,7 +11,6 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden}
 
-/* SPLASH */
 #splash{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .7s ease}
 #splash.hide{opacity:0;pointer-events:none}
 .sp-logo{font-family:'Unbounded',sans-serif;font-size:56px;font-weight:700;line-height:1;color:var(--white);letter-spacing:-1px}
@@ -29,26 +28,30 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .role-lv{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:34px;color:var(--white);margin-top:-4px;margin-bottom:32px}
 .role-label{font-size:11px;color:var(--w50);font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px}
 .role-btn{width:100%;padding:18px;border:1px solid var(--border2);border-radius:16px;background:var(--surface);color:var(--white);font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:12px}
-.role-btn:hover{border-color:var(--w30);background:var(--surface2)}
 .role-btn.primary{background:var(--white);color:#000;border-color:var(--white)}
-.role-btn.primary:hover{opacity:.9}
 
-/* ONBOARDING (client) */
-#onb{position:fixed;inset:0;z-index:997;display:none;align-items:center;justify-content:center;background:var(--bg)}
+/* ONBOARDING */
+#onb{position:fixed;inset:0;z-index:997;display:none;flex-direction:column;background:var(--bg);overflow-y:auto}
 #onb.active{display:flex}
-.onb-in{text-align:center;max-width:320px;width:100%;padding:24px}
-.onb-logo{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;color:var(--white)}
+.onb-step{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;min-height:100vh}
+.onb-step.active{display:flex}
+.onb-logo{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1}
 .onb-lv{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:34px;color:var(--white);margin-top:-4px}
-.onb-sub{color:var(--w50);font-size:13px;line-height:1.6;margin:20px 0 28px}
-.onb-iw{position:relative;margin-bottom:8px}
-.onb-inp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 14px 16px 42px;color:var(--white);font-family:'Manrope',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.onb-headline{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;color:var(--white);line-height:1.3;margin-bottom:12px;max-width:300px}
+.onb-desc{font-size:14px;color:var(--w70);line-height:1.7;margin-bottom:32px;max-width:300px}
+.onb-features{display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;margin-bottom:32px}
+.onb-feature{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left}
+.onb-feature-icon{width:40px;height:40px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.onb-feature-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:2px}
+.onb-feature-desc{font-size:12px;color:var(--w50)}
+.onb-big-btn{width:100%;max-width:320px;padding:18px;border:none;border-radius:16px;background:var(--white);color:#000;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:10px}
+.onb-big-btn:active{transform:scale(.97);opacity:.85}
+.onb-inp{width:100%;max-width:320px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 14px 16px 42px;color:var(--white);font-family:'Manrope',sans-serif;font-size:13px;outline:none;margin-bottom:8px;transition:border-color .2s}
 .onb-inp:focus{border-color:var(--w30)}
+.onb-iw{position:relative;width:100%;max-width:320px;margin-bottom:8px}
 .onb-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--w50)}
 .onb-err{color:#ff7b7b;font-size:12px;margin-bottom:10px;display:none}
-.btn-p{width:100%;padding:16px;border:none;border-radius:14px;background:var(--white);color:#000;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-p:active{transform:scale(.97);opacity:.85}
 .back-btn{background:none;border:none;color:var(--w50);font-family:'Manrope',sans-serif;font-size:13px;cursor:pointer;margin-top:16px;padding:8px}
-.back-btn:hover{color:var(--white)}
 
 /* ADMIN LOGIN */
 #admin-login{position:fixed;inset:0;z-index:997;display:none;align-items:center;justify-content:center;background:var(--bg)}
@@ -58,17 +61,17 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .adm-sub{color:var(--w50);font-size:13px;margin-bottom:28px}
 .adm-inp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;color:var(--white);font-family:'Manrope',sans-serif;font-size:14px;outline:none;margin-bottom:10px;transition:border-color .2s}
 .adm-inp:focus{border-color:var(--w30)}
-.adm-err{color:#ff7b7b;font-size:12px;margin-bottom:10px;display:none}
+.btn-p{width:100%;padding:16px;border:none;border-radius:14px;background:var(--white);color:#000;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-p:active{transform:scale(.97);opacity:.85}
 
 /* ADMIN PANEL */
 #admin-panel{position:fixed;inset:0;z-index:996;display:none;flex-direction:column;background:var(--bg);overflow-y:auto}
 #admin-panel.active{display:flex}
 .adm-header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .adm-header-title{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700}
-.adm-logout{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--w50);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;padding:6px 12px;transition:all .2s}
-.adm-logout:hover{color:var(--white);border-color:var(--w30)}
+.adm-logout{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--w50);font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;padding:6px 12px}
 .adm-body{padding:16px;flex:1}
-.adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .adm-stat{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px}
 .adm-stat-v{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:4px}
 .adm-stat-l{font-size:11px;color:var(--w50);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
@@ -84,6 +87,16 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .adm-card-row span:last-child{color:var(--w70);font-weight:600}
 .adm-empty{text-align:center;color:var(--w50);font-size:13px;padding:32px 0}
 
+/* GATE */
+#gate{position:fixed;inset:0;z-index:995;display:none;align-items:center;justify-content:center;background:var(--bg)}
+#gate.active{display:flex}
+.gate-in{text-align:center;max-width:320px;width:100%;padding:28px}
+.gate-icon{width:72px;height:72px;border-radius:22px;background:var(--surface);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px}
+.gate-title{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:700;margin-bottom:10px}
+.gate-desc{font-size:14px;color:var(--w70);line-height:1.6;margin-bottom:28px}
+.gate-btn{width:100%;padding:16px;border:none;border-radius:14px;background:var(--white);color:#000;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s;text-decoration:none}
+.gate-btn.secondary{background:transparent;border:1px solid var(--border2);color:var(--w70)}
+
 /* APP */
 #app{display:none}
 #app.show{display:block}
@@ -97,25 +110,38 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .nb.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:2px;background:var(--white);border-radius:0 0 2px 2px}
 
 /* HOME */
-.home-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 0}
-.h-logo{font-family:'Unbounded',sans-serif;font-size:52px;font-weight:700;line-height:1;color:var(--white);letter-spacing:-1px}
-.h-lv{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:60px;line-height:1;color:var(--white);margin-top:-6px}
-.h-tag{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--w50);text-transform:uppercase;line-height:2;margin:28px 0 32px}
-.h-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:20px}
-.h-stat{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;text-align:left}
-.h-stat-l{font-size:10px;color:var(--w50);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.h-stat-v{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:700;color:var(--white);line-height:1}
-.h-stat-s{font-size:11px;color:var(--w50);margin-top:4px}
-.h-cta{width:100%;padding:18px;border:none;border-radius:16px;background:var(--white);color:#000;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .2s}
+.home-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 0}
+.h-logo{font-family:'Unbounded',sans-serif;font-size:48px;font-weight:700;line-height:1;color:var(--white);letter-spacing:-1px}
+.h-lv{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:56px;line-height:1;color:var(--white);margin-top:-6px}
+.h-tag{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--w50);text-transform:uppercase;line-height:2;margin:24px 0 28px}
+.h-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:16px}
+.h-stat{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;text-align:left}
+.h-stat-l{font-size:10px;color:var(--w50);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.h-stat-v{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:var(--white);line-height:1}
+.h-stat-s{font-size:11px;color:var(--w50);margin-top:3px}
+
+/* STREAK */
+.streak-bar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:14px;width:100%}
+.streak-fire{font-size:24px}
+.streak-info{flex:1}
+.streak-count{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;color:var(--white)}
+.streak-label{font-size:11px;color:var(--w50);margin-top:1px}
+.streak-days{display:flex;gap:4px}
+.streak-dot{width:8px;height:8px;border-radius:50%;background:var(--w10)}
+.streak-dot.done{background:var(--white)}
+.streak-dot.today{background:var(--white);box-shadow:0 0 6px rgba(255,255,255,.5)}
+
+.h-cta{width:100%;padding:17px;border:none;border-radius:16px;background:var(--white);color:#000;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .2s}
 .h-cta:active{opacity:.85}
 
-.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px}
-.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.card-title{font-size:15px;font-weight:700;color:var(--white);display:flex;align-items:center;gap:8px}
-.chip{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700}
-.chip-w{background:var(--w10);border:1px solid var(--border2);color:var(--w90)}
-.chip-g{background:var(--gdim);border:1px solid rgba(74,222,128,.3);color:var(--green)}
+/* XP BAR */
+.xp-bar-wrap{width:100%;margin-bottom:14px}
+.xp-bar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.xp-level-badge{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--white)}
+.xp-bar{height:6px;background:var(--w10);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:var(--white);border-radius:3px;transition:width .8s ease}
 
+/* PROFILE */
 .ph-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 0 16px}
 .ph-title{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700}
 .ph-bell{width:38px;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center}
@@ -125,13 +151,36 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .av-dot{position:absolute;bottom:6px;right:6px;width:14px;height:14px;border-radius:50%;background:var(--green);border:2px solid var(--bg)}
 .p-name{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:700;margin-bottom:4px}
 .p-role{font-size:13px;color:var(--w50);margin-bottom:12px}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700}
+.chip-w{background:var(--w10);border:1px solid var(--border2);color:var(--w90)}
+.chip-g{background:var(--gdim);border:1px solid rgba(74,222,128,.3);color:var(--green)}
+
+/* TRAJECTORY CARD */
+.traj-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px}
+.traj-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.traj-title{font-size:13px;font-weight:700;color:var(--white);display:flex;align-items:center;gap:8px}
+.traj-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.traj-point{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.traj-point.a{background:var(--w10);color:var(--w70)}
+.traj-point.b{background:rgba(74,222,128,.15);color:var(--green)}
+.traj-text{flex:1}
+.traj-label{font-size:10px;color:var(--w50);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.traj-value{font-size:14px;font-weight:700;color:var(--white)}
+.traj-arrow{display:flex;justify-content:center;margin:4px 0 10px}
+.traj-progress{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.traj-prog-bar{flex:1;height:4px;background:var(--w10);border-radius:2px;overflow:hidden}
+.traj-prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .6s}
+.traj-prog-pct{font-size:12px;font-weight:700;color:var(--green)}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:15px;font-weight:700;color:var(--white);display:flex;align-items:center;gap:8px}
 .s-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
 .s-row:last-of-type{border-bottom:none}
 .s-label{font-size:13px;color:var(--w50)}
 .s-val{font-size:13px;font-weight:700;color:var(--white)}
 .s-val.g{color:var(--green)}
 .coll-btn{width:100%;padding:13px 0;background:none;border:none;color:var(--w50);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:color .2s}
-.coll-btn:hover{color:var(--white)}
 .coll-content{overflow:hidden;transition:max-height .35s ease,opacity .3s ease;max-height:0;opacity:0}
 .coll-content.open{max-height:600px;opacity:1}
 .card-btn{width:100%;padding:14px;border:1px solid var(--border2);border-radius:12px;background:var(--w5);color:var(--white);font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
@@ -142,33 +191,41 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .inp:focus{border-color:var(--w30)}
 .inp::placeholder{color:var(--w50);font-weight:500}
 
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
+.ach-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center}
+.ach-item.unlocked{border-color:var(--w30);background:var(--surface2)}
+.ach-icon{font-size:24px;margin-bottom:6px}
+.ach-name{font-size:10px;font-weight:700;color:var(--w50);text-transform:uppercase;letter-spacing:.3px}
+.ach-item.unlocked .ach-name{color:var(--white)}
+
 .ref-card{background:linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid var(--border2);border-radius:20px;padding:18px;margin-bottom:12px}
 .ref-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px}
 .ref-desc{font-size:13px;color:var(--w70);line-height:1.5;margin-bottom:14px}
 .ref-link-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
-.ref-link-text{font-size:12px;color:var(--w70);font-family:'Manrope',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.ref-copy-btn{background:var(--white);color:#000;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;transition:opacity .2s}
-.ref-copy-btn:active{opacity:.7}
+.ref-link-text{font-size:12px;color:var(--w70);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.ref-copy-btn{background:var(--white);color:#000;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
 .ref-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ref-stat{background:var(--surface2);border-radius:12px;padding:12px;text-align:center}
-.ref-stat-v{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:var(--white)}
+.ref-stat-v{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700}
 .ref-stat-l{font-size:11px;color:var(--w50);margin-top:3px}
 
+/* GOALS */
 .g-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 0 20px}
 .g-title{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:700}
 .goal-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:20px;margin-bottom:16px}
 .goal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
 .goal-left{flex:1;min-width:0}
 .goal-lbl{font-size:10px;color:var(--w50);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.goal-inp{background:none;border:none;outline:none;color:var(--white);font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;width:100%;line-height:1.2;padding:0}
-.goal-inp::placeholder{color:var(--w30);font-family:'Manrope',sans-serif;font-weight:500;font-size:14px}
+.goal-inp{background:none;border:none;outline:none;color:var(--white);font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;width:100%;line-height:1.2;padding:0}
+.goal-inp::placeholder{color:var(--w30);font-family:'Manrope',sans-serif;font-weight:500;font-size:13px}
 .goal-dl{font-size:11px;color:var(--w50);margin-top:6px}
 .circ-wrap{position:relative;width:76px;height:76px;flex-shrink:0}
 .circ-wrap svg{transform:rotate(-90deg)}
 .circ-lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--white)}
 .prog-bar{height:4px;background:var(--w10);border-radius:2px;overflow:hidden;margin-bottom:10px}
 .prog-fill{height:100%;background:var(--white);border-radius:2px;transition:width .6s ease}
-.prog-msg{font-size:12px;color:var(--w70);font-weight:500;line-height:1.5}
+.prog-msg{font-size:12px;color:var(--w70);line-height:1.5}
 .prog-msg strong{color:var(--white)}
 .sec-lbl{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
 .sec-lbl span{font-family:'Manrope',sans-serif;font-size:12px;color:var(--w50);font-weight:600}
@@ -191,20 +248,21 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .day-task-text{font-size:12px;font-weight:500;color:var(--white)}
 .day-task.done .day-task-text{text-decoration:line-through;color:var(--w50)}
 .empty-st{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:48px 20px}
-.empty-ico{width:70px;height:70px;border-radius:22px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.empty-ico{width:70px;height:70px;border-radius:22px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px}
 .empty-st p{font-size:14px;line-height:1.7;color:var(--w50);max-width:280px}
 .empty-st strong{color:var(--white)}
 
-.m-top{display:flex;align-items:center;gap:12px;padding:10px 0 18px}
-.m-ico{width:48px;height:48px;border-radius:14px;background:var(--surface);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* MENTOR */
+.m-top{display:flex;align-items:center;gap:12px;padding:10px 0 16px}
+.m-ico{width:48px;height:48px;border-radius:14px;background:var(--surface);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
 .m-name{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700}
 .m-sub{font-size:12px;color:var(--w50);margin-top:2px}
 .niche-card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:16px;margin-bottom:14px}
 .niche-lbl{font-size:10px;color:var(--w50);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .niche-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px}
 .niche-desc{font-size:13px;color:var(--w70);line-height:1.5}
-.chat-box{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px;min-height:200px;max-height:360px}
-.msg{max-width:86%;padding:12px 15px;border-radius:18px;font-size:13px;line-height:1.55;font-weight:500}
+.chat-box{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px;min-height:180px;max-height:340px}
+.msg{max-width:86%;padding:12px 15px;border-radius:18px;font-size:13px;line-height:1.6;font-weight:500}
 .msg.ai{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px;align-self:flex-start;color:var(--white)}
 .msg.user{background:var(--white);border-bottom-right-radius:4px;align-self:flex-end;color:#000;font-weight:600}
 .quick-row{display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
@@ -241,24 +299,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 .tariff-features li{font-size:12px;color:var(--w70);padding:3px 0;display:flex;align-items:center;gap:6px}
 .tariff-features li::before{content:'✓';color:var(--green);font-weight:700}
 .tariff-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--gdim);color:var(--green);margin-left:8px}
-.modal-close{width:100%;padding:14px;border:1px solid var(--border2);border-radius:14px;background:transparent;color:var(--w70);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:12px;transition:all .2s}
-
-/* GATE SCREENS */
-#gate{position:fixed;inset:0;z-index:996;display:none;align-items:center;justify-content:center;background:var(--bg)}
-#gate.active{display:flex}
-.gate-in{text-align:center;max-width:320px;width:100%;padding:28px}
-.gate-logo{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:700;color:var(--white);line-height:1}
-.gate-lv{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:32px;color:var(--white);margin-top:-4px;margin-bottom:24px}
-.gate-icon{width:72px;height:72px;border-radius:22px;background:var(--surface);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
-.gate-title{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:700;margin-bottom:10px;color:var(--white)}
-.gate-desc{font-size:14px;color:var(--w70);line-height:1.6;margin-bottom:28px}
-.gate-btn{width:100%;padding:16px;border:none;border-radius:14px;background:var(--white);color:#000;font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s}
-.gate-btn:active{opacity:.85}
-.gate-btn.secondary{background:transparent;border:1px solid var(--border2);color:var(--w70)}
-.trial-timer{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:700;color:var(--white);margin:16px 0 6px}
-.trial-label{font-size:12px;color:var(--w50);text-transform:uppercase;letter-spacing:1px;margin-bottom:24px}
-.trial-progress{height:6px;background:var(--w10);border-radius:3px;overflow:hidden;margin-bottom:8px}
-.trial-fill{height:100%;background:var(--white);border-radius:3px;transition:width .5s}
+.modal-close{width:100%;padding:14px;border:1px solid var(--border2);border-radius:14px;background:transparent;color:var(--w70);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:12px}
 
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -281,7 +322,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     <div class="role-logo">THE</div>
     <div class="role-lv">level</div>
     <div class="role-label">Выбери роль</div>
-    <button class="role-btn primary" onclick="showClientOnb()">
+    <button class="role-btn primary" onclick="showOnbStep(1)">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Я клиент
     </button>
@@ -292,19 +333,47 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
   </div>
 </div>
 
-<!-- CLIENT ONBOARDING -->
+<!-- ONBOARDING STEPS -->
 <div id="onb">
-  <div class="onb-in">
+  <!-- Step 1: Welcome -->
+  <div class="onb-step active" id="onb-step-1">
     <div class="onb-logo">THE</div>
-    <div class="onb-lv">level</div>
-    <p class="onb-sub">AI-ассистент, который помогает зарабатывать больше и расти каждый день.</p>
+    <div class="onb-lv" style="margin-bottom:32px">level</div>
+    <div class="onb-headline">Залетай — здесь ты реально начнёшь зарабатывать</div>
+    <div class="onb-desc">AI-наставник который знает твою ситуацию, строит план под тебя и не даёт слиться</div>
+    <div class="onb-features">
+      <div class="onb-feature">
+        <div class="onb-feature-icon">🎯</div>
+        <div><div class="onb-feature-title">Твоя ниша за 5 минут</div><div class="onb-feature-desc">AI разберёт твои навыки и даст конкретное направление</div></div>
+      </div>
+      <div class="onb-feature">
+        <div class="onb-feature-icon">📅</div>
+        <div><div class="onb-feature-title">План на 30 дней</div><div class="onb-feature-desc">Задачи по дням — не теория, а реальные действия</div></div>
+      </div>
+      <div class="onb-feature">
+        <div class="onb-feature-icon">⚡</div>
+        <div><div class="onb-feature-title">Без воды и отмазок</div><div class="onb-feature-desc">Честно скажет где ты сейчас и что делать дальше</div></div>
+      </div>
+    </div>
+    <button class="onb-big-btn" onclick="showOnbStep(2)">
+      Погнали →
+    </button>
+    <button class="back-btn" onclick="backToRole()">← Назад</button>
+  </div>
+
+  <!-- Step 2: API Key -->
+  <div class="onb-step" id="onb-step-2">
+    <div class="onb-logo">THE</div>
+    <div class="onb-lv" style="margin-bottom:24px">level</div>
+    <div class="onb-headline" style="font-size:18px">Последний шаг — подключи AI</div>
+    <div class="onb-desc">Вставь API ключ Claude. Он нужен чтобы твой личный наставник работал.</div>
     <div class="onb-iw">
       <svg class="onb-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       <input class="onb-inp" id="apikey-input" type="password" placeholder="API ключ Claude (sk-ant-...)"/>
     </div>
-    <p class="onb-err" id="apikey-error">Введи корректный API ключ</p>
-    <button class="btn-p" id="start-btn">Начать →</button>
-    <button class="back-btn" onclick="backToRole()">← Назад</button>
+    <p class="onb-err" id="apikey-error">Введи корректный ключ</p>
+    <button class="onb-big-btn" id="start-btn">Запустить →</button>
+    <button class="back-btn" onclick="showOnbStep(1)">← Назад</button>
   </div>
 </div>
 
@@ -329,72 +398,159 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
   </div>
   <div class="adm-body">
     <div class="adm-grid">
-      <div class="adm-stat"><div class="adm-stat-v" id="adm-total">0</div><div class="adm-stat-l">Всего пользователей</div></div>
+      <div class="adm-stat"><div class="adm-stat-v" id="adm-total">0</div><div class="adm-stat-l">Пользователей</div></div>
       <div class="adm-stat"><div class="adm-stat-v" id="adm-active">0</div><div class="adm-stat-l">Активных подписок</div></div>
-      <div class="adm-stat"><div class="adm-stat-v" id="adm-refs">0</div><div class="adm-stat-l">Рефералов всего</div></div>
+      <div class="adm-stat"><div class="adm-stat-v" id="adm-refs">0</div><div class="adm-stat-l">Рефералов</div></div>
       <div class="adm-stat"><div class="adm-stat-v" id="adm-rev">0 ₽</div><div class="adm-stat-l">Реф. выплаты (20%)</div></div>
     </div>
-
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px">
       <div class="adm-stat"><div class="adm-stat-v" id="adm-try">0</div><div class="adm-stat-l">Level Try</div></div>
       <div class="adm-stat"><div class="adm-stat-v" id="adm-base">0</div><div class="adm-stat-l">The Level</div></div>
       <div class="adm-stat"><div class="adm-stat-v" id="adm-ult">0</div><div class="adm-stat-l">Ultimate</div></div>
     </div>
-
     <div class="adm-section">Пользователи</div>
     <div id="adm-users-list"></div>
   </div>
 </div>
 
+<!-- GATE -->
+<div id="gate">
+  <div class="gate-in" id="gate-content"></div>
+</div>
+
 <!-- APP -->
 <div id="app">
+
+<!-- HOME -->
 <div id="screen-home" class="screen active">
   <div class="home-hero">
-    <div style="font-size:10px;font-weight:700;letter-spacing:3px;color:var(--w50);text-transform:uppercase;margin-bottom:18px;">AI Income Assistant</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:3px;color:var(--w50);text-transform:uppercase;margin-bottom:16px;">AI Income Assistant</div>
     <div class="h-logo">THE</div>
     <div class="h-lv">level</div>
     <div class="h-tag">AI-POWERED GROWTH<br>REAL INCOME · EVERY DAY</div>
+
+    <div class="streak-bar" id="streak-bar" style="display:none">
+      <div class="streak-fire">🔥</div>
+      <div class="streak-info">
+        <div class="streak-count" id="streak-count">0 дней</div>
+        <div class="streak-label">Серия активности</div>
+      </div>
+      <div class="streak-days" id="streak-dots"></div>
+    </div>
+
+    <div class="xp-bar-wrap" id="xp-wrap" style="display:none">
+      <div class="xp-bar-header">
+        <div class="xp-level-badge" id="xp-level-badge">Уровень 1</div>
+        <div style="font-size:12px;color:var(--w50)" id="xp-text">0 / 100 XP</div>
+      </div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    </div>
+
     <div class="h-grid">
       <div class="h-stat"><div class="h-stat-l">Заработано</div><div class="h-stat-v" id="home-earned">— ₽</div><div class="h-stat-s">всего</div></div>
       <div class="h-stat"><div class="h-stat-l">Задач выполнено</div><div class="h-stat-v" id="home-tasks">0</div><div class="h-stat-s">выполнено</div></div>
     </div>
-    <button class="h-cta" onclick="showScreen('mentor')">Начать с AI Mentor <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+    <button class="h-cta" id="home-cta-btn">
+      Пройти опрос с AI Mentor →
+    </button>
   </div>
 </div>
 
+<!-- GOALS -->
 <div id="screen-goals" class="screen">
-  <div class="g-hdr"><div class="g-title">Daily Goals</div><div style="width:38px;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></div>
+  <div class="g-hdr">
+    <div class="g-title">Daily Goals</div>
+    <div style="width:38px;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+    </div>
+  </div>
   <div id="goals-content"></div>
 </div>
 
+<!-- MENTOR -->
 <div id="screen-mentor" class="screen">
   <div class="m-top">
-    <div class="m-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="m-name">AI Mentor</div><div class="m-sub">Твой персональный наставник</div></div>
+    <div class="m-ico">⚡</div>
+    <div>
+      <div class="m-name">AI Mentor</div>
+      <div class="m-sub">Твой личный наставник по заработку</div>
+    </div>
   </div>
-  <div id="niche-block" style="display:none"><div class="niche-card"><div class="niche-lbl">Твоя ниша</div><div class="niche-title" id="niche-title"></div><div class="niche-desc" id="niche-desc"></div></div></div>
+  <div id="niche-block" style="display:none">
+    <div class="niche-card">
+      <div class="niche-lbl">Твоя ниша</div>
+      <div class="niche-title" id="niche-title"></div>
+      <div class="niche-desc" id="niche-desc"></div>
+    </div>
+  </div>
   <div class="chat-box" id="chat-messages"></div>
   <div class="quick-row">
-    <button class="qbtn" onclick="quickSend('Дай план на сегодня')">Дневной план</button>
-    <button class="qbtn" onclick="quickSend('Новые идеи для развития')">Новые идеи</button>
-    <button class="qbtn" onclick="quickSend('Как отследить прогресс?')">Прогресс</button>
+    <button class="qbtn" onclick="quickSend('Дай план на сегодня')">План на день</button>
+    <button class="qbtn" onclick="quickSend('Где взять первых клиентов?')">Первые клиенты</button>
+    <button class="qbtn" onclick="quickSend('Как поднять чек?')">Поднять чек</button>
+    <button class="qbtn" onclick="quickSend('Мотивируй меня')">Мотивация 🔥</button>
   </div>
   <div class="inp-row">
-    <input class="msg-inp" id="chat-input" type="text" placeholder="Написать AI Mentor..."/>
-    <button class="send-btn" id="chat-send" onclick="sendMessage()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    <input class="msg-inp" id="chat-input" type="text" placeholder="Спроси что угодно..."/>
+    <button class="send-btn" id="chat-send" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
   </div>
   <button class="reset-btn" onclick="resetApp()">Начать заново</button>
 </div>
 
+<!-- PROFILE -->
 <div id="screen-profile" class="screen">
-  <div class="ph-hdr"><div class="ph-title">Профиль</div><div class="ph-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div></div>
+  <div class="ph-hdr">
+    <div class="ph-title">Профиль</div>
+    <div class="ph-bell"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+  </div>
+
   <div class="p-hero">
     <div class="av-wrap"><div class="av" id="avatar-letter">?</div><div class="av-dot"></div></div>
     <div class="p-name" id="profile-name">...</div>
-    <div class="p-role" id="profile-role">Предприниматель</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;"><div class="chip chip-w">⭐ LEVEL PRO</div><div class="chip chip-g" id="tasks-chip">✓ 0 задач</div></div>
+    <div class="p-role" id="profile-role">Определяем нишу...</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+      <div class="chip chip-w">⭐ LEVEL PRO</div>
+      <div class="chip chip-g" id="tasks-chip">✓ 0 задач</div>
+    </div>
   </div>
 
+  <!-- TRAJECTORY A → B -->
+  <div class="traj-card" id="traj-card" style="display:none">
+    <div class="traj-header">
+      <div class="traj-title">🗺 Твоя траектория</div>
+    </div>
+    <div class="traj-row">
+      <div class="traj-point a">A</div>
+      <div class="traj-text">
+        <div class="traj-label">Сейчас</div>
+        <div class="traj-value" id="point-a">—</div>
+      </div>
+    </div>
+    <div class="traj-arrow">
+      <svg width="16" height="24" viewBox="0 0 16 24" fill="none"><line x1="8" y1="0" x2="8" y2="18" stroke="rgba(255,255,255,0.2)" stroke-width="2"/><polyline points="3,14 8,20 13,14" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none"/></svg>
+    </div>
+    <div class="traj-row">
+      <div class="traj-point b">B</div>
+      <div class="traj-text">
+        <div class="traj-label">Цель</div>
+        <div class="traj-value" id="point-b">—</div>
+      </div>
+    </div>
+    <div class="traj-progress">
+      <div class="traj-prog-bar"><div class="traj-prog-fill" id="traj-fill" style="width:0%"></div></div>
+      <div class="traj-prog-pct" id="traj-pct">0%</div>
+    </div>
+  </div>
+
+  <!-- ACHIEVEMENTS -->
+  <div class="card" id="ach-card">
+    <div class="card-hdr"><div class="card-title">🏆 Достижения</div></div>
+    <div class="ach-grid" id="ach-grid"></div>
+  </div>
+
+  <!-- SUBSCRIPTION -->
   <div class="card">
     <div class="card-hdr" style="margin-bottom:0;cursor:pointer" onclick="toggleSub()">
       <div class="card-title">👑 Subscription</div>
@@ -405,7 +561,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
         <div class="s-row"><span class="s-label">Тариф</span><span class="s-val">The Level Ultimate</span></div>
         <div class="s-row"><span class="s-label">Статус</span><span class="s-val g">Активна</span></div>
         <div class="s-row"><span class="s-label">Продлевается</span><span class="s-val" id="sub-date">—</span></div>
-        <div class="s-row"><span class="s-label">Пробный период</span><span class="s-val" id="trial-days">—</span></div>
+        <div class="s-row"><span class="s-label">Пробный период</span><span class="s-val" id="trial-days-left">—</span></div>
         <div class="s-row"><span class="s-label">Задач выполнено</span><span class="s-val" id="sub-tasks-count">0</span></div>
         <button class="card-btn primary" onclick="openSubModal()">Управление подпиской</button>
       </div>
@@ -416,9 +572,10 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     </button>
   </div>
 
+  <!-- REF -->
   <div class="ref-card">
     <div class="ref-title">🎁 Реферальная программа</div>
-    <div class="ref-desc">Приглашай друзей и получай 20% от их первой оплаты. Деньги зачисляются на баланс в течение 24 часов.</div>
+    <div class="ref-desc">Приглашай друзей и получай 20% от их первой оплаты. Зачисляется в течение 24 часов.</div>
     <div class="ref-link-box">
       <span class="ref-link-text" id="ref-link-text">t.me/TheLevelAppBot/thelevel?start=ref_...</span>
       <button class="ref-copy-btn" onclick="copyRef()">Копировать</button>
@@ -429,6 +586,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     </div>
   </div>
 
+  <!-- EARNINGS -->
   <div class="card">
     <div class="earn-lbl">Заработано за всё время</div>
     <div class="earn-val" id="earnings-display">— ₽</div>
@@ -444,16 +602,12 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 </nav>
 </div>
 
-<!-- GATE: subscription check -->
-<div id="gate">
-  <div class="gate-in" id="gate-content"></div>
-</div>
-
+<!-- SUB MODAL -->
 <div class="modal-ov" id="sub-modal" onclick="if(event.target===this)closeSubModal()">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">Выбери тариф</div>
-    <div class="modal-sub">Начни бесплатно и переходи когда будешь готов</div>
+    <div class="modal-sub">Начни бесплатно — переходи когда будешь готов</div>
     <div class="tariff"><div class="tariff-top"><div><span class="tariff-name">Level Try</span><span class="tariff-badge">3 дня</span></div><span class="tariff-price">0 ₽</span></div><ul class="tariff-features"><li>Базовый AI Mentor</li><li>1 цель и план на 30 дней</li><li>Основные функции трекера</li></ul></div>
     <div class="tariff"><div class="tariff-top"><span class="tariff-name">The Level</span><span class="tariff-price">199 ₽<small>/мес</small></span></div><ul class="tariff-features"><li>50% возможностей AI Mentor</li><li>До 3 активных целей</li><li>Расширенные планы задач</li><li>Аналитика прогресса</li></ul></div>
     <div class="tariff current"><div class="tariff-top"><div style="display:flex;align-items:center;"><span class="tariff-name">The Level Ultimate</span><span class="tariff-badge">Текущий</span></div><span class="tariff-price">699 ₽<small>/мес</small></span></div><ul class="tariff-features"><li>100% возможностей AI Mentor</li><li>Неограниченные цели</li><li>Персональные стратегии</li><li>Реферальная программа 20%</li><li>Приоритетная поддержка</li></ul></div>
@@ -462,335 +616,283 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 </div>
 
 <script>
-const ADMIN_LOGIN = 'alexgvrkn2026';
-const SHEET_API = 'https://script.google.com/macros/s/AKfycbwj_BAwTMAGarSMacKseRHRv7IWfrBkYMVMB7S5TE2uHOOlELUOm7GnoKnJwV-RFSzW/exec';
-const ADMIN_PASS = '123best321botapp';
-let API_KEY = localStorage.getItem('thelevel_apikey') || '';
-const MODEL = 'claude-sonnet-4-5';
-let subOpen = false;
+const ADMIN_LOGIN='alexgvrkn2026', ADMIN_PASS='123best321botapp';
+const SHEET_API='https://script.google.com/macros/s/AKfycbwj_BAwTMAGarSMacKseRHRv7IWfrBkYMVMB7S5TE2uHOOlELUOm7GnoKnJwV-RFSzW/exec';
+const BOT_TOKEN='8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
+const CHANNEL='thelevelai';
+const TRIAL_DAYS=3;
+let API_KEY=localStorage.getItem('thelevel_apikey')||'';
+const MODEL='claude-sonnet-4-5';
+let subOpen=false;
 
-// Simulated users DB (localStorage)
-function getUsers(){ try{ return JSON.parse(localStorage.getItem('thelevel_users')||'[]'); }catch(e){ return []; } }
-function saveUsers(u){ localStorage.setItem('thelevel_users', JSON.stringify(u)); }
-async function registerUser(userId, userName){
-  const refBy = getRefParam();
-  try {
-    await fetch(SHEET_API + '?action=register&userId=' + encodeURIComponent(userId) + '&userName=' + encodeURIComponent(userName) + '&refBy=' + encodeURIComponent(refBy));
-  } catch(e) { console.log('Register error:', e); }
+let state={
+  chatHistory:[],niche:null,nicheDesc:null,plan:null,tasks:{},
+  onboardingDone:false,userName:'',userId:'',earned:'',goal:'',
+  subDate:'',startDate:null,trialStart:null,
+  pointA:'',pointB:'',xp:0,streak:0,lastActive:'',
+  achievements:[]
+};
+
+function save(){localStorage.setItem('thelevel_state',JSON.stringify(state))}
+function load(){try{const r=localStorage.getItem('thelevel_state');if(r)state=JSON.parse(r)}catch(e){}}
+
+// ACHIEVEMENTS
+const ACHIEVEMENTS_DEF=[
+  {id:'first_task',icon:'✅',name:'Первый шаг',desc:'Выполни 1 задачу'},
+  {id:'streak3',icon:'🔥',name:'3 дня подряд',desc:'3-дневная серия'},
+  {id:'half_month',icon:'⚡',name:'Полпути',desc:'15 задач выполнено'},
+  {id:'month_done',icon:'🏆',name:'Месяц',desc:'30 задач выполнено'},
+  {id:'niche_found',icon:'🎯',name:'Ниша найдена',desc:'Прошёл опрос'},
+  {id:'earned_first',icon:'💰',name:'Первый доход',desc:'Введи свой доход'},
+];
+
+function checkAchievements(){
+  const all=Object.values(state.tasks).flat(),done=all.filter(t=>t.done).length;
+  if(done>=1&&!state.achievements.includes('first_task')){state.achievements.push('first_task');showToast('Достижение: Первый шаг ✅');}
+  if(done>=15&&!state.achievements.includes('half_month')){state.achievements.push('half_month');showToast('Достижение: Полпути ⚡');}
+  if(done>=30&&!state.achievements.includes('month_done')){state.achievements.push('month_done');showToast('Достижение: Месяц 🏆');}
+  if(state.niche&&!state.achievements.includes('niche_found')){state.achievements.push('niche_found');showToast('Достижение: Ниша найдена 🎯');}
+  if(state.earned&&!state.achievements.includes('earned_first')){state.achievements.push('earned_first');showToast('Достижение: Первый доход 💰');}
+  // XP calculation
+  state.xp=done*10+(state.achievements.length*25);
+  save();
 }
 
-async function getRefCount(userId){
-  try {
-    const res = await fetch(SHEET_API + '?action=getRefs&userId=' + encodeURIComponent(userId));
-    const data = await res.json();
-    return data.count || 0;
-  } catch(e) { return 0; }
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;animation:fadeIn .3s ease';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
 }
 
-async function getAllUsers(){
-  try {
-    const res = await fetch(SHEET_API + '?action=getAll');
-    return await res.json();
-  } catch(e) { return []; }
-}
-function getRefParam(){
-  try{ const p=new URLSearchParams(window.location.search); return p.get('start')||''; }catch(e){ return ''; }
+function updateStreak(){
+  const today=new Date().toDateString();
+  if(state.lastActive!==today){
+    const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+    if(state.lastActive===yesterday.toDateString()){state.streak=(state.streak||0)+1;}
+    else if(state.lastActive!==today){state.streak=1;}
+    state.lastActive=today;
+    save();
+  }
 }
 
-let state = { chatHistory:[], niche:null, nicheDesc:null, plan:null, tasks:{}, onboardingDone:false, userName:'', userId:'', earned:'', goal:'', subDate:'', startDate:null, trialStart:null };
-function save(){ localStorage.setItem('thelevel_state', JSON.stringify(state)); }
-function load(){ try{ const r=localStorage.getItem('thelevel_state'); if(r) state=JSON.parse(r); }catch(e){} }
-
-// SPLASH → ROLE SELECT
-window.addEventListener('load', ()=>{
+window.addEventListener('load',()=>{
   load();
   setTimeout(()=>{
     document.getElementById('splash').classList.add('hide');
     setTimeout(()=>{
       document.getElementById('splash').style.display='none';
-      if(state.onboardingDone && API_KEY){ initApp(); return; }
-      if(localStorage.getItem('thelevel_admin')==='1'){ showAdminPanel(); return; }
+      if(state.onboardingDone&&API_KEY){initApp();return;}
+      if(localStorage.getItem('thelevel_admin')==='1'){showAdminPanel();return;}
       document.getElementById('role-select').classList.add('active');
-    }, 700);
-  }, 2400);
+    },700);
+  },2400);
 });
 
-function showClientOnb(){
+function showOnbStep(n){
   document.getElementById('role-select').classList.remove('active');
   document.getElementById('onb').classList.add('active');
-}
-function showAdminLogin(){
-  document.getElementById('role-select').classList.remove('active');
-  document.getElementById('admin-login').classList.add('active');
+  document.querySelectorAll('.onb-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('onb-step-'+n).classList.add('active');
 }
 function backToRole(){
   document.getElementById('onb').classList.remove('active');
   document.getElementById('admin-login').classList.remove('active');
   document.getElementById('role-select').classList.add('active');
 }
-
+function showAdminLogin(){
+  document.getElementById('role-select').classList.remove('active');
+  document.getElementById('admin-login').classList.add('active');
+}
 function adminLogin(){
-  const l=document.getElementById('adm-login').value.trim();
-  const p=document.getElementById('adm-pass').value.trim();
-  if(l===ADMIN_LOGIN && p===ADMIN_PASS){
-    localStorage.setItem('thelevel_admin','1');
-    document.getElementById('admin-login').classList.remove('active');
-    showAdminPanel();
-  } else {
-    document.getElementById('adm-error').style.display='block';
-  }
+  const l=document.getElementById('adm-login').value.trim(),p=document.getElementById('adm-pass').value.trim();
+  if(l===ADMIN_LOGIN&&p===ADMIN_PASS){localStorage.setItem('thelevel_admin','1');document.getElementById('admin-login').classList.remove('active');showAdminPanel();}
+  else{document.getElementById('adm-error').style.display='block';}
 }
-function adminLogout(){
-  localStorage.removeItem('thelevel_admin');
-  document.getElementById('admin-panel').classList.remove('active');
-  document.getElementById('role-select').classList.add('active');
-}
+function adminLogout(){localStorage.removeItem('thelevel_admin');document.getElementById('admin-panel').classList.remove('active');document.getElementById('role-select').classList.add('active');}
+function showAdminPanel(){document.getElementById('admin-panel').classList.add('active');renderAdminPanel();}
 
-function showAdminPanel(){
-  document.getElementById('admin-panel').classList.add('active');
-  renderAdminPanel();
-}
+async function getAllUsers(){try{const res=await fetch(SHEET_API+'?action=getAll');return await res.json();}catch(e){return[];}}
 
 async function renderAdminPanel(){
   document.getElementById('adm-users-list').innerHTML='<div class="adm-empty">Загрузка...</div>';
-  const users = await getAllUsers();
-  if(!users || users.length === 0){
-
-    document.getElementById('adm-users-list').innerHTML='<div class="adm-empty">Пользователей пока нет</div>';
-    document.getElementById('adm-total').textContent=0;
-    document.getElementById('adm-active').textContent=0;
-    document.getElementById('adm-refs').textContent=0;
+  const users=await getAllUsers();
+  if(!users||users.length===0){
+    ['adm-total','adm-active','adm-refs','adm-try','adm-base','adm-ult'].forEach(id=>document.getElementById(id).textContent='0');
     document.getElementById('adm-rev').textContent='0 ₽';
-    document.getElementById('adm-try').textContent=0;
-    document.getElementById('adm-base').textContent=0;
-    document.getElementById('adm-ult').textContent=0;
+    document.getElementById('adm-users-list').innerHTML='<div class="adm-empty">Пользователей пока нет</div>';
     return;
   }
-  // Normalize users from Google Sheets format
-  const normalized = users.map(u => ({
-    id: u.userId || u.id || '—',
-    name: u.userName || u.name || '—',
-    refBy: u.refBy || '',
-    joinDate: u.joinDate ? new Date(u.joinDate).toLocaleDateString('ru-RU') : (u.joinDate || '—'),
-    plan: u.plan || 'Level Try',
-    refs: 0,
-    refEarned: 0
-  }));
-
-  // Count refs for each user
-  normalized.forEach(u => {
-    u.refs = normalized.filter(r => r.refBy === 'ref_' + u.id).length;
-    u.refEarned = u.refs * 199 * 0.2;
-  });
-
-  const total = normalized.length;
-  const active = normalized.filter(u => u.plan !== 'Level Try').length;
-  const refs = normalized.reduce((s,u) => s + u.refs, 0);
-  const rev = normalized.reduce((s,u) => s + u.refEarned, 0);
-  const tryC = normalized.filter(u => u.plan === 'Level Try').length;
-  const baseC = normalized.filter(u => u.plan === 'The Level').length;
-  const ultC = normalized.filter(u => u.plan === 'The Level Ultimate').length;
-
-  document.getElementById('adm-total').textContent = total;
-  document.getElementById('adm-active').textContent = active;
-  document.getElementById('adm-refs').textContent = refs;
-  document.getElementById('adm-rev').textContent = Math.round(rev) + ' ₽';
-  document.getElementById('adm-try').textContent = tryC;
-  document.getElementById('adm-base').textContent = baseC;
-  document.getElementById('adm-ult').textContent = ultC;
-
-  const list = document.getElementById('adm-users-list');
-  list.innerHTML = '';
-
-  normalized.forEach(u => {
-    const planClass = u.plan === 'Level Try' ? 'plan-try' : u.plan === 'The Level' ? 'plan-base' : 'plan-ult';
-    const card = document.createElement('div'); card.className = 'adm-card';
-    card.innerHTML = `
-      <div class="adm-card-top">
-        <div class="adm-card-name">${u.name}</div>
-        <div class="adm-card-plan ${planClass}">${u.plan}</div>
-      </div>
-      <div class="adm-card-row"><span>Зарегистрирован</span><span>${u.joinDate}</span></div>
-      <div class="adm-card-row"><span>Рефералов</span><span>${u.refs}</span></div>
-      <div class="adm-card-row"><span>Реф. заработок (20%)</span><span>${Math.round(u.refEarned)} ₽</span></div>
-      ${u.refBy ? `<div class="adm-card-row"><span>Приведён через</span><span>${u.refBy}</span></div>` : ''}
-    `;
+  const norm=users.map(u=>({id:u.userId||u.id||'—',name:u.userName||u.name||'—',refBy:u.refBy||'',joinDate:u.joinDate?new Date(u.joinDate).toLocaleDateString('ru-RU'):(u.joinDate||'—'),plan:u.plan||'Level Try',refs:0,refEarned:0}));
+  norm.forEach(u=>{u.refs=norm.filter(r=>r.refBy==='ref_'+u.id).length;u.refEarned=u.refs*199*0.2;});
+  const total=norm.length,active=norm.filter(u=>u.plan!=='Level Try').length,refs=norm.reduce((s,u)=>s+u.refs,0),rev=norm.reduce((s,u)=>s+u.refEarned,0);
+  document.getElementById('adm-total').textContent=total;
+  document.getElementById('adm-active').textContent=active;
+  document.getElementById('adm-refs').textContent=refs;
+  document.getElementById('adm-rev').textContent=Math.round(rev)+' ₽';
+  document.getElementById('adm-try').textContent=norm.filter(u=>u.plan==='Level Try').length;
+  document.getElementById('adm-base').textContent=norm.filter(u=>u.plan==='The Level').length;
+  document.getElementById('adm-ult').textContent=norm.filter(u=>u.plan==='The Level Ultimate').length;
+  const list=document.getElementById('adm-users-list');list.innerHTML='';
+  norm.forEach(u=>{
+    const pc=u.plan==='Level Try'?'plan-try':u.plan==='The Level'?'plan-base':'plan-ult';
+    const card=document.createElement('div');card.className='adm-card';
+    card.innerHTML=`<div class="adm-card-top"><div class="adm-card-name">${u.name}</div><div class="adm-card-plan ${pc}">${u.plan}</div></div><div class="adm-card-row"><span>Зарегистрирован</span><span>${u.joinDate}</span></div><div class="adm-card-row"><span>Рефералов</span><span>${u.refs}</span></div><div class="adm-card-row"><span>Реф. заработок</span><span>${Math.round(u.refEarned)} ₽</span></div>${u.refBy?`<div class="adm-card-row"><span>Приведён через</span><span>${u.refBy}</span></div>`:''}`;
     list.appendChild(card);
   });
 }
 
-// CLIENT APP
-document.getElementById('start-btn').addEventListener('click', ()=>{
+document.getElementById('start-btn').addEventListener('click',()=>{
   const k=document.getElementById('apikey-input').value.trim();
-  if(!k||!k.startsWith('sk-')){ document.getElementById('apikey-error').style.display='block'; return; }
-  API_KEY=k; localStorage.setItem('thelevel_apikey',k);
+  if(!k||!k.startsWith('sk-')){document.getElementById('apikey-error').style.display='block';return;}
+  API_KEY=k;localStorage.setItem('thelevel_apikey',k);
   state.onboardingDone=true;
-  const d=new Date(); d.setDate(d.getDate()+30);
-  state.subDate=d.toLocaleDateString('ru-RU');
+  const d=new Date();d.setDate(d.getDate()+30);state.subDate=d.toLocaleDateString('ru-RU');
   save();
   document.getElementById('onb').classList.remove('active');
   initApp();
 });
 
-const CHANNEL = 'thelevelai';
-const BOT_TOKEN = '8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
-const TRIAL_DAYS = 3;
-
 async function checkSubscription(userId){
-  try{
-    const res = await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/getChatMember?chat_id=@'+CHANNEL+'&user_id='+userId);
-    const data = await res.json();
-    if(data.ok){
-      const status = data.result.status;
-      return ['member','administrator','creator'].includes(status);
-    }
-  }catch(e){}
+  try{const res=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/getChatMember?chat_id=@'+CHANNEL+'&user_id='+userId);const data=await res.json();if(data.ok)return['member','administrator','creator'].includes(data.result.status);}catch(e){}
   return false;
 }
-
-function getTrialDaysLeft(){
-  if(!state.trialStart) return TRIAL_DAYS;
-  const diff = Math.floor((new Date() - new Date(state.trialStart)) / (1000*60*60*24));
-  return Math.max(0, TRIAL_DAYS - diff);
-}
+function getTrialDaysLeft(){if(!state.trialStart)return TRIAL_DAYS;const diff=Math.floor((new Date()-new Date(state.trialStart))/(864e5));return Math.max(0,TRIAL_DAYS-diff);}
 
 async function initApp(){
   document.getElementById('app').classList.add('show');
-  updateProfile(); renderGoals(); renderHome();
+  if(!state.trialStart){state.trialStart=new Date().toISOString();save();}
+  updateStreak();
 
-  // Get userId from Telegram
-  let userId = state.userId || '0';
-  try{ const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user) userId=String(tg.initDataUnsafe.user.id); }catch(e){}
+  let userId=state.userId||'0';
+  try{const tg=window.Telegram?.WebApp;if(tg?.initDataUnsafe?.user)userId=String(tg.initDataUnsafe.user.id);}catch(e){}
 
-  // Set trial start if not set
-  if(!state.trialStart){ state.trialStart = new Date().toISOString(); save(); }
+  const daysLeft=getTrialDaysLeft();
+  const isSubscribed=userId!=='0'?await checkSubscription(userId):true;
 
-  const daysLeft = getTrialDaysLeft();
+  if(!isSubscribed){showGate('subscribe');return;}
+  if(daysLeft<=0){showGate('trial-expired');return;}
 
-  // Check subscription first
-  const isSubscribed = userId !== '0' ? await checkSubscription(userId) : true;
-
-  if(!isSubscribed){
-    showGate('subscribe');
-    return;
-  }
-
-  if(daysLeft <= 0){
-    showGate('trial-expired');
-    return;
-  }
-
+  updateProfile();renderGoals();renderHome();
   showScreen('home');
-  if(state.chatHistory.length===0) startQuestionnaire();
-  else{ renderChat(); renderNiche(); }
+
+  // Update home CTA based on whether questionnaire done
+  const ctaBtn=document.getElementById('home-cta-btn');
+  if(state.niche){ctaBtn.textContent='Перейти к целям →';ctaBtn.onclick=()=>showScreen('goals');}
+  else{ctaBtn.textContent='Пройти опрос с AI Mentor →';ctaBtn.onclick=()=>showScreen('mentor');}
+
+  if(state.chatHistory.length===0)startQuestionnaire();
+  else{renderChat();renderNiche();}
 }
 
 function showGate(type){
-  const gate = document.getElementById('gate');
-  const content = document.getElementById('gate-content');
+  const gate=document.getElementById('gate'),content=document.getElementById('gate-content');
   gate.classList.add('active');
-
-  if(type === 'subscribe'){
-    content.innerHTML = `
-      <div class="gate-logo">THE</div>
-      <div class="gate-lv">level</div>
-      <div class="gate-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.97"/>
-        </svg>
-      </div>
-      <div class="gate-title">Подпишись на канал</div>
-      <div class="gate-desc">Чтобы пользоваться The Level, нужно подписаться на наш Telegram-канал</div>
-      <a href="https://t.me/thelevelai" target="_blank" style="text-decoration:none;display:block;margin-bottom:10px;">
-        <button class="gate-btn">Подписаться на @thelevelai</button>
-      </a>
-      <button class="gate-btn secondary" onclick="recheckSubscription()">Я подписался ✓</button>
-    `;
-  } else if(type === 'trial-expired'){
-    content.innerHTML = `
-      <div class="gate-logo">THE</div>
-      <div class="gate-lv">level</div>
-      <div class="gate-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-      </div>
-      <div class="gate-title">Пробный период закончился</div>
-      <div class="gate-desc">3 дня бесплатного доступа истекли. Выбери тариф чтобы продолжить.</div>
-      <button class="gate-btn" onclick="closeGateAndSub()">Выбрать тариф</button>
-    `;
+  if(type==='subscribe'){
+    content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">📢</div><div class="gate-title">Подпишись на канал</div><div class="gate-desc">Чтобы пользоваться The Level — нужно быть в нашем Telegram-канале. Там ежедневно выходит контент по заработку.</div><a href="https://t.me/thelevelai" target="_blank" style="text-decoration:none;display:block;margin-bottom:10px;"><button class="gate-btn">Подписаться на @thelevelai</button></a><button class="gate-btn secondary" onclick="recheckSubscription()">Я подписался ✓</button>`;
+  }else if(type==='trial-expired'){
+    content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">⏰</div><div class="gate-title">Пробный период закончился</div><div class="gate-desc">3 дня бесплатного доступа прошло. Выбери тариф — и продолжай двигаться к своей цели.</div><button class="gate-btn" onclick="closeGateAndSub()">Выбрать тариф →</button>`;
   }
 }
 
 async function recheckSubscription(){
-  let userId = state.userId || '0';
-  try{ const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user) userId=String(tg.initDataUnsafe.user.id); }catch(e){}
-  const isSubscribed = await checkSubscription(userId);
-  if(isSubscribed){
-    document.getElementById('gate').classList.remove('active');
-    const daysLeft = getTrialDaysLeft();
-    if(daysLeft <= 0){ showGate('trial-expired'); return; }
-    showScreen('home');
-    if(state.chatHistory.length===0) startQuestionnaire();
-    else{ renderChat(); renderNiche(); }
-  } else {
-    alert('Ты ещё не подписался! Подпишись на @thelevelai и нажми снова.');
+  let userId=state.userId||'0';
+  try{const tg=window.Telegram?.WebApp;if(tg?.initDataUnsafe?.user)userId=String(tg.initDataUnsafe.user.id);}catch(e){}
+  const ok=await checkSubscription(userId);
+  if(ok){document.getElementById('gate').classList.remove('active');const dl=getTrialDaysLeft();if(dl<=0){showGate('trial-expired');return;}updateProfile();renderGoals();renderHome();showScreen('home');if(state.chatHistory.length===0)startQuestionnaire();else{renderChat();renderNiche();}}
+  else{alert('Ты ещё не подписался! Подпишись на @thelevelai и нажми снова.');}
+}
+function closeGateAndSub(){document.getElementById('gate').classList.remove('active');showScreen('profile');setTimeout(()=>openSubModal(),300);}
+
+async function registerUser(userId,userName){
+  const refBy=getRefParam();
+  try{await fetch(SHEET_API+'?action=register&userId='+encodeURIComponent(userId)+'&userName='+encodeURIComponent(userName)+'&refBy='+encodeURIComponent(refBy));}catch(e){}
+}
+async function getRefCount(userId){try{const res=await fetch(SHEET_API+'?action=getRefs&userId='+encodeURIComponent(userId));const data=await res.json();return data.count||0;}catch(e){return 0;}}
+function getRefParam(){try{const p=new URLSearchParams(window.location.search);return p.get('start')||'';}catch(e){return '';}}
+
+function updateProfile(){
+  let name='Пользователь',uid=''+Math.floor(Math.random()*9e8+1e8);
+  try{const tg=window.Telegram?.WebApp;if(tg?.initDataUnsafe?.user){const u=tg.initDataUnsafe.user;name=u.first_name+(u.last_name?' '+u.last_name:'');uid=''+u.id;}}catch(e){}
+  if(!state.userName)state.userName=name;
+  if(!state.userId)state.userId=uid;
+  save();
+  registerUser(state.userId,'@'+state.userName.toLowerCase().replace(/\s/g,'_'));
+  document.getElementById('profile-name').textContent='@'+state.userName.toLowerCase().replace(/\s/g,'_');
+  document.getElementById('avatar-letter').textContent=state.userName.charAt(0).toUpperCase();
+  if(state.niche)document.getElementById('profile-role').textContent=state.niche;
+  const all=Object.values(state.tasks).flat(),done=all.filter(t=>t.done).length;
+  document.getElementById('tasks-chip').textContent='✓ '+done+' задач';
+  document.getElementById('sub-tasks-count').textContent=done;
+  if(state.subDate)document.getElementById('sub-date').textContent=state.subDate;
+  const dl=getTrialDaysLeft();
+  document.getElementById('trial-days-left').textContent=dl>0?dl+' дн. осталось':'Истёк';
+  document.getElementById('earnings-display').textContent=state.earned?state.earned+' ₽':'— ₽';
+  if(state.earned)document.getElementById('earned-input').value=state.earned;
+  document.getElementById('ref-link-text').textContent='t.me/TheLevelAppBot/thelevel?start=ref_'+state.userId;
+  getRefCount(state.userId).then(c=>{document.getElementById('ref-count').textContent=c;document.getElementById('ref-earned').textContent=Math.round(c*199*0.2)+' ₽';});
+
+  // Trajectory
+  if(state.pointA||state.niche){
+    document.getElementById('traj-card').style.display='block';
+    document.getElementById('point-a').textContent=state.pointA||'Начальная точка';
+    document.getElementById('point-b').textContent=state.pointB||state.niche||'Цель';
+    const pct=all.length>0?Math.round((done/all.length)*100):0;
+    document.getElementById('traj-fill').style.width=pct+'%';
+    document.getElementById('traj-pct').textContent=pct+'%';
+  }
+
+  // Achievements
+  checkAchievements();
+  renderAchievements();
+
+  // XP & level
+  const xpEl=document.getElementById('xp-wrap');
+  if(state.niche){
+    xpEl.style.display='block';
+    const lvl=Math.floor(state.xp/100)+1;
+    const xpInLvl=state.xp%100;
+    document.getElementById('xp-level-badge').textContent='Уровень '+lvl;
+    document.getElementById('xp-text').textContent=xpInLvl+' / 100 XP';
+    document.getElementById('xp-fill').style.width=xpInLvl+'%';
+  }
+
+  // Streak
+  if(state.streak>0){
+    document.getElementById('streak-bar').style.display='flex';
+    document.getElementById('streak-count').textContent=state.streak+' '+(state.streak===1?'день':state.streak<5?'дня':'дней');
+    const dots=document.getElementById('streak-dots');dots.innerHTML='';
+    for(let i=0;i<7;i++){const d=document.createElement('div');d.className='streak-dot'+(i<state.streak?' done':'')+(i===state.streak-1?' today':'');dots.appendChild(d);}
   }
 }
 
-function closeGateAndSub(){
-  document.getElementById('gate').classList.remove('active');
-  showScreen('profile');
-  setTimeout(()=>openSubModal(), 300);
-}
-
-function updateProfile(){
-  let name='Пользователь', uid=''+Math.floor(Math.random()*900000+100000);
-  try{ const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user){ const u=tg.initDataUnsafe.user; name=u.first_name+(u.last_name?' '+u.last_name:''); uid=''+u.id; } }catch(e){}
-  if(!state.userName) state.userName=name;
-  if(!state.userId) state.userId=uid;
-  save();
-  registerUser(state.userId, '@'+state.userName.toLowerCase().replace(/\s/g,'_'));
-  document.getElementById('profile-name').textContent='@'+state.userName.toLowerCase().replace(/\s/g,'_');
-  document.getElementById('avatar-letter').textContent=state.userName.charAt(0).toUpperCase();
-  if(state.niche) document.getElementById('profile-role').textContent=state.niche;
-  const all=Object.values(state.tasks).flat(), done=all.filter(t=>t.done).length;
-  document.getElementById('tasks-chip').textContent='✓ '+done+' задач';
-  document.getElementById('sub-tasks-count').textContent=done;
-  if(state.subDate) document.getElementById('sub-date').textContent=state.subDate;
-  document.getElementById('earnings-display').textContent=state.earned?state.earned+' ₽':'— ₽';
-  if(state.earned) document.getElementById('earned-input').value=state.earned;
-  document.getElementById('ref-link-text').textContent='t.me/TheLevelAppBot/thelevel?start=ref_'+state.userId;
-  const dLeft = getTrialDaysLeft ? getTrialDaysLeft() : 3;
-  const trialEl = document.getElementById('trial-days');
-  if(trialEl) trialEl.textContent = dLeft > 0 ? dLeft+' дн. осталось' : 'Истёк';
-  // Fetch real ref count
-  getRefCount(state.userId).then(count => {
-    document.getElementById('ref-count').textContent = count;
-    document.getElementById('ref-earned').textContent = (count * 199 * 0.2).toFixed(0) + ' ₽';
+function renderAchievements(){
+  const grid=document.getElementById('ach-grid');grid.innerHTML='';
+  ACHIEVEMENTS_DEF.forEach(a=>{
+    const unlocked=state.achievements.includes(a.id);
+    const item=document.createElement('div');item.className='ach-item'+(unlocked?' unlocked':'');
+    item.innerHTML=`<div class="ach-icon" style="${unlocked?'':'filter:grayscale(1);opacity:.4'}">${a.icon}</div><div class="ach-name">${a.name}</div>`;
+    item.title=a.desc;
+    grid.appendChild(item);
   });
 }
 
 document.getElementById('earned-input').addEventListener('input',e=>{
   state.earned=e.target.value;
   document.getElementById('earnings-display').textContent=e.target.value?e.target.value+' ₽':'— ₽';
-  save(); renderHome();
+  save();renderHome();checkAchievements();
 });
 
 function toggleSub(){
   subOpen=!subOpen;
   document.getElementById('sub-content').classList.toggle('open',subOpen);
   document.getElementById('sub-arrow').style.transform=subOpen?'rotate(180deg)':'';
-  document.getElementById('sub-toggle-btn').innerHTML=subOpen
-    ?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg> Скрыть'
-    :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Показать детали';
+  document.getElementById('sub-toggle-btn').innerHTML=subOpen?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg> Скрыть':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Показать детали';
 }
 
 function copyRef(){
-  navigator.clipboard.writeText(document.getElementById('ref-link-text').textContent).then(()=>{
-    const b=document.querySelector('.ref-copy-btn'); b.textContent='Скопировано!';
-    setTimeout(()=>b.textContent='Копировать',2000);
-  });
+  navigator.clipboard.writeText(document.getElementById('ref-link-text').textContent).then(()=>{const b=document.querySelector('.ref-copy-btn');b.textContent='Скопировано!';setTimeout(()=>b.textContent='Копировать',2000);});
 }
 
 function showScreen(name){
@@ -798,104 +900,110 @@ function showScreen(name){
   document.getElementById('screen-'+name).classList.add('active');
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('nav-'+name).classList.add('active');
-  if(name==='profile') updateProfile();
-  if(name==='home') renderHome();
-  if(name==='goals') renderGoals();
+  if(name==='profile')updateProfile();
+  if(name==='home')renderHome();
+  if(name==='goals')renderGoals();
 }
 
 function renderHome(){
-  const all=Object.values(state.tasks).flat(), done=all.filter(t=>t.done).length;
+  const all=Object.values(state.tasks).flat(),done=all.filter(t=>t.done).length;
   document.getElementById('home-tasks').textContent=done;
   document.getElementById('home-earned').textContent=state.earned?state.earned+' ₽':'— ₽';
 }
 
-function getDayOfPlan(){ if(!state.startDate) return 1; return Math.max(1,Math.min(30,Math.floor((new Date()-new Date(state.startDate))/(864e5))+1)); }
-function getDayDate(n){ if(!state.startDate) return ''; const d=new Date(state.startDate); d.setDate(d.getDate()+n-1); return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'}); }
+function getDayOfPlan(){if(!state.startDate)return 1;return Math.max(1,Math.min(30,Math.floor((new Date()-new Date(state.startDate))/(864e5))+1));}
+function getDayDate(n){if(!state.startDate)return '';const d=new Date(state.startDate);d.setDate(d.getDate()+n-1);return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});}
 
 function renderGoals(){
-  const c=document.getElementById('goals-content'); c.innerHTML='';
-  if(!state.niche){ c.innerHTML=`<div class="empty-st"><div class="empty-ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><p>Пройди опрос у <strong>AI Mentor</strong> — получи персональный план на 30 дней!</p></div>`; return; }
-  const all=Object.values(state.tasks).flat(), done=all.filter(t=>t.done).length;
+  const c=document.getElementById('goals-content');c.innerHTML='';
+  if(!state.niche){c.innerHTML=`<div class="empty-st"><div class="empty-ico">🎯</div><p>Пройди опрос у <strong>AI Mentor</strong> — получи нишу и персональный план на 30 дней!</p><button style="margin-top:8px;padding:14px 24px;border:none;border-radius:12px;background:var(--white);color:#000;font-weight:700;cursor:pointer;font-size:14px" onclick="showScreen('mentor')">Начать опрос →</button></div>`;return;}
+  const all=Object.values(state.tasks).flat(),done=all.filter(t=>t.done).length;
   const pct=all.length>0?Math.round((done/all.length)*100):0;
   const R=28,circ=2*Math.PI*R,off=circ-(pct/100)*circ;
-  let dl=''; if(state.startDate){ const e=new Date(state.startDate); e.setDate(e.getDate()+29); dl='до '+e.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}); }
-  const gc=document.createElement('div'); gc.className='goal-card';
-  gc.innerHTML=`<div class="goal-top"><div class="goal-left"><div class="goal-lbl">Твоя цель</div><input class="goal-inp" id="goal-input" placeholder="Например: 100к, запустить канал..." value="${state.goal||''}"/><div class="goal-dl">${dl}</div></div><div class="circ-wrap"><svg width="76" height="76" viewBox="0 0 76 76"><circle cx="38" cy="38" r="${R}" stroke="rgba(255,255,255,.08)" stroke-width="6" fill="none"/><circle cx="38" cy="38" r="${R}" stroke="#fff" stroke-width="6" fill="none" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/></svg><div class="circ-lbl">${pct}%</div></div></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><div class="prog-msg">${pct===100?'🎉 <strong>Цель достигнута!</strong>':pct>=66?'<strong>Финишная прямая!</strong> Так держать.':pct>=33?'<strong>Хороший прогресс</strong> — продолжай.':'<strong>Старт дан</strong> — каждый день важен.'}</div>`;
+  let dl='';if(state.startDate){const e=new Date(state.startDate);e.setDate(e.getDate()+29);dl='до '+e.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});}
+  const gc=document.createElement('div');gc.className='goal-card';
+  gc.innerHTML=`<div class="goal-top"><div class="goal-left"><div class="goal-lbl">Твоя цель</div><input class="goal-inp" id="goal-input" placeholder="Например: 100к, запустить канал..." value="${state.goal||''}"/><div class="goal-dl">${dl}</div></div><div class="circ-wrap"><svg width="76" height="76" viewBox="0 0 76 76"><circle cx="38" cy="38" r="${R}" stroke="rgba(255,255,255,.08)" stroke-width="6" fill="none"/><circle cx="38" cy="38" r="${R}" stroke="#fff" stroke-width="6" fill="none" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/></svg><div class="circ-lbl">${pct}%</div></div></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><div class="prog-msg">${pct===100?'🎉 <strong>Цель достигнута! Разъебал!</strong>':pct>=66?'<strong>Финишная прямая!</strong> Дожимай.':pct>=33?'<strong>Хороший темп</strong> — не останавливайся.':'<strong>Старт дан.</strong> Каждое действие считается.'}</div>`;
   c.appendChild(gc);
-  gc.querySelector('#goal-input').addEventListener('input',e=>{ state.goal=e.target.value; save(); });
-
-  const today=getDayOfPlan(), todayT=state.tasks[today]||[], todayDone=todayT.filter(t=>t.done).length;
-  const ts=document.createElement('div');
-  ts.innerHTML=`<div class="sec-lbl">Сегодня — День ${today} <span>${todayDone}/${todayT.length} выполнено</span></div>`;
-  todayT.forEach((task,ti)=>{ const item=document.createElement('div'); item.className='task-card'+(task.done?' done':''); item.innerHTML=`<div class="t-check">${task.done?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div class="t-text">${task.text}</div>`; item.onclick=()=>{ state.tasks[today][ti].done=!state.tasks[today][ti].done; save(); renderGoals(); renderHome(); updateProfile(); }; ts.appendChild(item); });
+  gc.querySelector('#goal-input').addEventListener('input',e=>{state.goal=e.target.value;save();});
+  const today=getDayOfPlan(),todayT=state.tasks[today]||[],todayDone=todayT.filter(t=>t.done).length;
+  const ts=document.createElement('div');ts.innerHTML=`<div class="sec-lbl">Сегодня — День ${today} <span>${todayDone}/${todayT.length} выполнено</span></div>`;
+  todayT.forEach((task,ti)=>{const item=document.createElement('div');item.className='task-card'+(task.done?' done':'');item.innerHTML=`<div class="t-check">${task.done?'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div class="t-text">${task.text}</div>`;item.onclick=()=>{state.tasks[today][ti].done=!state.tasks[today][ti].done;save();renderGoals();renderHome();updateStreak();checkAchievements();updateProfile();};ts.appendChild(item);});
   c.appendChild(ts);
-
-  const expBtn=document.createElement('button'); expBtn.className='exp-btn'; expBtn.innerHTML='Все 30 дней';
-  const allDiv=document.createElement('div'); allDiv.style.display='none'; let open=false;
-  expBtn.onclick=()=>{ open=!open; allDiv.style.display=open?'block':'none'; expBtn.textContent=open?'Скрыть':'Все 30 дней'; };
+  const expBtn=document.createElement('button');expBtn.className='exp-btn';expBtn.innerHTML='Все 30 дней';
+  const allDiv=document.createElement('div');allDiv.style.display='none';let open=false;
+  expBtn.onclick=()=>{open=!open;allDiv.style.display=open?'block':'none';expBtn.textContent=open?'Скрыть':'Все 30 дней';};
   for(let day=1;day<=30;day++){
-    const tasks=state.tasks[day]||[], dc=tasks.filter(t=>t.done).length, isT=day===today, isDone=tasks.length>0&&dc===tasks.length;
-    const card=document.createElement('div'); card.className='day-card'+(isT?' is-today':'');
+    const tasks=state.tasks[day]||[],dc=tasks.filter(t=>t.done).length,isT=day===today,isDone=tasks.length>0&&dc===tasks.length;
+    const card=document.createElement('div');card.className='day-card'+(isT?' is-today':'');
     let badge=isT?`<div class="chip chip-w" style="font-size:10px;padding:3px 8px;">Сегодня</div>`:isDone?`<div class="chip chip-g" style="font-size:10px;padding:3px 8px;">Готово</div>`:`<span style="font-size:11px;color:var(--w50)">${getDayDate(day)}</span>`;
     card.innerHTML=`<div class="day-hdr"><span class="day-num">День ${day}</span>${badge}</div>`;
-    tasks.forEach((task,ti)=>{ const t=document.createElement('div'); t.className='day-task'+(task.done?' done':''); t.innerHTML=`<div class="d-check">${task.done?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div class="day-task-text">${task.text}</div>`; t.onclick=()=>{ state.tasks[day][ti].done=!state.tasks[day][ti].done; save(); renderGoals(); renderHome(); updateProfile(); }; card.appendChild(t); });
+    tasks.forEach((task,ti)=>{const t=document.createElement('div');t.className='day-task'+(task.done?' done':'');t.innerHTML=`<div class="d-check">${task.done?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}</div><div class="day-task-text">${task.text}</div>`;t.onclick=()=>{state.tasks[day][ti].done=!state.tasks[day][ti].done;save();renderGoals();renderHome();updateStreak();checkAchievements();updateProfile();};card.appendChild(t);});
     allDiv.appendChild(card);
   }
-  c.appendChild(expBtn); c.appendChild(allDiv);
+  c.appendChild(expBtn);c.appendChild(allDiv);
 }
 
-const SYS=`Ты — опытный наставник и бизнес-ментор с 10-летним стажем. За карьеру помог сотням людей выйти на стабильный доход в самых разных нишах.
+// CHAT — стиль Алекса
+const SYS=`Ты — AI-наставник в приложении The Level. Твой стиль — как у успешного онлайн-предпринимателя: живо, по делу, без воды и академщины. Короткие предложения. Конкретика. Иногда эмодзи, но в меру.
 
-Ты знаешь и умеешь работать с:
-- Фриланс: дизайн (графический, UX/UI, motion), видеомонтаж, копирайтинг, SMM, таргет
-- Чаттинг: онлайн-общение, модерация, виртуальные ассистенты
-- Онлайн-заработок: маркетплейсы (Wildberries, Ozon), арбитраж трафика, партнёрки
-- Контент: YouTube, TikTok, Instagram, Telegram-каналы, подкасты
-- IT: веб-разработка, мобильные приложения, автоматизация, no-code
-- Бизнес: запуск и масштабирование, продажи, управление командой
-- Инвестиции: накопления, инвестиции, пассивный доход
-- Личное развитие: продуктивность, спорт, обучение
+Ты знаешь всё про заработок в онлайне:
+- Фриланс: дизайн (графический, UX/UI, motion), видеомонтаж, копирайтинг, SMM, таргет, контекст
+- Чаттинг, виртуальные ассистенты, модерация
+- Маркетплейсы: Wildberries, Ozon, авито
+- Контент: YouTube, TikTok, Reels, Telegram-каналы, подкасты
+- Продюсирование экспертов, инфобизнес, запуски
+- IT: веб-разработка, автоматизация, no-code, боты
+- Арбитраж трафика, партнёрки, CPA
+- Инвестиции, пассивный доход
+- Личный бренд, нетворкинг
 
-Стиль: конкретный, мотивирующий, без воды. Реальные советы из практики.
+ВАЖНО: никогда не пиши ** или * для выделения. Хочешь выделить — пиши ЗАГЛАВНЫМИ или с новой строки.
 
-ВАЖНО: никогда не используй символы * или ** для выделения текста. Если хочешь выделить — напиши заглавными буквами или с новой строки.
+После опроса (5-6 вопросов, один за раз) — ответь ТОЛЬКО JSON:
+{"type":"result","niche":"Название ниши","nicheDesc":"1-2 предложения в живом стиле","plan":"3-4 конкретных шага","pointA":"Где человек сейчас (коротко)","pointB":"Куда придёт через 30 дней (коротко)","tasks":[{"day":1,"tasks":["Задача до 7 слов"]},{"day":2,"tasks":["Задача"]},{"day":3,"tasks":["Задача"]},{"day":4,"tasks":["Задача"]},{"day":5,"tasks":["Задача"]},{"day":6,"tasks":["Задача"]},{"day":7,"tasks":["Задача"]},{"day":8,"tasks":["Задача"]},{"day":9,"tasks":["Задача"]},{"day":10,"tasks":["Задача"]},{"day":11,"tasks":["Задача"]},{"day":12,"tasks":["Задача"]},{"day":13,"tasks":["Задача"]},{"day":14,"tasks":["Задача"]},{"day":15,"tasks":["Задача"]},{"day":16,"tasks":["Задача"]},{"day":17,"tasks":["Задача"]},{"day":18,"tasks":["Задача"]},{"day":19,"tasks":["Задача"]},{"day":20,"tasks":["Задача"]},{"day":21,"tasks":["Задача"]},{"day":22,"tasks":["Задача"]},{"day":23,"tasks":["Задача"]},{"day":24,"tasks":["Задача"]},{"day":25,"tasks":["Задача"]},{"day":26,"tasks":["Задача"]},{"day":27,"tasks":["Задача"]},{"day":28,"tasks":["Задача"]},{"day":29,"tasks":["Задача"]},{"day":30,"tasks":["Задача"]}]}
 
-Проведи опрос (5-6 вопросов), один вопрос за раз. Сначала узнай цель, потом уровень, время, ограничения.
+Все 30 дней обязательны. Задачи реальные, конкретные.`;
 
-После опроса ответь ТОЛЬКО JSON без текста снаружи:
-{"type":"result","niche":"Название","nicheDesc":"1-2 предложения","plan":"3-4 шага к цели","tasks":[{"day":1,"tasks":["Задача до 7 слов"]},{"day":2,"tasks":["Задача"]},{"day":3,"tasks":["Задача"]},{"day":4,"tasks":["Задача"]},{"day":5,"tasks":["Задача"]},{"day":6,"tasks":["Задача"]},{"day":7,"tasks":["Задача"]},{"day":8,"tasks":["Задача"]},{"day":9,"tasks":["Задача"]},{"day":10,"tasks":["Задача"]},{"day":11,"tasks":["Задача"]},{"day":12,"tasks":["Задача"]},{"day":13,"tasks":["Задача"]},{"day":14,"tasks":["Задача"]},{"day":15,"tasks":["Задача"]},{"day":16,"tasks":["Задача"]},{"day":17,"tasks":["Задача"]},{"day":18,"tasks":["Задача"]},{"day":19,"tasks":["Задача"]},{"day":20,"tasks":["Задача"]},{"day":21,"tasks":["Задача"]},{"day":22,"tasks":["Задача"]},{"day":23,"tasks":["Задача"]},{"day":24,"tasks":["Задача"]},{"day":25,"tasks":["Задача"]},{"day":26,"tasks":["Задача"]},{"day":27,"tasks":["Задача"]},{"day":28,"tasks":["Задача"]},{"day":29,"tasks":["Задача"]},{"day":30,"tasks":["Задача"]}]}
-
-Все 30 дней обязательны. Задачи конкретные, реальные.`;
-
-function addMsg(role,text,typing=false){ const box=document.getElementById('chat-messages'); const div=document.createElement('div'); div.className='msg '+(role==='assistant'?'ai':'user')+(typing?' typing':''); if(typing){ div.innerHTML='<div class="dots"><span></span><span></span><span></span></div>'; div.id='typing-indicator'; } else{ div.textContent=text; } box.appendChild(div); box.scrollTop=box.scrollHeight; return div; }
-function renderChat(){ const b=document.getElementById('chat-messages'); b.innerHTML=''; state.chatHistory.forEach(m=>addMsg(m.role,m.content)); }
-async function startQuestionnaire(){ const g='Привет! Я твой наставник в The Level.\n\nЗа 10 лет работы я помог сотням людей достичь своих целей — от первого дохода на фрилансе до запуска собственного бизнеса.\n\nС чего начнём? Расскажи — какую цель хочешь достичь? Это может быть заработок, новый навык, запуск проекта — что угодно.'; state.chatHistory.push({role:'assistant',content:g}); save(); addMsg('assistant',g); }
-function quickSend(t){ document.getElementById('chat-input').value=t; sendMessage(); }
-function buildMsgs(){ const m=state.chatHistory,r=[]; for(let i=0;i<m.length;i++){ if(r.length===0&&m[i].role==='assistant') continue; if(r.length>0&&m[i].role===r[r.length-1].role) r[r.length-1].content+='\n'+m[i].content; else r.push({role:m[i].role,content:m[i].content}); } return r; }
+function addMsg(role,text,typing=false){const box=document.getElementById('chat-messages');const div=document.createElement('div');div.className='msg '+(role==='assistant'?'ai':'user')+(typing?' typing':'');if(typing){div.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';div.id='typing-indicator';}else{div.textContent=text;}box.appendChild(div);box.scrollTop=box.scrollHeight;return div;}
+function renderChat(){const b=document.getElementById('chat-messages');b.innerHTML='';state.chatHistory.forEach(m=>addMsg(m.role,m.content));}
+async function startQuestionnaire(){const g='Привет! Залетай.\n\nЯ твой AI-наставник в The Level. Помогу найти нишу, выстрою план и буду рядом пока ты не сделаешь первые деньги.\n\nНачнём с главного — чем занимаешься сейчас и что хочешь изменить?';state.chatHistory.push({role:'assistant',content:g});save();addMsg('assistant',g);}
+function quickSend(t){document.getElementById('chat-input').value=t;sendMessage();}
+function buildMsgs(){const m=state.chatHistory,r=[];for(let i=0;i<m.length;i++){if(r.length===0&&m[i].role==='assistant')continue;if(r.length>0&&m[i].role===r[r.length-1].role)r[r.length-1].content+='\n'+m[i].content;else r.push({role:m[i].role,content:m[i].content});}return r;}
 
 async function sendMessage(){
   const inp=document.getElementById('chat-input'),btn=document.getElementById('chat-send');
-  const text=inp.value.trim(); if(!text) return;
-  inp.value=''; btn.disabled=true;
-  state.chatHistory.push({role:'user',content:text}); save(); addMsg('user',text);
+  const text=inp.value.trim();if(!text)return;
+  inp.value='';btn.disabled=true;
+  state.chatHistory.push({role:'user',content:text});save();addMsg('user',text);
   const te=addMsg('assistant','',true);
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:4000,system:SYS,messages:buildMsgs()})});
-    const data=await res.json(); te.remove();
+    const data=await res.json();te.remove();
     const reply=data.content?.[0]?.text||'Ошибка ответа';
-    try{ const cl=reply.replace(/```json|```/g,'').trim(); const s=cl.indexOf('{'),e=cl.lastIndexOf('}'); if(s!==-1&&e!==-1){ const p=JSON.parse(cl.substring(s,e+1)); if(p.type==='result'){ handleResult(p); btn.disabled=false; return; } } }catch(e){}
-    state.chatHistory.push({role:'assistant',content:reply}); save(); addMsg('assistant',reply);
-  }catch(e){ te.remove(); addMsg('assistant','Ошибка соединения. Попробуй ещё раз.'); }
+    try{const cl=reply.replace(/```json|```/g,'').trim();const s=cl.indexOf('{'),e=cl.lastIndexOf('}');if(s!==-1&&e!==-1){const p=JSON.parse(cl.substring(s,e+1));if(p.type==='result'){handleResult(p);btn.disabled=false;return;}}}catch(e){}
+    state.chatHistory.push({role:'assistant',content:reply});save();addMsg('assistant',reply);
+  }catch(e){te.remove();addMsg('assistant','Ошибка соединения. Попробуй ещё раз.');}
   btn.disabled=false;
 }
-document.getElementById('chat-input').addEventListener('keydown',e=>{ if(e.key==='Enter') sendMessage(); });
+document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage();});
 
-function handleResult(p){ state.niche=p.niche; state.nicheDesc=p.nicheDesc; state.plan=p.plan; state.tasks={}; p.tasks.forEach(d=>{ state.tasks[d.day]=d.tasks.map(t=>({text:t,done:false})); }); state.startDate=new Date().toISOString(); const msg='Готово! Твой план на 30 дней составлен.\n\nНиша: '+p.niche+'\n\n'+p.nicheDesc+'\n\nОткрывай раздел "Цели" и начинай — день 1 стартует сегодня.'; state.chatHistory.push({role:'assistant',content:msg}); save(); addMsg('assistant',msg); renderNiche(); renderGoals(); renderHome(); updateProfile(); }
-function renderNiche(){ if(!state.niche) return; document.getElementById('niche-block').style.display='block'; document.getElementById('niche-title').textContent=state.niche; document.getElementById('niche-desc').textContent=state.nicheDesc||''; }
-function openSubModal(){ document.getElementById('sub-modal').classList.add('active'); }
-function closeSubModal(){ document.getElementById('sub-modal').classList.remove('active'); }
-function resetApp(){ if(!confirm('Сбросить весь прогресс?')) return; localStorage.removeItem('thelevel_state'); localStorage.removeItem('thelevel_apikey'); location.reload(); }
-try{ window.Telegram?.WebApp?.ready(); window.Telegram?.WebApp?.expand(); }catch(e){}
+function handleResult(p){
+  state.niche=p.niche;state.nicheDesc=p.nicheDesc;state.plan=p.plan;
+  state.pointA=p.pointA||'';state.pointB=p.pointB||'';
+  state.tasks={};p.tasks.forEach(d=>{state.tasks[d.day]=d.tasks.map(t=>({text:t,done:false}));});
+  state.startDate=new Date().toISOString();
+  const msg='Готово. Твоя ниша: '+p.niche+'\n\n'+p.nicheDesc+'\n\nПлан на 30 дней составлен. Открывай Цели и начинай — день 1 стартует сегодня.';
+  state.chatHistory.push({role:'assistant',content:msg});save();addMsg('assistant',msg);
+  renderNiche();renderGoals();renderHome();checkAchievements();updateProfile();
+  // Update home CTA
+  const ctaBtn=document.getElementById('home-cta-btn');
+  if(ctaBtn){ctaBtn.textContent='Перейти к целям →';ctaBtn.onclick=()=>showScreen('goals');}
+}
+function renderNiche(){if(!state.niche)return;document.getElementById('niche-block').style.display='block';document.getElementById('niche-title').textContent=state.niche;document.getElementById('niche-desc').textContent=state.nicheDesc||'';}
+function openSubModal(){document.getElementById('sub-modal').classList.add('active');}
+function closeSubModal(){document.getElementById('sub-modal').classList.remove('active');}
+function resetApp(){if(!confirm('Сбросить весь прогресс?'))return;localStorage.removeItem('thelevel_state');localStorage.removeItem('thelevel_apikey');location.reload();}
+try{window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();}catch(e){}
 </script>
 </body>
 </html>
