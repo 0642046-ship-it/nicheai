@@ -617,7 +617,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 
 <script>
 const ADMIN_LOGIN='alexgvrkn2026', ADMIN_PASS='123best321botapp';
-const SHEET_API='https://script.google.com/macros/s/AKfycbwj_BAwTMAGarSMacKseRHRv7IWfrBkYMVMB7S5TE2uHOOlELUOm7GnoKnJwV-RFSzW/exec';
+const SHEET_API='http://cm819652.tw1.ru/api/index.php';
 const BOT_TOKEN='8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
 const CHANNEL='thelevelai';
 const TRIAL_DAYS=3;
@@ -713,7 +713,12 @@ function adminLogin(){
 function adminLogout(){localStorage.removeItem('thelevel_admin');document.getElementById('admin-panel').classList.remove('active');document.getElementById('role-select').classList.add('active');}
 function showAdminPanel(){document.getElementById('admin-panel').classList.add('active');renderAdminPanel();}
 
-async function getAllUsers(){try{const res=await fetch(SHEET_API+'?action=getAll');return await res.json();}catch(e){return[];}}
+async function getAllUsers(){
+  try{
+    const res=await fetch(SHEET_API+'?action=getAll');
+    return await res.json();
+  }catch(e){return[];}
+}
 
 async function renderAdminPanel(){
   document.getElementById('adm-users-list').innerHTML='<div class="adm-empty">Загрузка...</div>';
@@ -755,10 +760,23 @@ document.getElementById('start-btn').addEventListener('click',()=>{
 });
 
 async function checkSubscription(userId){
-  try{const res=await fetch('https://api.telegram.org/bot'+BOT_TOKEN+'/getChatMember?chat_id=@'+CHANNEL+'&user_id='+userId);const data=await res.json();if(data.ok)return['member','administrator','creator'].includes(data.result.status);}catch(e){}
-  return false;
+  const isTelegram = window.Telegram?.WebApp?.initData && window.Telegram.WebApp.initData.length > 0;
+  if(!isTelegram) return true;
+  try{
+    const res = await fetch(SHEET_API + '?action=checkSub&userId=' + encodeURIComponent(userId));
+    const data = await res.json();
+    return data.subscribed === true;
+  }catch(e){ return true; }
 }
 function getTrialDaysLeft(){if(!state.trialStart)return TRIAL_DAYS;const diff=Math.floor((new Date()-new Date(state.trialStart))/(864e5));return Math.max(0,TRIAL_DAYS-diff);}
+
+async function checkTrialBackend(userId){
+  try{
+    const res = await fetch(SHEET_API + '?action=checkTrial&userId=' + encodeURIComponent(userId));
+    const data = await res.json();
+    return data;
+  }catch(e){ return {allowed:true, daysLeft:3, plan:'Level Try'}; }
+}
 
 async function initApp(){
   document.getElementById('app').classList.add('show');
@@ -768,11 +786,19 @@ async function initApp(){
   let userId=state.userId||'0';
   try{const tg=window.Telegram?.WebApp;if(tg?.initDataUnsafe?.user)userId=String(tg.initDataUnsafe.user.id);}catch(e){}
 
-  const daysLeft=getTrialDaysLeft();
+  // Check subscription
   const isSubscribed=userId!=='0'?await checkSubscription(userId):true;
-
   if(!isSubscribed){showGate('subscribe');return;}
-  if(daysLeft<=0){showGate('trial-expired');return;}
+
+  // Check trial from backend
+  let daysLeft = getTrialDaysLeft();
+  if(userId !== '0'){
+    const trialData = await checkTrialBackend(userId);
+    daysLeft = trialData.daysLeft;
+    if(!trialData.allowed && trialData.plan === 'Level Try'){showGate('trial-expired');return;}
+  } else {
+    if(daysLeft<=0){showGate('trial-expired');return;}
+  }
 
   updateProfile();renderGoals();renderHome();
   showScreen('home');
@@ -797,17 +823,21 @@ function showGate(type){
 }
 
 async function recheckSubscription(){
-  let userId=state.userId||'0';
-  try{const tg=window.Telegram?.WebApp;if(tg?.initDataUnsafe?.user)userId=String(tg.initDataUnsafe.user.id);}catch(e){}
-  const ok=await checkSubscription(userId);
-  if(ok){document.getElementById('gate').classList.remove('active');const dl=getTrialDaysLeft();if(dl<=0){showGate('trial-expired');return;}updateProfile();renderGoals();renderHome();showScreen('home');if(state.chatHistory.length===0)startQuestionnaire();else{renderChat();renderNiche();}}
-  else{alert('Ты ещё не подписался! Подпишись на @thelevelai и нажми снова.');}
+  document.getElementById('gate').classList.remove('active');
+  const dl=getTrialDaysLeft();
+  if(dl<=0){showGate('trial-expired');return;}
+  updateProfile();renderGoals();renderHome();
+  showScreen('home');
+  if(state.chatHistory.length===0)startQuestionnaire();
+  else{renderChat();renderNiche();}
 }
 function closeGateAndSub(){document.getElementById('gate').classList.remove('active');showScreen('profile');setTimeout(()=>openSubModal(),300);}
 
 async function registerUser(userId,userName){
   const refBy=getRefParam();
-  try{await fetch(SHEET_API+'?action=register&userId='+encodeURIComponent(userId)+'&userName='+encodeURIComponent(userName)+'&refBy='+encodeURIComponent(refBy));}catch(e){}
+  try{
+    await fetch(SHEET_API+'?action=register&userId='+encodeURIComponent(userId)+'&userName='+encodeURIComponent(userName)+'&refBy='+encodeURIComponent(refBy));
+  }catch(e){}
 }
 async function getRefCount(userId){try{const res=await fetch(SHEET_API+'?action=getRefs&userId='+encodeURIComponent(userId));const data=await res.json();return data.count||0;}catch(e){return 0;}}
 function getRefParam(){try{const p=new URLSearchParams(window.location.search);return p.get('start')||'';}catch(e){return '';}}
