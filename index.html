@@ -645,8 +645,16 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     <div class="modal-title">Выбери тариф</div>
     <div class="modal-sub">Начни бесплатно — переходи когда будешь готов</div>
     <div class="tariff"><div class="tariff-top"><div><span class="tariff-name">Level Try</span><span class="tariff-badge">3 дня</span></div><span class="tariff-price">0 ₽</span></div><ul class="tariff-features"><li>Базовый AI Mentor</li><li>1 цель и план на 30 дней</li><li>Основные функции трекера</li></ul></div>
-    <div class="tariff"><div class="tariff-top"><span class="tariff-name">The Level</span><span class="tariff-price">199 ₽<small>/мес</small></span></div><ul class="tariff-features"><li>50% возможностей AI Mentor</li><li>До 3 активных целей</li><li>Расширенные планы задач</li><li>Аналитика прогресса</li></ul></div>
-    <div class="tariff current"><div class="tariff-top"><div style="display:flex;align-items:center;"><span class="tariff-name">The Level Ultimate</span><span class="tariff-badge">Текущий</span></div><span class="tariff-price">699 ₽<small>/мес</small></span></div><ul class="tariff-features"><li>100% возможностей AI Mentor</li><li>Неограниченные цели</li><li>Персональные стратегии</li><li>Реферальная программа 20%</li><li>Приоритетная поддержка</li></ul></div>
+    <div class="tariff">
+      <div class="tariff-top"><span class="tariff-name">The Level</span><span class="tariff-price">200 ⭐</span></div>
+      <ul class="tariff-features"><li>50% возможностей AI Mentor</li><li>До 3 активных целей</li><li>Расширенные планы задач</li><li>Аналитика прогресса</li></ul>
+      <button class="card-btn primary" style="margin-top:12px" onclick="payWithStars('The Level')">⭐ Оплатить 200 Stars</button>
+    </div>
+    <div class="tariff current">
+      <div class="tariff-top"><div style="display:flex;align-items:center;"><span class="tariff-name">The Level Ultimate</span><span class="tariff-badge">Лучший</span></div><span class="tariff-price">700 ⭐</span></div>
+      <ul class="tariff-features"><li>100% возможностей AI Mentor</li><li>Неограниченные цели</li><li>Персональные стратегии</li><li>Реферальная программа 20%</li><li>Приоритетная поддержка</li></ul>
+      <button class="card-btn primary" style="margin-top:12px" onclick="payWithStars('The Level Ultimate')">⭐ Оплатить 700 Stars</button>
+    </div>
     <button class="modal-close" onclick="closeSubModal()">Закрыть</button>
   </div>
 </div>
@@ -1101,6 +1109,22 @@ function handleResult(p){
 function renderNiche(){if(!state.niche)return;document.getElementById('niche-block').style.display='block';document.getElementById('niche-title').textContent=state.niche;document.getElementById('niche-desc').textContent=state.nicheDesc||'';}
 function openSubModal(){document.getElementById('sub-modal').classList.add('active');}
 function closeSubModal(){document.getElementById('sub-modal').classList.remove('active');}
+async function payWithStars(plan){
+  if(!state.userId){ alert('Открой приложение через Telegram!'); return; }
+  try{
+    const res = await fetch(SHEET_API + '?action=sendInvoice&userId=' + encodeURIComponent(state.userId) + '&plan=' + encodeURIComponent(plan));
+    const data = await res.json();
+    if(data.ok){
+      closeSubModal();
+      alert('Счёт отправлен в чат с ботом! Открой @TheLevelAppBot чтобы оплатить.');
+    } else {
+      alert('Ошибка отправки счёта. Попробуй ещё раз.');
+    }
+  }catch(e){
+    alert('Ошибка соединения.');
+  }
+}
+
 function resetApp(){if(!confirm('Сбросить весь прогресс?'))return;localStorage.removeItem('thelevel_state');localStorage.removeItem('thelevel_apikey');location.reload();}
 try{window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();}catch(e){}
 </script>
