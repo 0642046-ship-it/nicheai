@@ -355,25 +355,14 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
         <div><div class="onb-feature-title">Без воды и отмазок</div><div class="onb-feature-desc">Честно скажет где ты сейчас и что делать дальше</div></div>
       </div>
     </div>
-    <button class="onb-big-btn" onclick="showOnbStep(2)">
+    <button class="onb-big-btn" id="start-btn">
       Погнали →
     </button>
     <button class="back-btn" onclick="backToRole()">← Назад</button>
   </div>
 
-  <!-- Step 2: API Key -->
-  <div class="onb-step" id="onb-step-2">
-    <div class="onb-logo">THE</div>
-    <div class="onb-lv" style="margin-bottom:24px">level</div>
-    <div class="onb-headline" style="font-size:18px">Последний шаг — подключи AI</div>
-    <div class="onb-desc">Вставь API ключ Claude. Он нужен чтобы твой личный наставник работал.</div>
-    <div class="onb-iw">
-      <svg class="onb-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <input class="onb-inp" id="apikey-input" type="password" placeholder="API ключ Claude (sk-ant-...)"/>
-    </div>
-    <p class="onb-err" id="apikey-error">Введи корректный ключ</p>
-    <button class="onb-big-btn" id="start-btn">Запустить →</button>
-    <button class="back-btn" onclick="showOnbStep(1)">← Назад</button>
+  <!-- Step 2: hidden, auto-start -->
+  <div class="onb-step" id="onb-step-2" style="display:none">
   </div>
 </div>
 
@@ -678,7 +667,6 @@ const SHEET_API='https://nicheai-production.up.railway.app';
 const BOT_TOKEN='8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
 const CHANNEL='thelevelai';
 const TRIAL_DAYS=3;
-let API_KEY=localStorage.getItem('thelevel_apikey')||'';
 const MODEL='claude-sonnet-4-5';
 let subOpen=false;
 
@@ -887,10 +875,35 @@ function showGate(type){
   const gate=document.getElementById('gate'),content=document.getElementById('gate-content');
   gate.classList.add('active');
   if(type==='subscribe'){
-    content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">📢</div><div class="gate-title">Подпишись на канал</div><div class="gate-desc">Чтобы пользоваться The Level — нужно быть в нашем Telegram-канале. Там ежедневно выходит контент по заработку.</div><button class="gate-btn" onclick="openChannel()">Подписаться на @thelevelai</button><button class="gate-btn secondary" onclick="recheckSubscription()" style="margin-top:8px">Я подписался ✓</button>`;
+    content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">📢</div><div class="gate-title">Подпишись на канал</div><div class="gate-desc">Чтобы пользоваться The Level — нужно быть в нашем Telegram-канале. Там ежедневно выходит контент по заработку.</div><button class="gate-btn" onclick="openChannel()">Подписаться на @thelevelai →</button><div style="font-size:12px;color:var(--w50);margin-top:12px;text-align:center">После подписки просто вернись в приложение</div>`;
+    // Auto-check when user returns to app
+    startAutoSubCheck();
   }else if(type==='trial-expired'){
     content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">⏰</div><div class="gate-title">Пробный период закончился</div><div class="gate-desc">3 дня бесплатного доступа прошло. Выбери тариф — и продолжай двигаться к своей цели.</div><button class="gate-btn" onclick="closeGateAndSub()">Выбрать тариф →</button>`;
   }
+}
+
+let subCheckInterval = null;
+
+function startAutoSubCheck(){
+  if(subCheckInterval) clearInterval(subCheckInterval);
+  subCheckInterval = setInterval(async ()=>{
+    let userId = state.userId || '0';
+    try{ const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user) userId=String(tg.initDataUnsafe.user.id); }catch(e){}
+    if(userId === '0') return;
+    const ok = await checkSubscription(userId);
+    if(ok){
+      clearInterval(subCheckInterval);
+      subCheckInterval = null;
+      localStorage.setItem('thelevel_sub','1');
+      localStorage.setItem('thelevel_sub_time', Date.now().toString());
+      document.getElementById('gate').classList.remove('active');
+      const dl=getTrialDaysLeft();
+      if(dl<=0){showGate('trial-expired');return;}
+      updateProfile();renderGoals();renderHome();showScreen('home');
+      if(state.chatHistory.length===0)startQuestionnaire();else{renderChat();renderNiche();}
+    }
+  }, 3000); // Check every 3 seconds
 }
 
 function openChannel(){
@@ -1126,7 +1139,7 @@ async function sendMessage(){
   state.chatHistory.push({role:'user',content:text});save();addMsg('user',text);
   const te=addMsg('assistant','',true);
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:4000,system:SYS,messages:buildMsgs()})});
+    const res=await fetch(SHEET_API+'?action=claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,max_tokens:4000,system:SYS,messages:buildMsgs()})});
     const data=await res.json();te.remove();
     const reply=data.content?.[0]?.text||'Ошибка ответа';
     try{const cl=reply.replace(/```json|```/g,'').trim();const s=cl.indexOf('{'),e=cl.lastIndexOf('}');if(s!==-1&&e!==-1){const p=JSON.parse(cl.substring(s,e+1));if(p.type==='result'){handleResult(p);btn.disabled=false;return;}}}catch(e){}
@@ -1190,7 +1203,31 @@ function openAdminDirect(){
 }
 
 function resetApp(){if(!confirm('Сбросить весь прогресс?'))return;localStorage.removeItem('thelevel_state');localStorage.removeItem('thelevel_apikey');location.reload();}
-try{window.Telegram?.WebApp?.ready();window.Telegram?.WebApp?.expand();}catch(e){}
+try{
+  window.Telegram?.WebApp?.ready();
+  window.Telegram?.WebApp?.expand();
+  // Check subscription when app becomes visible again
+  window.Telegram?.WebApp?.onEvent('activated', async ()=>{
+    const gateVisible = document.getElementById('gate').classList.contains('active');
+    if(gateVisible){
+      let userId = state.userId || '0';
+      try{ const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user) userId=String(tg.initDataUnsafe.user.id); }catch(e){}
+      if(userId !== '0'){
+        const ok = await checkSubscription(userId);
+        if(ok){
+          if(subCheckInterval){ clearInterval(subCheckInterval); subCheckInterval=null; }
+          localStorage.setItem('thelevel_sub','1');
+          localStorage.setItem('thelevel_sub_time', Date.now().toString());
+          document.getElementById('gate').classList.remove('active');
+          const dl=getTrialDaysLeft();
+          if(dl<=0){showGate('trial-expired');return;}
+          updateProfile();renderGoals();renderHome();showScreen('home');
+          if(state.chatHistory.length===0)startQuestionnaire();else{renderChat();renderNiche();}
+        }
+      }
+    }
+  });
+}catch(e){}
 </script>
 </body>
 </html>
