@@ -553,7 +553,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
   <!-- SUBSCRIPTION -->
   <div class="card">
     <div class="card-hdr" style="margin-bottom:0;cursor:pointer" onclick="toggleSub()">
-      <div class="card-title">👑 Subscription</div>
+      <div class="card-title">👑 Подписка</div>
       <div style="display:flex;align-items:center;gap:8px;"><div class="chip chip-g">Активна</div><svg id="sub-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--w50)" stroke-width="2" style="transition:transform .3s"><polyline points="6 9 12 15 18 9"/></svg></div>
     </div>
     <div class="coll-content" id="sub-content">
@@ -572,6 +572,11 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     </button>
   </div>
 
+  <!-- MANAGE SUB BUTTON above ref -->
+  <button class="card-btn primary" style="margin-bottom:12px;border-radius:16px;padding:16px;" onclick="openSubModal()">
+    💳 Оплатить подписку
+  </button>
+
   <!-- REF -->
   <div class="ref-card">
     <div class="ref-title">🎁 Реферальная программа</div>
@@ -583,6 +588,37 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     <div class="ref-stats">
       <div class="ref-stat"><div class="ref-stat-v" id="ref-count">0</div><div class="ref-stat-l">Приглашено</div></div>
       <div class="ref-stat"><div class="ref-stat-v" id="ref-earned">0 ₽</div><div class="ref-stat-l">Заработано (20%)</div></div>
+    </div>
+  </div>
+
+  <!-- LIFETIME STATS -->
+  <div class="card" id="lifetime-stats-card">
+    <div class="card-hdr"><div class="card-title">📊 LifeTime Stats</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="background:var(--surface2);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700" id="stat-tasks">0</div>
+        <div style="font-size:10px;color:var(--w50);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Задач выполнено</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700" id="stat-days">0</div>
+        <div style="font-size:10px;color:var(--w50);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Дней в прогрессе</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700" id="stat-streak">0</div>
+        <div style="font-size:10px;color:var(--w50);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Серия 🔥</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:12px;text-align:center">
+        <div style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:var(--green)" id="stat-ai-score">0</div>
+        <div style="font-size:10px;color:var(--w50);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">AI Score</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INCOME FORECAST -->
+  <div class="card" id="income-forecast-card" style="display:none">
+    <div class="card-hdr"><div class="card-title">💡 Income Forecast</div></div>
+    <div style="font-size:13px;color:var(--w70);line-height:1.6" id="income-forecast-text">
+      Если ты сохранишь текущий темп — потенциальный доход через 3 месяца: <strong style="color:var(--white)" id="income-forecast-val">—</strong>
     </div>
   </div>
 
@@ -617,7 +653,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
 
 <script>
 const ADMIN_LOGIN='alexgvrkn2026', ADMIN_PASS='123best321botapp';
-const SHEET_API='http://cm819652.tw1.ru/api/index.php';
+const SHEET_API='https://nicheai-production.up.railway.app';
 const BOT_TOKEN='8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
 const CHANNEL='thelevelai';
 const TRIAL_DAYS=3;
@@ -861,6 +897,27 @@ function updateProfile(){
   document.getElementById('earnings-display').textContent=state.earned?state.earned+' ₽':'— ₽';
   if(state.earned)document.getElementById('earned-input').value=state.earned;
   document.getElementById('ref-link-text').textContent='t.me/TheLevelAppBot/thelevel?start=ref_'+state.userId;
+
+  // Lifetime stats
+  const allT=Object.values(state.tasks).flat(), doneT=allT.filter(t=>t.done).length;
+  const daysPassed=state.startDate?Math.max(1,Math.floor((new Date()-new Date(state.startDate))/(864e5))+1):0;
+  const aiScore=Math.min(100, Math.round((doneT/Math.max(1,allT.length))*60 + (state.streak||0)*3 + (state.achievements?.length||0)*5));
+  if(document.getElementById('stat-tasks')) document.getElementById('stat-tasks').textContent=doneT;
+  if(document.getElementById('stat-days')) document.getElementById('stat-days').textContent=daysPassed;
+  if(document.getElementById('stat-streak')) document.getElementById('stat-streak').textContent=state.streak||0;
+  if(document.getElementById('stat-ai-score')) document.getElementById('stat-ai-score').textContent=aiScore;
+
+  // Income forecast
+  if(state.niche && doneT>0){
+    const fc=document.getElementById('income-forecast-card');
+    if(fc) fc.style.display='block';
+    const rate=doneT/Math.max(1,daysPassed);
+    const monthlyRate=rate*30;
+    const baseIncome=monthlyRate*500;
+    const forecast3m=Math.round(baseIncome*3/1000)*1000;
+    const fv=document.getElementById('income-forecast-val');
+    if(fv) fv.textContent=forecast3m.toLocaleString('ru-RU')+' ₽';
+  }
   getRefCount(state.userId).then(c=>{document.getElementById('ref-count').textContent=c;document.getElementById('ref-earned').textContent=Math.round(c*199*0.2)+' ₽';});
 
   // Trajectory
@@ -881,9 +938,11 @@ function updateProfile(){
   const xpEl=document.getElementById('xp-wrap');
   if(state.niche){
     xpEl.style.display='block';
-    const lvl=Math.floor(state.xp/100)+1;
+    const lvlNames=['BUILDER','OPERATOR','CREATOR','FOUNDER','VISIONARY'];
+    const lvl=Math.min(Math.floor(state.xp/100)+1, 5);
     const xpInLvl=state.xp%100;
-    document.getElementById('xp-level-badge').textContent='Уровень '+lvl;
+    const lvlName=lvlNames[lvl-1]||'VISIONARY';
+    document.getElementById('xp-level-badge').textContent='LVL '+lvl+' · '+lvlName;
     document.getElementById('xp-text').textContent=xpInLvl+' / 100 XP';
     document.getElementById('xp-fill').style.width=xpInLvl+'%';
   }
@@ -952,7 +1011,17 @@ function renderGoals(){
   const R=28,circ=2*Math.PI*R,off=circ-(pct/100)*circ;
   let dl='';if(state.startDate){const e=new Date(state.startDate);e.setDate(e.getDate()+29);dl='до '+e.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});}
   const gc=document.createElement('div');gc.className='goal-card';
-  gc.innerHTML=`<div class="goal-top"><div class="goal-left"><div class="goal-lbl">Твоя цель</div><input class="goal-inp" id="goal-input" placeholder="Например: 100к, запустить канал..." value="${state.goal||''}"/><div class="goal-dl">${dl}</div></div><div class="circ-wrap"><svg width="76" height="76" viewBox="0 0 76 76"><circle cx="38" cy="38" r="${R}" stroke="rgba(255,255,255,.08)" stroke-width="6" fill="none"/><circle cx="38" cy="38" r="${R}" stroke="#fff" stroke-width="6" fill="none" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/></svg><div class="circ-lbl">${pct}%</div></div></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><div class="prog-msg">${pct===100?'🎉 <strong>Цель достигнута! Разъебал!</strong>':pct>=66?'<strong>Финишная прямая!</strong> Дожимай.':pct>=33?'<strong>Хороший темп</strong> — не останавливайся.':'<strong>Старт дан.</strong> Каждое действие считается.'}</div>`;
+  gc.innerHTML=`<div class="goal-top"><div class="goal-left"><div class="goal-lbl">Твоя цель</div><input class="goal-inp" id="goal-input" placeholder="Например: 100к, запустить канал..." value="${state.goal||''}"/><div class="goal-dl">${dl}</div></div><div class="circ-wrap"><svg width="76" height="76" viewBox="0 0 76 76"><circle cx="38" cy="38" r="${R}" stroke="rgba(255,255,255,.08)" stroke-width="6" fill="none"/><circle cx="38" cy="38" r="${R}" stroke="#fff" stroke-width="6" fill="none" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/></svg><div class="circ-lbl">${pct}%</div></div></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><div class="prog-msg">${pct===100?'🎉 <strong>Цель достигнута! Разъебал!</strong>':pct>=66?'<strong>Финишная прямая!</strong> Дожимай.':pct>=33?'<strong>Хороший темп</strong> — не останавливайся.':'<strong>Старт дан.</strong> Каждое действие считается.'}</div>
+    ${(()=>{
+      const all=Object.values(state.tasks).flat();
+      const done=all.filter(t=>t.done).length;
+      if(done===0||!state.startDate) return '';
+      const daysPassed=Math.max(1,Math.floor((new Date()-new Date(state.startDate))/(864e5))+1);
+      const rate=done/daysPassed;
+      const remaining=all.length-done;
+      const daysToFinish=rate>0?Math.ceil(remaining/rate):30;
+      return '<div style="margin-top:10px;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08)"><div style="font-size:10px;color:var(--w50);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">⚡ AI Прогноз</div><div style="font-size:12px;color:var(--w70)">При текущем темпе цель будет достигнута через <strong style="color:var(--white)">'+(daysToFinish<=0?'скоро':daysToFinish+' дн.')+'</strong></div></div>';
+    })()}`;
   c.appendChild(gc);
   gc.querySelector('#goal-input').addEventListener('input',e=>{state.goal=e.target.value;save();});
   const today=getDayOfPlan(),todayT=state.tasks[today]||[],todayDone=todayT.filter(t=>t.done).length;
