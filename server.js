@@ -70,11 +70,11 @@ function httpsGet(reqUrl) {
   });
 }
 
-function httpsPost(reqUrl, body, cryptoToken = null) {
+function httpsPost(reqUrl, body, cryptoToken = null, extraHeaders = {}) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
     const urlParsed = new URL(reqUrl);
-    const headers = { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) };
+    const headers = { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data), ...extraHeaders };
     if (cryptoToken) headers['Crypto-Pay-API-Token'] = cryptoToken;
     const options = {
       hostname: urlParsed.hostname,
@@ -282,6 +282,21 @@ const server = http.createServer(async (req, res) => {
         });
 
         sendJSON(res, {ok: result.ok || false});
+        break;
+      }
+
+      // Claude API proxy - key stored on server
+      case 'claude': {
+        if(req.method !== 'POST') { sendJSON(res, {ok: false}); return; }
+        const body = await getBody(req);
+        const claudeKey = process.env.CLAUDE_API_KEY;
+        if(!claudeKey) { sendJSON(res, {ok: false, error: 'No API key'}); return; }
+        
+        const claudeRes = await httpsPost('https://api.anthropic.com/v1/messages', body, null, {
+          'x-api-key': claudeKey,
+          'anthropic-version': '2023-06-01'
+        });
+        sendJSON(res, claudeRes);
         break;
       }
 
