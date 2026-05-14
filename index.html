@@ -577,6 +577,13 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     💳 Оплатить подписку
   </button>
 
+  <!-- ADMIN BUTTON for Alex -->
+  <div id="admin-shortcut" style="display:none;margin-bottom:12px;">
+    <button class="card-btn" style="border-radius:16px;padding:16px;border-color:rgba(255,255,255,0.3);" onclick="openAdminDirect()">
+      ⚡ Панель администратора
+    </button>
+  </div>
+
   <!-- REF -->
   <div class="ref-card">
     <div class="ref-title">🎁 Реферальная программа</div>
@@ -648,12 +655,18 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     <div class="tariff">
       <div class="tariff-top"><span class="tariff-name">The Level</span><span class="tariff-price">200 ⭐</span></div>
       <ul class="tariff-features"><li>50% возможностей AI Mentor</li><li>До 3 активных целей</li><li>Расширенные планы задач</li><li>Аналитика прогресса</li></ul>
-      <button class="card-btn primary" style="margin-top:12px" onclick="payWithStars('The Level')">⭐ Оплатить 200 Stars</button>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="card-btn primary" style="flex:1" onclick="payWithStars('The Level')">⭐ 200 Stars</button>
+        <button class="card-btn" style="flex:1;border-color:var(--border2)" onclick="payWithCrypto('The Level')">₿ Крипто</button>
+      </div>
     </div>
     <div class="tariff current">
       <div class="tariff-top"><div style="display:flex;align-items:center;"><span class="tariff-name">The Level Ultimate</span><span class="tariff-badge">Лучший</span></div><span class="tariff-price">700 ⭐</span></div>
       <ul class="tariff-features"><li>100% возможностей AI Mentor</li><li>Неограниченные цели</li><li>Персональные стратегии</li><li>Реферальная программа 20%</li><li>Приоритетная поддержка</li></ul>
-      <button class="card-btn primary" style="margin-top:12px" onclick="payWithStars('The Level Ultimate')">⭐ Оплатить 700 Stars</button>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="card-btn primary" style="flex:1" onclick="payWithStars('The Level Ultimate')">⭐ 700 Stars</button>
+        <button class="card-btn" style="flex:1;border-color:var(--border2)" onclick="payWithCrypto('The Level Ultimate')">₿ Крипто</button>
+      </div>
     </div>
     <button class="modal-close" onclick="closeSubModal()">Закрыть</button>
   </div>
@@ -906,6 +919,12 @@ function updateProfile(){
   if(state.earned)document.getElementById('earned-input').value=state.earned;
   document.getElementById('ref-link-text').textContent='t.me/TheLevelAppBot/thelevel?start=ref_'+state.userId;
 
+  // Show admin button for Alex
+  const adminBtn = document.getElementById('admin-shortcut');
+  if(adminBtn && (state.userId === '934467282' || state.userId === '5455853427')) {
+    adminBtn.style.display = 'block';
+  }
+
   // Lifetime stats
   const allT=Object.values(state.tasks).flat(), doneT=allT.filter(t=>t.done).length;
   const daysPassed=state.startDate?Math.max(1,Math.floor((new Date()-new Date(state.startDate))/(864e5))+1):0;
@@ -1109,6 +1128,22 @@ function handleResult(p){
 function renderNiche(){if(!state.niche)return;document.getElementById('niche-block').style.display='block';document.getElementById('niche-title').textContent=state.niche;document.getElementById('niche-desc').textContent=state.nicheDesc||'';}
 function openSubModal(){document.getElementById('sub-modal').classList.add('active');}
 function closeSubModal(){document.getElementById('sub-modal').classList.remove('active');}
+async function payWithCrypto(plan){
+  if(!state.userId){ alert('Открой приложение через Telegram!'); return; }
+  try{
+    const res = await fetch(SHEET_API + '?action=createCryptoInvoice&userId=' + encodeURIComponent(state.userId) + '&plan=' + encodeURIComponent(plan));
+    const data = await res.json();
+    if(data.ok && data.payUrl){
+      closeSubModal();
+      window.Telegram?.WebApp?.openLink(data.payUrl);
+    } else {
+      alert('Ошибка создания счёта. Попробуй ещё раз.');
+    }
+  }catch(e){
+    alert('Ошибка соединения.');
+  }
+}
+
 async function payWithStars(plan){
   if(!state.userId){ alert('Открой приложение через Telegram!'); return; }
   try{
@@ -1123,6 +1158,12 @@ async function payWithStars(plan){
   }catch(e){
     alert('Ошибка соединения.');
   }
+}
+
+function openAdminDirect(){
+  localStorage.setItem('thelevel_admin','1');
+  document.getElementById('app').classList.remove('show');
+  showAdminPanel();
 }
 
 function resetApp(){if(!confirm('Сбросить весь прогресс?'))return;localStorage.removeItem('thelevel_state');localStorage.removeItem('thelevel_apikey');location.reload();}
