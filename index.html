@@ -843,8 +843,22 @@ async function initApp(){
   let userId=state.userId||'0';
   try{const tg=window.Telegram?.WebApp;if(tg?.initDataUnsafe?.user)userId=String(tg.initDataUnsafe.user.id);}catch(e){}
 
-  // Check subscription
-  const isSubscribed=userId!=='0'?await checkSubscription(userId):true;
+  // Check subscription - cache for 1 hour
+  let isSubscribed = true;
+  if(userId !== '0'){
+    const cachedSub = localStorage.getItem('thelevel_sub');
+    const cachedTime = localStorage.getItem('thelevel_sub_time');
+    const cacheValid = cachedTime && (Date.now() - parseInt(cachedTime)) < 3600000; // 1 hour
+    if(cacheValid && cachedSub === '1'){
+      isSubscribed = true;
+    } else {
+      isSubscribed = await checkSubscription(userId);
+      if(isSubscribed){
+        localStorage.setItem('thelevel_sub', '1');
+        localStorage.setItem('thelevel_sub_time', Date.now().toString());
+      }
+    }
+  }
   if(!isSubscribed){showGate('subscribe');return;}
 
   // Check trial from backend
@@ -873,9 +887,18 @@ function showGate(type){
   const gate=document.getElementById('gate'),content=document.getElementById('gate-content');
   gate.classList.add('active');
   if(type==='subscribe'){
-    content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">📢</div><div class="gate-title">Подпишись на канал</div><div class="gate-desc">Чтобы пользоваться The Level — нужно быть в нашем Telegram-канале. Там ежедневно выходит контент по заработку.</div><a href="https://t.me/thelevelai" target="_blank" style="text-decoration:none;display:block;margin-bottom:10px;"><button class="gate-btn">Подписаться на @thelevelai</button></a><button class="gate-btn secondary" onclick="recheckSubscription()">Я подписался ✓</button>`;
+    content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">📢</div><div class="gate-title">Подпишись на канал</div><div class="gate-desc">Чтобы пользоваться The Level — нужно быть в нашем Telegram-канале. Там ежедневно выходит контент по заработку.</div><button class="gate-btn" onclick="openChannel()">Подписаться на @thelevelai</button><button class="gate-btn secondary" onclick="recheckSubscription()" style="margin-top:8px">Я подписался ✓</button>`;
   }else if(type==='trial-expired'){
     content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">⏰</div><div class="gate-title">Пробный период закончился</div><div class="gate-desc">3 дня бесплатного доступа прошло. Выбери тариф — и продолжай двигаться к своей цели.</div><button class="gate-btn" onclick="closeGateAndSub()">Выбрать тариф →</button>`;
+  }
+}
+
+function openChannel(){
+  // Use Telegram API to open channel without closing Mini App
+  try {
+    window.Telegram?.WebApp?.openTelegramLink('https://t.me/thelevelai');
+  } catch(e) {
+    window.open('https://t.me/thelevelai', '_blank');
   }
 }
 
