@@ -794,9 +794,6 @@ async function renderAdminPanel(){
 }
 
 document.getElementById('start-btn').addEventListener('click',()=>{
-  const k=document.getElementById('apikey-input').value.trim();
-  if(!k||!k.startsWith('sk-')){document.getElementById('apikey-error').style.display='block';return;}
-  API_KEY=k;localStorage.setItem('thelevel_apikey',k);
   state.onboardingDone=true;
   const d=new Date();d.setDate(d.getDate()+30);state.subDate=d.toLocaleDateString('ru-RU');
   save();
