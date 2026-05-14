@@ -728,8 +728,8 @@ window.addEventListener('load',()=>{
     document.getElementById('splash').classList.add('hide');
     setTimeout(()=>{
       document.getElementById('splash').style.display='none';
-      if(state.onboardingDone&&API_KEY){initApp();return;}
       if(localStorage.getItem('thelevel_admin')==='1'){showAdminPanel();return;}
+      if(state.onboardingDone){initApp();return;}
       document.getElementById('role-select').classList.add('active');
     },700);
   },2400);
