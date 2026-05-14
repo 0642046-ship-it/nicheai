@@ -4,6 +4,8 @@ const mysql = require('mysql2/promise');
 const https = require('https');
 
 const BOT_TOKEN = '8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
+const CRYPTO_BOT_TOKEN = '582267:AAo7vr6oI8aniPYv1vCBDOEvif2LjNc4GNV';
+const CRYPTO_BOT_API = 'https://pay.crypt.bot/api';
 const CHANNEL = 'thelevelai';
 const TRIAL_DAYS = 3;
 const PORT = process.env.PORT || 8080;
@@ -68,15 +70,17 @@ function httpsGet(reqUrl) {
   });
 }
 
-function httpsPost(reqUrl, body) {
+function httpsPost(reqUrl, body, cryptoToken = null) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
     const urlParsed = new URL(reqUrl);
+    const headers = { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) };
+    if (cryptoToken) headers['Crypto-Pay-API-Token'] = cryptoToken;
     const options = {
       hostname: urlParsed.hostname,
-      path: urlParsed.pathname,
+      path: urlParsed.pathname + (urlParsed.search || ''),
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }
+      headers
     };
     const req = https.request(options, (res) => {
       let d = '';
@@ -231,6 +235,33 @@ const server = http.createServer(async (req, res) => {
         const amount = plan === 'The Level' ? 200 : 700;
         await db.execute('INSERT INTO payments (user_id, amount, plan, payment_method, status) VALUES (?, ?, ?, ?, ?)', [userId, amount, plan, method, 'completed']);
         sendJSON(res, {ok: true});
+        break;
+      }
+
+      // Create CryptoBot invoice
+      case 'createCryptoInvoice': {
+        const { userId, plan } = q;
+        if (!userId || !plan) { sendJSON(res, {ok: false}); return; }
+        
+        const amount = plan === 'The Level' ? '2.20' : '7.70'; // USDT
+        
+        const cryptoRes = await httpsPost(`${CRYPTO_BOT_API}/createInvoice`, {
+          currency_type: 'fiat',
+          fiat: 'RUB',
+          accepted_assets: 'USDT,TON,BTC,ETH',
+          amount: plan === 'The Level' ? '199' : '699',
+          description: `The Level — ${plan} (30 дней)`,
+          payload: JSON.stringify({userId, plan}),
+          paid_btn_name: 'openBot',
+          paid_btn_url: 'https://t.me/TheLevelAppBot/thelevel',
+          expires_in: 3600
+        }, CRYPTO_BOT_TOKEN);
+        
+        if (cryptoRes.ok) {
+          sendJSON(res, {ok: true, payUrl: cryptoRes.result.bot_invoice_url});
+        } else {
+          sendJSON(res, {ok: false, error: JSON.stringify(cryptoRes)});
+        }
         break;
       }
 
