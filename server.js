@@ -43,7 +43,7 @@ async function initDB() {
     )`);
     console.log('DB connected successfully');
   } catch(e) {
-    console.error('DB error:', e.message);
+    console.error('DB error:', e.code, e.errno, e.sqlMessage, e.message, JSON.stringify(e));
   }
 }
 
