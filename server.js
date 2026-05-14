@@ -4,11 +4,13 @@ const mysql = require('mysql2/promise');
 const https = require('https');
 
 const DB_CONFIG = {
-  host: 'localhost',
-  user: 'cm819652_thelevel',
-  password: 'igdz6Ny8',
-  database: 'cm819652_thelevel',
-  port: 3306
+  host: process.env.MYSQLHOST || 'localhost',
+  user: process.env.MYSQLUSER || 'cm819652_thelevel',
+  password: process.env.MYSQLPASSWORD || 'igdz6Ny8',
+  database: process.env.MYSQLDATABASE || 'cm819652_thelevel',
+  port: parseInt(process.env.MYSQLPORT || '3306'),
+  waitForConnections: true,
+  connectionLimit: 10
 };
 
 const BOT_TOKEN = '8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
@@ -39,15 +41,15 @@ async function initDB() {
       status VARCHAR(20) DEFAULT 'pending',
       created_at DATETIME DEFAULT NOW()
     )`);
-    console.log('DB connected');
+    console.log('DB connected successfully');
   } catch(e) {
     console.error('DB error:', e.message);
   }
 }
 
-function httpsGet(url) {
+function httpsGet(reqUrl) {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    https.get(reqUrl, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => { try { resolve(JSON.parse(data)); } catch(e) { resolve({}); } });
@@ -89,7 +91,7 @@ const server = http.createServer(async (req, res) => {
         if (db) {
           const [rows] = await db.execute('SELECT id FROM users WHERE id = ?', [userId]);
           if (rows.length === 0) {
-            await db.execute('INSERT INTO users (id, username, ref_by, trial_start) VALUES (?, ?, ?, NOW())', [userId, userName, refBy]);
+            await db.execute('INSERT INTO users (id, username, ref_by, trial_start) VALUES (?, ?, ?, NOW())', [userId, userName || 'Unknown', refBy]);
           }
         }
         sendJSON(res, {ok: true});
@@ -126,7 +128,7 @@ const server = http.createServer(async (req, res) => {
         const { userId } = q;
         if (!userId || !db) { sendJSON(res, {count: 0}); return; }
         const [rows] = await db.execute('SELECT COUNT(*) as cnt FROM users WHERE ref_by = ?', ['ref_' + userId]);
-        sendJSON(res, {count: rows[0].cnt || 0});
+        sendJSON(res, {count: parseInt(rows[0].cnt) || 0});
         break;
       }
 
@@ -148,11 +150,15 @@ const server = http.createServer(async (req, res) => {
         break;
       }
 
+      case 'ping':
+        sendJSON(res, {ok: true, message: 'The Level backend is running!'});
+        break;
+
       default:
         sendJSON(res, {ok: false, error: 'Unknown action'});
     }
   } catch(e) {
-    console.error(e);
+    console.error('Error:', e.message);
     sendJSON(res, {ok: false, error: e.message});
   }
 });
