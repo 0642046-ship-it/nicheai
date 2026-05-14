@@ -104,8 +104,8 @@ function getBody(req) {
 }
 
 const PLANS = {
-  'The Level': { stars: 200, label: '50% возможностей AI Mentor на 30 дней' },
-  'The Level Ultimate': { stars: 700, label: '100% возможностей AI Mentor на 30 дней' }
+  'The Level': { stars: 1, label: '50% возможностей AI Mentor на 30 дней (тест)' },
+  'The Level Ultimate': { stars: 2, label: '100% возможностей AI Mentor на 30 дней (тест)' }
 };
 
 const server = http.createServer(async (req, res) => {
