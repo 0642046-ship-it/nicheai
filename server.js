@@ -47,6 +47,10 @@ async function initDB() {
       status VARCHAR(20) DEFAULT 'pending',
       created_at DATETIME DEFAULT NOW()
     )`);
+    // Add telegram_charge_id column if not exists
+    try {
+      await db.execute('ALTER TABLE payments ADD COLUMN telegram_charge_id VARCHAR(200)');
+    } catch(e) { /* column already exists */ }
     console.log('Tables ready!');
   } catch(e) {
     console.error('DB error:', e.code, e.message);
