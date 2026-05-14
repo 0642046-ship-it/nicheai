@@ -3,16 +3,6 @@ const url = require('url');
 const mysql = require('mysql2/promise');
 const https = require('https');
 
-const DB_CONFIG = {
-  host: process.env.MYSQLHOST || 'localhost',
-  user: process.env.MYSQLUSER || 'cm819652_thelevel',
-  password: process.env.MYSQLPASSWORD || 'igdz6Ny8',
-  database: process.env.MYSQLDATABASE || 'cm819652_thelevel',
-  port: parseInt(process.env.MYSQLPORT || '3306'),
-  waitForConnections: true,
-  connectionLimit: 10
-};
-
 const BOT_TOKEN = '8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
 const CHANNEL = 'thelevelai';
 const TRIAL_DAYS = 3;
@@ -22,7 +12,38 @@ let db;
 
 async function initDB() {
   try {
-    db = await mysql.createPool(DB_CONFIG);
+    const mysqlUrl = process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL;
+    
+    if (mysqlUrl) {
+      // Parse mysql://user:pass@host:port/db
+      const parsed = new URL(mysqlUrl);
+      db = await mysql.createPool({
+        host: parsed.hostname,
+        user: parsed.username,
+        password: parsed.password,
+        database: parsed.pathname.slice(1),
+        port: parseInt(parsed.port || '3306'),
+        waitForConnections: true,
+        connectionLimit: 5,
+        ssl: { rejectUnauthorized: false }
+      });
+    } else {
+      db = await mysql.createPool({
+        host: process.env.MYSQLHOST || 'localhost',
+        user: process.env.MYSQLUSER || 'root',
+        password: process.env.MYSQLPASSWORD || '',
+        database: process.env.MYSQLDATABASE || 'railway',
+        port: parseInt(process.env.MYSQLPORT || '3306'),
+        waitForConnections: true,
+        connectionLimit: 5,
+        ssl: { rejectUnauthorized: false }
+      });
+    }
+
+    // Test connection
+    await db.execute('SELECT 1');
+    console.log('DB connected successfully!');
+
     await db.execute(`CREATE TABLE IF NOT EXISTS users (
       id VARCHAR(50) PRIMARY KEY,
       username VARCHAR(100),
@@ -41,9 +62,10 @@ async function initDB() {
       status VARCHAR(20) DEFAULT 'pending',
       created_at DATETIME DEFAULT NOW()
     )`);
-    console.log('DB connected successfully');
+    console.log('Tables ready!');
   } catch(e) {
-    console.error('DB error:', e.code, e.errno, e.sqlMessage, e.message, JSON.stringify(e));
+    console.error('DB error:', e.code, e.message);
+    db = null;
   }
 }
 
@@ -69,13 +91,8 @@ function sendJSON(res, data, status = 200) {
 
 const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
-    res.writeHead(200, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    });
-    res.end();
-    return;
+    res.writeHead(200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
+    res.end(); return;
   }
 
   const parsed = url.parse(req.url, true);
@@ -84,6 +101,9 @@ const server = http.createServer(async (req, res) => {
 
   try {
     switch(action) {
+      case 'ping':
+        sendJSON(res, {ok: true, message: 'The Level backend is running!', db: !!db});
+        break;
 
       case 'register': {
         const { userId, userName, refBy = '' } = q;
@@ -105,16 +125,14 @@ const server = http.createServer(async (req, res) => {
           const data = await httpsGet(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${CHANNEL}&user_id=${userId}`);
           const status = data?.result?.status || '';
           sendJSON(res, {subscribed: ['member','administrator','creator'].includes(status)});
-        } catch(e) {
-          sendJSON(res, {subscribed: true});
-        }
+        } catch(e) { sendJSON(res, {subscribed: true}); }
         break;
       }
 
       case 'checkTrial': {
         const { userId } = q;
         if (!userId || !db) { sendJSON(res, {allowed: true, daysLeft: 3, plan: 'Level Try'}); return; }
-        const [rows] = await db.execute('SELECT trial_start, plan, paid_until FROM users WHERE id = ?', [userId]);
+        const [rows] = await db.execute('SELECT trial_start, plan FROM users WHERE id = ?', [userId]);
         if (rows.length === 0) { sendJSON(res, {allowed: true, daysLeft: 3, plan: 'Level Try'}); return; }
         const user = rows[0];
         if (user.plan !== 'Level Try') { sendJSON(res, {allowed: true, daysLeft: 999, plan: user.plan}); return; }
@@ -150,19 +168,15 @@ const server = http.createServer(async (req, res) => {
         break;
       }
 
-      case 'ping':
-        sendJSON(res, {ok: true, message: 'The Level backend is running!'});
-        break;
-
       default:
         sendJSON(res, {ok: false, error: 'Unknown action'});
     }
   } catch(e) {
-    console.error('Error:', e.message);
+    console.error('Request error:', e.message);
     sendJSON(res, {ok: false, error: e.message});
   }
 });
 
 initDB().then(() => {
-  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  server.listen(PORT, () => console.log(`Server on port ${PORT}, DB: ${!!db}`));
 });
