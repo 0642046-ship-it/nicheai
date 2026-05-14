@@ -12,14 +12,12 @@ let db;
 
 async function initDB() {
   try {
-    const mysqlUrl = process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL;
-    
+    const mysqlUrl = process.env.MYSQL_URL;
     if (mysqlUrl) {
-      // Parse mysql://user:pass@host:port/db
       const parsed = new URL(mysqlUrl);
       db = await mysql.createPool({
         host: parsed.hostname,
-        user: parsed.username,
+        user: parsed.username || 'root',
         password: parsed.password,
         database: parsed.pathname.slice(1),
         port: parseInt(parsed.port || '3306'),
@@ -27,23 +25,9 @@ async function initDB() {
         connectionLimit: 5,
         ssl: { rejectUnauthorized: false }
       });
-    } else {
-      db = await mysql.createPool({
-        host: process.env.MYSQLHOST || 'localhost',
-        user: process.env.MYSQLUSER || 'root',
-        password: process.env.MYSQLPASSWORD || '',
-        database: process.env.MYSQLDATABASE || 'railway',
-        port: parseInt(process.env.MYSQLPORT || '3306'),
-        waitForConnections: true,
-        connectionLimit: 5,
-        ssl: { rejectUnauthorized: false }
-      });
     }
-
-    // Test connection
     await db.execute('SELECT 1');
-    console.log('DB connected successfully!');
-
+    console.log('DB connected!');
     await db.execute(`CREATE TABLE IF NOT EXISTS users (
       id VARCHAR(50) PRIMARY KEY,
       username VARCHAR(100),
@@ -59,6 +43,7 @@ async function initDB() {
       amount INT,
       plan VARCHAR(50),
       payment_method VARCHAR(50),
+      telegram_charge_id VARCHAR(200),
       status VARCHAR(20) DEFAULT 'pending',
       created_at DATETIME DEFAULT NOW()
     )`);
@@ -79,6 +64,27 @@ function httpsGet(reqUrl) {
   });
 }
 
+function httpsPost(reqUrl, body) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify(body);
+    const urlParsed = new URL(reqUrl);
+    const options = {
+      hostname: urlParsed.hostname,
+      path: urlParsed.pathname,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }
+    };
+    const req = https.request(options, (res) => {
+      let d = '';
+      res.on('data', chunk => d += chunk);
+      res.on('end', () => { try { resolve(JSON.parse(d)); } catch(e) { resolve({}); } });
+    });
+    req.on('error', reject);
+    req.write(data);
+    req.end();
+  });
+}
+
 function sendJSON(res, data, status = 200) {
   res.writeHead(status, {
     'Content-Type': 'application/json',
@@ -89,6 +95,19 @@ function sendJSON(res, data, status = 200) {
   res.end(JSON.stringify(data));
 }
 
+function getBody(req) {
+  return new Promise((resolve) => {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => { try { resolve(JSON.parse(body)); } catch(e) { resolve({}); } });
+  });
+}
+
+const PLANS = {
+  'The Level': { stars: 200, label: '50% возможностей AI Mentor на 30 дней' },
+  'The Level Ultimate': { stars: 700, label: '100% возможностей AI Mentor на 30 дней' }
+};
+
 const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
@@ -98,6 +117,49 @@ const server = http.createServer(async (req, res) => {
   const parsed = url.parse(req.url, true);
   const action = parsed.query.action || '';
   const q = parsed.query;
+
+  // Telegram webhook
+  if (parsed.pathname === '/webhook' && req.method === 'POST') {
+    const update = await getBody(req);
+    
+    // Pre-checkout query - approve payment
+    if (update.pre_checkout_query) {
+      const queryId = update.pre_checkout_query.id;
+      await httpsPost(`https://api.telegram.org/bot${BOT_TOKEN}/answerPreCheckoutQuery`, {
+        pre_checkout_query_id: queryId,
+        ok: true
+      });
+      console.log('Pre-checkout approved:', queryId);
+    }
+
+    // Successful payment
+    if (update.message?.successful_payment) {
+      const userId = String(update.message.from.id);
+      const payment = update.message.successful_payment;
+      const payload = payment.invoice_payload;
+      const chargeId = payment.telegram_payment_charge_id;
+      
+      // payload format: "thelevel_TheLevel" or "thelevel_Ultimate"
+      let plan = 'The Level';
+      if (payload.includes('Ultimate')) plan = 'The Level Ultimate';
+      
+      if (db) {
+        const paidUntil = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 19).replace('T', ' ');
+        await db.execute('UPDATE users SET plan = ?, paid_until = ? WHERE id = ?', [plan, paidUntil, userId]);
+        await db.execute('INSERT INTO payments (user_id, amount, plan, payment_method, telegram_charge_id, status) VALUES (?, ?, ?, ?, ?, ?)',
+          [userId, payment.total_amount, plan, 'stars', chargeId, 'completed']);
+        console.log(`Payment successful: user ${userId}, plan ${plan}`);
+      }
+
+      // Send confirmation message
+      await httpsPost(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        chat_id: userId,
+        text: `✅ Оплата прошла успешно!\n\nТариф: ${plan}\nДействует 30 дней.\n\nОткрывай приложение и погнали 🚀`
+      });
+    }
+
+    res.writeHead(200); res.end('ok'); return;
+  }
 
   try {
     switch(action) {
@@ -162,9 +224,29 @@ const server = http.createServer(async (req, res) => {
         if (!userId || !plan || !db) { sendJSON(res, {ok: false}); return; }
         const paidUntil = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 19).replace('T', ' ');
         await db.execute('UPDATE users SET plan = ?, paid_until = ? WHERE id = ?', [plan, paidUntil, userId]);
-        const amount = plan === 'The Level' ? 199 : 699;
+        const amount = plan === 'The Level' ? 200 : 700;
         await db.execute('INSERT INTO payments (user_id, amount, plan, payment_method, status) VALUES (?, ?, ?, ?, ?)', [userId, amount, plan, method, 'completed']);
         sendJSON(res, {ok: true});
+        break;
+      }
+
+      // Send Stars invoice to user
+      case 'sendInvoice': {
+        const { userId, plan } = q;
+        if (!userId || !plan) { sendJSON(res, {ok: false}); return; }
+        const planData = PLANS[plan];
+        if (!planData) { sendJSON(res, {ok: false, error: 'Unknown plan'}); return; }
+
+        const result = await httpsPost(`https://api.telegram.org/bot${BOT_TOKEN}/sendInvoice`, {
+          chat_id: userId,
+          title: plan,
+          description: planData.label,
+          payload: `thelevel_${plan.replace(/\s/g, '')}`,
+          currency: 'XTR',
+          prices: [{ label: plan, amount: planData.stars }]
+        });
+
+        sendJSON(res, {ok: result.ok || false});
         break;
       }
 
@@ -172,11 +254,21 @@ const server = http.createServer(async (req, res) => {
         sendJSON(res, {ok: false, error: 'Unknown action'});
     }
   } catch(e) {
-    console.error('Request error:', e.message);
+    console.error('Error:', e.message);
     sendJSON(res, {ok: false, error: e.message});
   }
 });
 
+// Set webhook
+async function setWebhook() {
+  const webhookUrl = `https://nicheai-production.up.railway.app/webhook`;
+  const result = await httpsGet(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${webhookUrl}`);
+  console.log('Webhook set:', result.ok, result.description);
+}
+
 initDB().then(() => {
-  server.listen(PORT, () => console.log(`Server on port ${PORT}, DB: ${!!db}`));
+  server.listen(PORT, () => {
+    console.log(`Server on port ${PORT}, DB: ${!!db}`);
+    setWebhook();
+  });
 });
