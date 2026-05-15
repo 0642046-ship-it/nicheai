@@ -339,8 +339,8 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
   <div class="onb-step active" id="onb-step-1">
     <div class="onb-logo">THE</div>
     <div class="onb-lv" style="margin-bottom:32px">level</div>
-    <div class="onb-headline">Залетай — здесь ты реально начнёшь зарабатывать</div>
-    <div class="onb-desc">AI-наставник который знает твою ситуацию, строит план под тебя и не даёт слиться</div>
+    <div class="onb-headline">Твой путеводитель до первых денег в онлайне</div>
+    <div class="onb-desc">AI-ментор который знает твою ситуацию, строит план под тебя и не даёт сдаться</div>
     <div class="onb-features">
       <div class="onb-feature">
         <div class="onb-feature-icon">🎯</div>
@@ -439,7 +439,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
       <div class="h-stat"><div class="h-stat-l">Заработано</div><div class="h-stat-v" id="home-earned">— ₽</div><div class="h-stat-s">всего</div></div>
       <div class="h-stat"><div class="h-stat-l">Задач выполнено</div><div class="h-stat-v" id="home-tasks">0</div><div class="h-stat-s">выполнено</div></div>
     </div>
-    <button class="h-cta" id="home-cta-btn">
+    <button class="h-cta" onclick="showScreen('mentor')" id="home-cta-btn">
       Пройти опрос с AI Mentor →
     </button>
   </div>
@@ -533,11 +533,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     </div>
   </div>
 
-  <!-- ACHIEVEMENTS -->
-  <div class="card" id="ach-card">
-    <div class="card-hdr"><div class="card-title">🏆 Достижения</div></div>
-    <div class="ach-grid" id="ach-grid"></div>
-  </div>
+
 
   <!-- SUBSCRIPTION -->
   <div class="card">
@@ -547,7 +543,7 @@ body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--white);mi
     </div>
     <div class="coll-content" id="sub-content">
       <div style="margin-top:14px;">
-        <div class="s-row"><span class="s-label">Тариф</span><span class="s-val">The Level Ultimate</span></div>
+        <div class="s-row"><span class="s-label">Тариф</span><span class="s-val" id="profile-plan">Level Try</span></div>
         <div class="s-row"><span class="s-label">Статус</span><span class="s-val g">Активна</span></div>
         <div class="s-row"><span class="s-label">Продлевается</span><span class="s-val" id="sub-date">—</span></div>
         <div class="s-row"><span class="s-label">Пробный период</span><span class="s-val" id="trial-days-left">—</span></div>
@@ -1004,7 +1000,7 @@ function updateProfile(){
   if(state.pointA||state.niche){
     document.getElementById('traj-card').style.display='block';
     document.getElementById('point-a').textContent=state.pointA||'Начальная точка';
-    document.getElementById('point-b').textContent=state.pointB||state.niche||'Цель';
+    document.getElementById('point-b').textContent=state.goal||state.pointB||state.niche||'Цель';
     const pct=all.length>0?Math.round((done/all.length)*100):0;
     document.getElementById('traj-fill').style.width=pct+'%';
     document.getElementById('traj-pct').textContent=pct+'%';
