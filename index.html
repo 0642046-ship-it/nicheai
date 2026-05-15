@@ -876,7 +876,13 @@ function recheckSubscription(){
   if(dl<=0){showGate('trial-expired');return;}
   updateProfile();renderGoals();renderHome();
   showScreen('home');
-  if(state.chatHistory.length===0)startQuestionnaire();else{renderChat();renderNiche();}
+  if(state.chatHistory.length>0){
+    requestAnimationFrame(()=>{
+      renderChat();
+      renderNiche();
+    });
+  }
+    
 }
 function closeGateAndSub(){document.getElementById('gate').classList.remove('active');showScreen('profile');setTimeout(()=>openSubModal(),300);}
 
@@ -1006,13 +1012,42 @@ function copyRef(){
 }
 
 function showScreen(name){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+name).classList.add('active');
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
-  document.getElementById('nav-'+name).classList.add('active');
-  if(name==='profile')updateProfile();
-  if(name==='home')renderHome();
-  if(name==='goals')renderGoals();
+
+  document.querySelectorAll('.screen')
+    .forEach(s=>s.classList.remove('active'));
+
+  document
+    .getElementById('screen-'+name)
+    .classList.add('active');
+
+  document.querySelectorAll('.nb')
+    .forEach(b=>b.classList.remove('active'));
+
+  document
+    .getElementById('nav-'+name)
+    .classList.add('active');
+
+  if(name==='profile') updateProfile();
+
+  if(name==='home') renderHome();
+
+  if(name==='goals') renderGoals();
+
+  // FIX: mentor screen lifecycle
+  if(name==='mentor'){
+
+    requestAnimationFrame(()=>{
+
+      if(state.chatHistory.length===0){
+        startQuestionnaire();
+      }else{
+        renderChat();
+      }
+
+    });
+
+  }
+
 }
 
 function renderHome(){
@@ -1084,9 +1119,94 @@ const SYS=`Ты — AI-наставник в приложении The Level. Т�
 
 Все 30 дней обязательны. Задачи реальные, конкретные.`;
 
-function addMsg(role,text,typing=false){const box=document.getElementById('chat-messages');const div=document.createElement('div');div.className='msg '+(role==='assistant'?'ai':'user')+(typing?' typing':'');if(typing){div.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';div.id='typing-indicator';}else{div.textContent=text;}box.appendChild(div);box.scrollTop=box.scrollHeight;return div;}
-function renderChat(){const b=document.getElementById('chat-messages');b.innerHTML='';state.chatHistory.forEach(m=>addMsg(m.role,m.content));}
-async function startQuestionnaire(){const g='Привет! Залетай.\n\nЯ твой AI-наставник в The Level. Помогу найти нишу, выстрою план и буду рядом пока ты не сделаешь первые деньги.\n\nНачнём с главного — чем занимаешься сейчас и что хочешь изменить?';state.chatHistory.push({role:'assistant',content:g});save();addMsg('assistant',g);}
+function addMsg(role,text,typing=false){
+
+  const box=document.getElementById('chat-messages');
+
+  // FIX: chat screen ещё не отрисован
+  if(!box){
+    requestAnimationFrame(()=>{
+      addMsg(role,text,typing);
+    });
+    return null;
+  }
+
+  const div=document.createElement('div');
+
+  div.className='msg '+
+    (role==='assistant'?'ai':'user')+
+    (typing?' typing':'');
+
+  if(typing){
+
+    div.innerHTML=
+      '<div class="dots">'+
+      '<span></span><span></span><span></span>'+
+      '</div>';
+
+    div.id='typing-indicator';
+
+  }else{
+    div.textContent=text;
+  }
+
+  box.appendChild(div);
+
+  box.scrollTop=box.scrollHeight;
+
+  return div;
+}
+function renderChat(){
+
+  const b=document.getElementById('chat-messages');
+
+  if(!b) return;
+
+  b.innerHTML='';
+
+  state.chatHistory.forEach(m=>{
+    addMsg(m.role,m.content);
+  });
+
+}
+async function startQuestionnaire(){
+
+  const g=
+`Привет! Залетай.
+
+Я твой AI-наставник в The Level.
+Помогу найти нишу, выстрою план и буду рядом пока ты не сделаешь первые деньги.
+
+Начнём с главного —
+чем занимаешься сейчас и что хочешь изменить?`;
+
+  // FIX: защита от дублей
+  const alreadyHasGreeting=state.chatHistory.some(
+    m=>m.role==='assistant'&&m.content===g
+  );
+
+  if(alreadyHasGreeting){
+
+    requestAnimationFrame(()=>{
+      renderChat();
+    });
+
+    return;
+  }
+
+  state.chatHistory.unshift({
+    role:'assistant',
+    content:g
+  });
+
+  save();
+
+  // FIX: ждём рендер mentor screen
+  requestAnimationFrame(()=>{
+    renderChat();
+  });
+
+}
 function quickSend(t){document.getElementById('chat-input').value=t;sendMessage();}
 function buildMsgs(){const m=state.chatHistory,r=[];for(let i=0;i<m.length;i++){if(r.length===0&&m[i].role==='assistant')continue;if(r.length>0&&m[i].role===r[r.length-1].role)r[r.length-1].content+='\n'+m[i].content;else r.push({role:m[i].role,content:m[i].content});}return r;}
 
@@ -1180,7 +1300,12 @@ try{
           const dl=getTrialDaysLeft();
           if(dl<=0){showGate('trial-expired');return;}
           updateProfile();renderGoals();renderHome();showScreen('home');
-          if(state.chatHistory.length===0)startQuestionnaire();else{renderChat();renderNiche();}
+          if(state.chatHistory.length>0){
+            requestAnimationFrame(()=>{
+              renderChat();
+              renderNiche();
+            });
+          }
         }
       }
     }
