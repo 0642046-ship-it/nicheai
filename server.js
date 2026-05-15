@@ -3,8 +3,8 @@ const url = require('url');
 const mysql = require('mysql2/promise');
 const https = require('https');
 
-const BOT_TOKEN = '8736314412:AAHP7xilcBoSoBi8Y5OUiBRRlsFgkI75Lhs';
-const CRYPTO_BOT_TOKEN = '582267:AAo7vr6oI8aniPYv1vCBDOEvif2LjNc4GNV';
+const BOT_TOKEN = process.env.BOT_TOKEN || '';
+const CRYPTO_BOT_TOKEN = process.env.CRYPTO_BOT_TOKEN || '';
 const CRYPTO_BOT_API = 'https://pay.crypt.bot/api';
 const CHANNEL = 'thelevelai';
 const TRIAL_DAYS = 3;
@@ -166,6 +166,34 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+    res.writeHead(200); res.end('ok'); return;
+  }
+
+  // CryptoBot webhook
+  if (parsed.pathname === '/cryptowebhook' && req.method === 'POST') {
+    const update = await getBody(req);
+    console.log('CryptoBot update:', update.update_type);
+    if (update.update_type === 'invoice_paid') {
+      const invoice = update.payload;
+      try {
+        const data = JSON.parse(invoice.payload);
+        const userId = data.userId;
+        const plan = data.plan;
+        if (userId && plan && db) {
+          const paidUntil = new Date(Date.now() + 30*86400000).toISOString().slice(0,19).replace('T',' ');
+          await db.execute('UPDATE users SET plan=?, paid_until=? WHERE id=?', [plan, paidUntil, userId]);
+          await db.execute('INSERT INTO payments (user_id,amount,plan,payment_method,status) VALUES (?,?,?,?,?)',
+            [userId, invoice.amount, plan, 'crypto', 'completed']);
+          await httpsPost(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            chat_id: userId,
+            text: `✅ Оплата криптой прошла!
+
+Тариф: ${plan}
+Действует 30 дней 🚀`
+          });
+        }
+      } catch(e) { console.error('Crypto webhook error:', e.message); }
+    }
     res.writeHead(200); res.end('ok'); return;
   }
 
