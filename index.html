@@ -883,7 +883,7 @@ function showGate(type){
   const gate=document.getElementById('gate'),content=document.getElementById('gate-content');
   gate.classList.add('active');
   if(type==='subscribe'){
-    content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">📢</div><div class="gate-title">Подпишись на канал</div><div class="gate-desc">Чтобы пользоваться The Level — нужно быть в нашем Telegram-канале. Там ежедневно выходит контент по заработку.</div><button class="gate-btn" onclick="openChannel()">Подписаться на @thelevelai →</button><div style="font-size:12px;color:var(--w50);margin-top:12px;text-align:center">После подписки просто вернись в приложение</div>`;
+    content.innerHTML=`<div class="onb-logo" style="margin-bottom:4px">THE</div><div class="onb-lv" style="margin-bottom:24px">level</div><div class="gate-icon">📢</div><div class="gate-title">Подпишись на канал</div><div class="gate-desc">Чтобы пользоваться The Level — нужно быть в нашем Telegram-канале. Там ежедневно выходит контент по заработку.</div><button class="gate-btn" onclick="openChannel()" style="margin-bottom:10px">Подписаться на @thelevelai →</button><button class="gate-btn secondary" onclick="recheckSubscription()">✓ Я подписался</button>`;
     // Auto-check when user returns to app
     startAutoSubCheck();
   }else if(type==='trial-expired'){
