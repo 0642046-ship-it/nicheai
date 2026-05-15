@@ -867,25 +867,16 @@ function openChannel(){
   }
 }
 
-async function recheckSubscription(){
-  let userId = state.userId || '0';
-  try{ const tg=window.Telegram?.WebApp; if(tg?.initDataUnsafe?.user) userId=String(tg.initDataUnsafe.user.id); }catch(e){}
-  
-  const ok = await checkSubscription(userId);
-  if(ok){
-    localStorage.setItem('thelevel_sub','1');
-    localStorage.setItem('thelevel_sub_time', Date.now().toString());
-    if(subCheckInterval){ clearInterval(subCheckInterval); subCheckInterval=null; }
-    document.getElementById('gate').classList.remove('active');
-    const dl=getTrialDaysLeft();
-    if(dl<=0){showGate('trial-expired');return;}
-    updateProfile();renderGoals();renderHome();
-    showScreen('home');
-    if(state.chatHistory.length===0)startQuestionnaire();
-    else{renderChat();renderNiche();}
-  } else {
-    alert('Ты ещё не подписался на @thelevelai. Подпишись и нажми снова!');
-  }
+function recheckSubscription(){
+  localStorage.setItem('thelevel_sub','1');
+  localStorage.setItem('thelevel_sub_time', Date.now().toString());
+  if(subCheckInterval){ clearInterval(subCheckInterval); subCheckInterval=null; }
+  document.getElementById('gate').classList.remove('active');
+  const dl=getTrialDaysLeft();
+  if(dl<=0){showGate('trial-expired');return;}
+  updateProfile();renderGoals();renderHome();
+  showScreen('home');
+  if(state.chatHistory.length===0)startQuestionnaire();else{renderChat();renderNiche();}
 }
 function closeGateAndSub(){document.getElementById('gate').classList.remove('active');showScreen('profile');setTimeout(()=>openSubModal(),300);}
 
