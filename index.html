@@ -802,17 +802,19 @@ document.getElementById('start-btn').addEventListener('click',()=>{
 });
 
 async function checkSubscription(userId){
+  // Check via backend
   const isTelegram = window.Telegram?.WebApp?.initData && window.Telegram.WebApp.initData.length > 0;
   if(!isTelegram) return true;
   try{
     const controller = new AbortController();
-    const timeout = setTimeout(()=>controller.abort(), 5000);
+    const timeout = setTimeout(()=>controller.abort(), 4000);
     const res = await fetch(SHEET_API + '?action=checkSub&userId=' + encodeURIComponent(userId), {signal: controller.signal});
     clearTimeout(timeout);
     const data = await res.json();
-    return data.subscribed === true;
+    if(data.subscribed === true) return true;
+    // If not subscribed - show gate
+    return false;
   }catch(e){ 
-    console.log('Sub check failed, letting user in:', e.message);
     return true; // If check fails - let user in
   }
 }
@@ -901,13 +903,7 @@ function startAutoSubCheck(){
     if(ok){
       clearInterval(subCheckInterval);
       subCheckInterval = null;
-      localStorage.setItem('thelevel_sub','1');
-      localStorage.setItem('thelevel_sub_time', Date.now().toString());
-      document.getElementById('gate').classList.remove('active');
-      const dl=getTrialDaysLeft();
-      if(dl<=0){showGate('trial-expired');return;}
-      updateProfile();renderGoals();renderHome();showScreen('home');
-      if(state.chatHistory.length===0)startQuestionnaire();else{renderChat();renderNiche();}
+      recheckSubscription();
     }
   }, 3000); // Check every 3 seconds
 }
