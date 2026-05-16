@@ -238,7 +238,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 .niche-lbl{font-size:9px;color:var(--w3);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
 .niche-title{font-size:14px;font-weight:700;margin-bottom:5px}
 .niche-desc{font-size:12px;color:var(--w3);line-height:1.5}
-.chat-box{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;min-height:180px;max-height:340px}
+.chat-box{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;margin-top:8px;min-height:180px;max-height:320px}
 .msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.6;font-weight:400}
 .msg.ai{background:rgba(255,255,255,0.07);border:0.5px solid var(--border);border-bottom-left-radius:3px;align-self:flex-start;color:var(--w2)}
 .msg.user{background:rgba(255,255,255,0.12);border-bottom-right-radius:3px;align-self:flex-end;color:var(--white);font-weight:600}
@@ -412,7 +412,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 
 <div id="screen-goals" class="screen">
   <div class="g-hdr">
-    <div class="g-title">Daily Goals</div>
+    <div class="g-title">Цели</div>
     <div style="width:34px;height:34px;background:var(--surface);border:0.5px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;">
       <i class="ti ti-calendar" style="font-size:16px;color:var(--w2)"></i>
     </div>
@@ -450,7 +450,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 
 <div id="screen-profile" class="screen">
   <div class="ph-hdr">
-    <div class="ph-title">Profile</div>
+    <div class="ph-title">Профиль</div>
     <div class="ph-bell"><i class="ti ti-bell" style="font-size:16px;color:var(--w2)"></i></div>
   </div>
 
@@ -654,8 +654,12 @@ function adminLogin(){
 function adminLogout(){
   localStorage.removeItem('thelevel_admin');
   document.getElementById('admin-panel').classList.remove('active');
-  document.getElementById('app').classList.add('show');
-  showScreen('home');
+  if(state.onboardingDone){
+    document.getElementById('app').classList.add('show');
+    showScreen('home');
+  } else {
+    document.getElementById('onb').classList.add('active');
+  }
 }
 function showAdminPanel(){document.getElementById('admin-panel').classList.add('active');renderAdminPanel();}
 
@@ -759,12 +763,21 @@ async function initApp(){
   if(state.chatHistory.length===0)startQuestionnaire();
   else{renderChat();renderNiche();}
 
-  // Long press on avatar for admin
+  // Long press on avatar for admin (all users can try)
   const av=document.getElementById('avatar-letter');
-  if(av&&isAdmin){
+  if(av){
     let pressTimer;
-    av.addEventListener('touchstart',()=>{pressTimer=setTimeout(()=>openAdminDirect(),1500);});
+    av.addEventListener('touchstart',(e)=>{
+      e.preventDefault();
+      pressTimer=setTimeout(()=>{
+        const uid=state.userId;
+        if(uid==='934467282'||uid==='5455853427'||state.userName?.toLowerCase().includes('gvrkn')){
+          openAdminDirect();
+        }
+      },1500);
+    },{passive:false});
     av.addEventListener('touchend',()=>clearTimeout(pressTimer));
+    av.addEventListener('touchmove',()=>clearTimeout(pressTimer));
   }
 }
 
@@ -839,7 +852,7 @@ function updateProfile(){
 
   // Admin button
   const adminBtn=document.getElementById('admin-shortcut');
-  const isAdmin=state.userId==='934467282'||state.userId==='5455853427'||state.userName?.toLowerCase().includes('gvrkn');
+  const isAdmin=state.userId==='934467282'||state.userId==='5455853427'||state.userName?.toLowerCase().includes('gvrkn')||state.userName?.toLowerCase().includes('alex');
   if(adminBtn&&isAdmin)adminBtn.style.display='block';
 
   // Stats
