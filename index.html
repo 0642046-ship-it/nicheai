@@ -513,9 +513,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
   </button>
 
   <div id="admin-shortcut" style="display:none;margin-bottom:10px;">
-    <button class="card-btn" style="border-radius:26px;padding:15px;border-color:rgba(255,255,255,0.2);" onclick="openAdminDirect()">
+    <button class="card-btn" style="border-radius:26px;padding:15px;border-color:rgba(255,255,255,0.2);" onclick="showAdminLoginModal()">
       ⚡ Панель администратора
     </button>
+  </div>
+
+  <!-- ADMIN LOGIN MODAL -->
+  <div id="admin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(12px);z-index:300;align-items:center;justify-content:center;">
+    <div style="background:#161616;border:0.5px solid rgba(255,255,255,0.15);border-radius:20px;padding:28px 24px;max-width:300px;width:90%;text-align:center">
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px">Вход в админку</div>
+      <div style="font-size:13px;color:#888;margin-bottom:20px">Введи логин и пароль</div>
+      <input id="modal-adm-login" type="text" placeholder="Логин" style="width:100%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px;color:#fff;font-family:Inter,sans-serif;font-size:14px;outline:none;margin-bottom:10px"/>
+      <input id="modal-adm-pass" type="password" placeholder="Пароль" style="width:100%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px;color:#fff;font-family:Inter,sans-serif;font-size:14px;outline:none;margin-bottom:6px"/>
+      <div id="modal-adm-error" style="color:#ff7b7b;font-size:12px;margin-bottom:10px;display:none">Неверный логин или пароль</div>
+      <button onclick="adminLoginModal()" style="width:100%;padding:14px;border:none;border-radius:26px;background:rgba(255,255,255,0.9);color:#111;font-family:Inter,sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px;box-shadow:0 0 20px rgba(255,255,255,0.2)">Войти →</button>
+      <button onclick="closeAdminModal()" style="width:100%;padding:12px;border:0.5px solid rgba(255,255,255,0.1);border-radius:26px;background:transparent;color:#888;font-family:Inter,sans-serif;font-size:13px;cursor:pointer">Отмена</button>
+    </div>
   </div>
 
   <div class="ref-card">
@@ -852,7 +865,8 @@ function updateProfile(){
 
   // Admin button
   const adminBtn=document.getElementById('admin-shortcut');
-  const isAdmin=state.userId==='934467282'||state.userId==='5455853427'||state.userName?.toLowerCase().includes('gvrkn')||state.userName?.toLowerCase().includes('alex');
+  // Show admin button to Alex only
+  const isAdmin=state.userId==='934467282'||state.userId==='5455853427'||state.userName?.toLowerCase().includes('gvrkn');
   if(adminBtn&&isAdmin)adminBtn.style.display='block';
 
   // Stats
@@ -1117,6 +1131,30 @@ function openAdminDirect(){
   localStorage.setItem('thelevel_admin','1');
   document.getElementById('app').classList.remove('show');
   showAdminPanel();
+}
+
+function showAdminLoginModal(){
+  const modal = document.getElementById('admin-modal');
+  if(modal){ modal.style.display='flex'; }
+}
+function closeAdminModal(){
+  const modal = document.getElementById('admin-modal');
+  if(modal){ modal.style.display='none'; }
+  document.getElementById('modal-adm-login').value='';
+  document.getElementById('modal-adm-pass').value='';
+  document.getElementById('modal-adm-error').style.display='none';
+}
+function adminLoginModal(){
+  const l=document.getElementById('modal-adm-login').value.trim();
+  const p=document.getElementById('modal-adm-pass').value.trim();
+  if(l===ADMIN_LOGIN&&p===ADMIN_PASS){
+    closeAdminModal();
+    localStorage.setItem('thelevel_admin','1');
+    document.getElementById('app').classList.remove('show');
+    showAdminPanel();
+  } else {
+    document.getElementById('modal-adm-error').style.display='block';
+  }
 }
 
 function resetApp(){if(!confirm('Сбросить весь прогресс?'))return;localStorage.removeItem('thelevel_state');location.reload();}
