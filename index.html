@@ -512,11 +512,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
     💳 Оплатить подписку
   </button>
 
-  <div id="admin-shortcut" style="display:none;margin-bottom:10px;">
-    <button class="card-btn" style="border-radius:26px;padding:15px;border-color:rgba(255,255,255,0.2);" onclick="showAdminLoginModal()">
-      ⚡ Панель администратора
-    </button>
-  </div>
+
 
   <!-- ADMIN LOGIN MODAL -->
   <div id="admin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(12px);z-index:300;align-items:center;justify-content:center;">
@@ -551,7 +547,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
     <div style="font-size:11px;color:var(--w3);margin-top:10px;line-height:1.6" id="income-forecast-text">
       При текущем темпе — <strong style="color:var(--white)" id="income-forecast-val">—</strong> за 3 месяца
     </div>
+    <div style="margin-top:4px;margin-bottom:10px;">
+    <button class="card-btn" style="border-radius:26px;padding:15px;border-color:rgba(255,255,255,0.1);color:var(--w3);" onclick="showAdminLoginModal()">
+      ⚡ Панель администратора
+    </button>
   </div>
+</div>
 </div>
 
 <nav class="nav">
@@ -865,9 +866,8 @@ function updateProfile(){
 
   // Admin button
   const adminBtn=document.getElementById('admin-shortcut');
-  // Show admin button to Alex only
-  const isAdmin=state.userId==='934467282'||state.userId==='5455853427'||state.userName?.toLowerCase().includes('gvrkn');
-  if(adminBtn&&isAdmin)adminBtn.style.display='block';
+  // Show admin button to everyone
+  if(adminBtn) adminBtn.style.display='block';
 
   // Stats
   const allT=Object.values(state.tasks).flat(),doneT=allT.filter(t=>t.done).length;
