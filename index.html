@@ -238,7 +238,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 .niche-lbl{font-size:9px;color:var(--w3);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
 .niche-title{font-size:14px;font-weight:700;margin-bottom:5px}
 .niche-desc{font-size:12px;color:var(--w3);line-height:1.5}
-.chat-box{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;margin-top:8px;min-height:180px;max-height:320px}
+.chat-box{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:6px;margin-top:4px;min-height:160px;max-height:300px}
 .msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.6;font-weight:400}
 .msg.ai{background:rgba(255,255,255,0.07);border:0.5px solid var(--border);border-bottom-left-radius:3px;align-self:flex-start;color:var(--w2)}
 .msg.user{background:rgba(255,255,255,0.12);border-bottom-right-radius:3px;align-self:flex-end;color:var(--white);font-weight:600}
@@ -406,6 +406,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
     <div id="home-earned" style="display:none"></div>
     <div id="home-tasks" style="display:none"></div>
 
+    <!-- Goal block shown after survey -->
+    <div id="home-goal-block" style="display:none;width:100%;margin-bottom:16px;position:relative;z-index:1">
+      <div style="background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;text-align:left">
+        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px">Твоя цель</div>
+        <div id="home-goal-text" style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:10px;line-height:1.3"></div>
+        <div style="height:2px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-bottom:6px">
+          <div id="home-goal-fill" style="height:100%;background:rgba(255,255,255,0.6);border-radius:2px;transition:width .6s;width:0%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div id="home-goal-pct" style="font-size:11px;color:#888">0% выполнено</div>
+          <button onclick="showScreen('goals')" style="background:none;border:none;color:#ccc;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">К целям →</button>
+        </div>
+      </div>
+    </div>
+
     <button class="h-cta" onclick="showScreen('mentor')" id="home-cta-btn">Пройти опрос с AI Mentor →</button>
   </div>
 </div>
@@ -433,12 +448,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
     </div>
   </div>
   <div class="chat-box" id="chat-messages"></div>
-  <div class="quick-row">
-    <button class="qbtn" onclick="quickSend('Дай план на сегодня')">План на день</button>
-    <button class="qbtn" onclick="quickSend('Где взять первых клиентов?')">Первые клиенты</button>
-    <button class="qbtn" onclick="quickSend('Как поднять чек?')">Поднять чек</button>
-    <button class="qbtn" onclick="quickSend('Мотивируй меня')">Мотивация 🔥</button>
-  </div>
+  <div class="quick-row" id="quick-row"></div>
   <div class="inp-row">
     <input class="msg-inp" id="chat-input" type="text" placeholder="Спроси что угодно..."/>
     <button class="send-btn" id="chat-send" onclick="sendMessage()">
@@ -961,6 +971,7 @@ function showScreen(name){
     requestAnimationFrame(()=>{
       if(state.chatHistory.length===0)startQuestionnaire();
       else renderChat();
+      renderQuickBtns();
     });
   }
 }
@@ -968,8 +979,31 @@ function showScreen(name){
 function renderHome(){
   const ctaBtn=document.getElementById('home-cta-btn');
   if(ctaBtn){
-    if(state.niche){ctaBtn.textContent='Перейти к целям →';ctaBtn.onclick=()=>showScreen('goals');}
-    else{ctaBtn.textContent='Пройти опрос с AI Mentor →';ctaBtn.onclick=()=>showScreen('mentor');}
+    if(state.niche){
+      // Hide survey button, show goals summary instead
+      ctaBtn.style.display='none';
+    } else {
+      ctaBtn.style.display='flex';
+      ctaBtn.textContent='Пройти опрос с AI Mentor →';
+      ctaBtn.onclick=()=>showScreen('mentor');
+    }
+  }
+  // Show goal progress on home if niche set
+  const homeGoalBlock = document.getElementById('home-goal-block');
+  if(homeGoalBlock){
+    if(state.niche){
+      homeGoalBlock.style.display='block';
+      const all=Object.values(state.tasks).flat(),done=all.filter(t=>t.done).length;
+      const pct=all.length>0?Math.round((done/all.length)*100):0;
+      const hgText=document.getElementById('home-goal-text');
+      const hgPct=document.getElementById('home-goal-pct');
+      const hgFill=document.getElementById('home-goal-fill');
+      if(hgText)hgText.textContent=state.goal||state.niche;
+      if(hgPct)hgPct.textContent=pct+'% выполнено';
+      if(hgFill)hgFill.style.width=pct+'%';
+    } else {
+      homeGoalBlock.style.display='none';
+    }
   }
 }
 
@@ -1052,7 +1086,7 @@ async function startQuestionnaire(){
   if(alreadyHasGreeting){requestAnimationFrame(()=>renderChat());return;}
   state.chatHistory.unshift({role:'assistant',content:g});
   save();
-  requestAnimationFrame(()=>renderChat());
+  requestAnimationFrame(()=>{renderChat();renderQuickBtns();});
 }
 
 function quickSend(t){document.getElementById('chat-input').value=t;sendMessage();}
@@ -1102,6 +1136,30 @@ function renderNiche(){
   document.getElementById('niche-block').style.display='block';
   document.getElementById('niche-title').textContent=state.niche;
   document.getElementById('niche-desc').textContent=state.nicheDesc||'';
+  renderQuickBtns();
+}
+
+function renderQuickBtns(){
+  const row=document.getElementById('quick-row');
+  if(!row)return;
+  // Dynamic based on context
+  const lastMsg=state.chatHistory.filter(m=>m.role==='user').slice(-1)[0]?.content||'';
+  let btns=[];
+  if(!state.niche){
+    btns=[['Что такое ниша?','Что такое ниша?'],['С чего начать?','С чего начать в онлайне?']];
+  } else {
+    const today=getDayOfPlan();
+    btns=[
+      ['День '+today+' 📅','Что делать сегодня на день '+today+'?'],
+      ['Первые клиенты','Где взять первых клиентов?'],
+      ['Поднять чек','Как поднять чек на свои услуги?'],
+      ['Мотивация 🔥','Мотивируй меня продолжать'],
+      ['Разбор ошибок','Какие ошибки я могу допустить?'],
+    ];
+  }
+  row.innerHTML=btns.map(([label,msg])=>
+    `<button class="qbtn" onclick="quickSend('${msg.replace(/'/g,"\'")}'">${label}</button>`
+  ).join('');
 }
 
 function openSubModal(){document.getElementById('sub-modal').classList.add('active');}
